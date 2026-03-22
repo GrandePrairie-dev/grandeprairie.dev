@@ -8,6 +8,12 @@ import { useTheme } from "@/hooks/useTheme";
 
 import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
+import People from "@/pages/People";
+import PersonProfile from "@/pages/PersonProfile";
+import Ideas from "@/pages/Ideas";
+import IdeaDetail from "@/pages/IdeaDetail";
+import Map from "@/pages/Map";
+import Calendar from "@/pages/Calendar";
 
 export function App() {
   const isMobile = useMobile();
@@ -31,6 +37,12 @@ export function App() {
           <main className="flex-1 overflow-auto">
             <Switch>
               <Route path="/" component={Home} />
+              <Route path="/people" component={People} />
+              <Route path="/people/:id" component={PersonProfile} />
+              <Route path="/ideas" component={Ideas} />
+              <Route path="/ideas/:id" component={IdeaDetail} />
+              <Route path="/map" component={Map} />
+              <Route path="/calendar" component={Calendar} />
               <Route component={NotFound} />
             </Switch>
           </main>
