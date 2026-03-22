@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode — Fresh Snow foundation */
+    --background: 30 14% 96%;       /* #F7F5F2 */
+    --foreground: 100 10% 17%;      /* #2C3227 Deep Earth */
+    --card: 0 0% 100%;
+    --card-foreground: 100 10% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 100 10% 17%;
+    --primary: 162 25% 23%;         /* #2D4A3E Boreal Spruce */
+    --primary-foreground: 30 14% 96%;
+    --secondary: 30 14% 92%;        /* #EDEAE6 Hoarfrost */
+    --secondary-foreground: 100 10% 17%;
+    --muted: 30 14% 92%;
+    --muted-foreground: 100 6% 37%; /* #5D6558 Smoke */
+    --accent: 30 14% 92%;
+    --accent-foreground: 100 10% 17%;
+    --destructive: 0 42% 56%;       /* #C45B5B Pipeline Red */
+    --destructive-foreground: 30 14% 96%;
+    --border: 30 6% 83%;            /* #D8D4CF Rime */
+    --input: 30 6% 83%;
+    --ring: 162 25% 23%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode — Midnight Prairie foundation */
+    --background: 215 20% 11%;      /* #161B22 */
+    --foreground: 215 15% 91%;      /* #E2E6EC Clean Snow */
+    --card: 215 18% 15%;            /* #1E2530 Deep Frost */
+    --card-foreground: 215 15% 91%;
+    --popover: 215 18% 15%;
+    --popover-foreground: 215 15% 91%;
+    --primary: 162 28% 38%;         /* #4A7C6A Boreal Spruce light */
+    --primary-foreground: 215 15% 91%;
+    --secondary: 215 16% 18%;       /* #262D38 Twilight */
+    --secondary-foreground: 215 15% 91%;
+    --muted: 215 16% 18%;
+    --muted-foreground: 215 12% 59%; /* #8B95A5 Frost Mist */
+    --accent: 215 16% 18%;
+    --accent-foreground: 215 15% 91%;
+    --destructive: 0 42% 56%;
+    --destructive-foreground: 215 15% 91%;
+    --border: 215 15% 21%;          /* #2E3742 Permafrost */
+    --input: 215 15% 21%;
+    --ring: 166 55% 49%;            /* #3DBFA8 Aurora Teal */
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
