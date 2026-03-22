@@ -50,9 +50,9 @@ export default function IdeaDetail() {
             <VoteButton ideaId={idea.id} votes={idea.votes} />
           </div>
 
-          {idea.description && (
-            <p className="text-sm leading-relaxed">{idea.description}</p>
-          )}
+          <p className="text-sm leading-relaxed">
+            {idea.description || "No description provided yet. Have thoughts? Add a comment below."}
+          </p>
 
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-1">
