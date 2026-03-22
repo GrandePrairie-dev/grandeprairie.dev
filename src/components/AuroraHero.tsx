@@ -8,7 +8,14 @@ export function AuroraHero() {
 
   return (
     <section className="relative overflow-hidden py-16 md:py-24">
-      {/* Aurora gradient effects */}
+      {/* Hero background image */}
+      <img
+        src="/images/hero-aurora.webp"
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover opacity-20 dark:opacity-30 pointer-events-none"
+      />
+      {/* Aurora gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background pointer-events-none" />
       <div className="absolute top-[-60px] left-1/2 -translate-x-1/2 w-[500px] h-[180px] bg-[radial-gradient(ellipse,rgba(61,191,168,0.12)_0%,rgba(45,74,62,0.06)_40%,transparent_70%)] pointer-events-none" />
       <div className="absolute top-[-30px] right-[15%] w-[300px] h-[120px] bg-[radial-gradient(ellipse,rgba(212,162,78,0.08)_0%,transparent_60%)] pointer-events-none" />
 
