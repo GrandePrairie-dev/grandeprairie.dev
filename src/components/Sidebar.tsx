@@ -7,6 +7,14 @@ import {
   Calendar,
   Sun,
   Moon,
+  FolderOpen,
+  Newspaper,
+  Wrench,
+  GraduationCap,
+  Building2,
+  Cpu,
+  Heart,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -56,12 +64,32 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     title: "Build",
-    items: [{ label: "Ideas", href: "/ideas", icon: Lightbulb }],
+    items: [
+      { label: "Ideas", href: "/ideas", icon: Lightbulb },
+      { label: "Projects", href: "/projects", icon: FolderOpen },
+    ],
+  },
+  {
+    title: "Learn",
+    items: [
+      { label: "Intel", href: "/intel", icon: Newspaper },
+      { label: "Tech Hub", href: "/tech-hub", icon: Wrench },
+      { label: "Students", href: "/students", icon: GraduationCap },
+    ],
   },
   {
     title: "Connect",
-    items: [{ label: "Calendar", href: "/calendar", icon: Calendar }],
+    items: [
+      { label: "Calendar", href: "/calendar", icon: Calendar },
+      { label: "Business", href: "/business", icon: Building2 },
+      { label: "AI Hub", href: "/ai-hub", icon: Cpu },
+    ],
   },
+];
+
+const STANDALONE_ITEMS: NavItem[] = [
+  { label: "About", href: "/about", icon: Heart },
+  { label: "Admin", href: "/admin", icon: Settings },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -128,6 +156,34 @@ function SidebarContent({
             </ul>
           </div>
         ))}
+        {/* Standalone nav items */}
+        <div className="border-t border-sidebar-border mt-4 pt-3">
+          <ul className="space-y-0.5">
+            {STANDALONE_ITEMS.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? location === "/"
+                  : location.startsWith(item.href);
+              const Icon = item.icon;
+              return (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-2.5 text-[12px] py-[7px] px-[10px] rounded-md transition-colors",
+                      isActive
+                        ? "border-l-2 border-aurora-teal bg-boreal-spruce/40 text-aurora-teal"
+                        : "text-[#8B95A5] hover:bg-white/5"
+                    )}
+                  >
+                    <Icon className="h-4 w-4 shrink-0" />
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </nav>
 
       {/* Footer */}

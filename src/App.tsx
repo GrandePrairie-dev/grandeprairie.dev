@@ -14,6 +14,14 @@ import Ideas from "@/pages/Ideas";
 import IdeaDetail from "@/pages/IdeaDetail";
 import Map from "@/pages/Map";
 import Calendar from "@/pages/Calendar";
+import Projects from "@/pages/Projects";
+import Intel from "@/pages/Intel";
+import TechHub from "@/pages/TechHub";
+import Students from "@/pages/Students";
+import Business from "@/pages/Business";
+import AIHub from "@/pages/AIHub";
+import About from "@/pages/About";
+import Admin from "@/pages/Admin";
 
 export function App() {
   const isMobile = useMobile();
@@ -43,6 +51,14 @@ export function App() {
               <Route path="/ideas/:id" component={IdeaDetail} />
               <Route path="/map" component={Map} />
               <Route path="/calendar" component={Calendar} />
+              <Route path="/projects" component={Projects} />
+              <Route path="/intel" component={Intel} />
+              <Route path="/tech-hub" component={TechHub} />
+              <Route path="/students" component={Students} />
+              <Route path="/business" component={Business} />
+              <Route path="/ai-hub" component={AIHub} />
+              <Route path="/about" component={About} />
+              <Route path="/admin" component={Admin} />
               <Route component={NotFound} />
             </Switch>
           </main>
