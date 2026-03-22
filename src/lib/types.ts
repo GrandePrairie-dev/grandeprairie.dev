@@ -160,7 +160,7 @@ export const ROLE_COLORS: Record<string, string> = {
   student: "#28A745",
   founder: "#DC3545",
   operator: "#6F42C1",
-  mentor: "#007BFF",
+  mentor: "#6BA3BE",
 };
 
 // ===== Helpers =====

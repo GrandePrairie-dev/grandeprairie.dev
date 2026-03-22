@@ -69,6 +69,13 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Override Tailwind's default blue ring color */
+  *,
+  ::before,
+  ::after {
+    --tw-ring-color: hsl(var(--ring));
+  }
+
   /* Heading refinements — northern character */
   h1, h2, h3 {
     letter-spacing: -0.02em;
