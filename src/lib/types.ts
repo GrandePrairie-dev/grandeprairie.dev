@@ -154,6 +154,18 @@ export const EVENT_CATEGORY_LABELS: Record<string, string> = {
   other: "Other",
 };
 
+export const INTEL_CATEGORIES = ["hiring", "project_activity", "industry", "events", "opportunity"] as const;
+export type IntelCategory = (typeof INTEL_CATEGORIES)[number];
+
+export const INTEL_CATEGORY_LABELS: Record<string, string> = {
+  all: "All",
+  hiring: "Hiring",
+  project_activity: "Projects",
+  industry: "Industry",
+  events: "Events",
+  opportunity: "Opportunity",
+};
+
 export const ROLE_COLORS: Record<string, string> = {
   developer: "#1B6B6D",
   trades: "#D4943A",
