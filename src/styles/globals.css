@@ -65,5 +65,74 @@
   }
   body {
     @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Heading refinements — northern character */
+  h1, h2, h3 {
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+  h4, h5, h6 {
+    letter-spacing: -0.01em;
+    font-weight: 600;
+  }
+
+  /* Selection — Aurora Teal */
+  ::selection {
+    background-color: hsl(169 45% 46% / 0.25);
+    color: inherit;
+  }
+  .dark ::selection {
+    background-color: hsl(169 45% 46% / 0.3);
+  }
+
+  /* Focus ring — branded */
+  :focus-visible {
+    outline: 2px solid hsl(155 26% 24%);
+    outline-offset: 2px;
+  }
+  .dark :focus-visible {
+    outline-color: hsl(169 45% 46%);
+  }
+
+  /* Monospace refinements */
+  code, pre {
+    font-family: 'JetBrains Mono', 'Menlo', monospace;
+    font-size: 0.875em;
+    letter-spacing: -0.01em;
+  }
+
+  /* Input letter-spacing */
+  input, textarea, select {
+    letter-spacing: 0.01em;
+  }
+}
+
+/* ═══════════════════════════════════════
+   Peace Region polish — scrollbars,
+   shadows, map dark mode
+═══════════════════════════════════════ */
+
+/* Scrollbar — light mode */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: hsl(42 18% 94%); }
+::-webkit-scrollbar-thumb { background: hsl(150 10% 75%); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(155 20% 40%); }
+
+/* Scrollbar — dark mode */
+.dark ::-webkit-scrollbar-track { background: hsl(155 10% 9%); }
+.dark ::-webkit-scrollbar-thumb { background: hsl(155 10% 22%); }
+.dark ::-webkit-scrollbar-thumb:hover { background: hsl(169 30% 35%); }
+
+/* Map dark mode tint */
+.dark .leaflet-container {
+  filter: brightness(0.75) saturate(0.85) hue-rotate(5deg);
+}
+
+/* Prairie Amber hover on unstyled links */
+a:not([class]):hover {
+  color: hsl(38 60% 56%);
+  transition: color 0.15s ease;
 }
