@@ -15,11 +15,13 @@ export function AuroraHero() {
       <div className="relative text-center px-4">
         {/* Badges */}
         <div className="inline-flex gap-2 mb-6">
-          <span className="px-3 py-1 rounded bg-boreal-spruce text-boreal-spruce-light text-[9px] font-bold uppercase tracking-[0.06em] border border-boreal-spruce-light/30">
-            55°N · 118°W
-          </span>
+          <Link href="/map">
+            <span className="px-3 py-1 rounded bg-boreal-spruce text-boreal-spruce-light text-[9px] font-bold uppercase tracking-[0.06em] border border-boreal-spruce-light/30 cursor-pointer hover:border-boreal-spruce-light/60 transition-colors">
+              55°N · 118°W
+            </span>
+          </Link>
           <span className="px-3 py-1 rounded bg-prairie-amber/15 text-prairie-amber text-[9px] font-bold uppercase tracking-[0.06em]">
-            Now Open
+            Launched Mar 2026
           </span>
         </div>
 
@@ -27,8 +29,11 @@ export function AuroraHero() {
         <h1 className="text-3xl md:text-4xl font-display font-[800] tracking-tight uppercase mb-3">
           Build Real Things
         </h1>
-        <p className="text-muted-foreground text-sm md:text-base max-w-lg mx-auto mb-8 leading-relaxed">
-          The Peace Region's open platform for developers, founders, trades, and students.
+        <p className="text-muted-foreground text-sm md:text-base max-w-lg mx-auto mb-4 leading-relaxed">
+          The Peace Region's open platform for developers, trades, founders, and builders. Oil & gas country meets open source.
+        </p>
+        <p className="text-muted-foreground/70 text-xs max-w-md mx-auto mb-8 leading-relaxed">
+          Whether you write code, weld pipe, run heavy equipment, or manage projects — if you build things, you belong here.
         </p>
 
         {/* CTAs */}
@@ -45,12 +50,15 @@ export function AuroraHero() {
           </Link>
         </div>
 
-        {/* Stats row */}
+        {/* Stats row — hide zero-value stats */}
         <div className="flex justify-center gap-8 md:gap-12 pt-6 border-t border-border">
           <StatItem value={stats?.profiles ?? 0} label="builders" color="text-aurora-teal" />
           <StatItem value={stats?.ideas ?? 0} label="ideas" color="text-prairie-amber" />
-          <StatItem value={stats?.projects ?? 0} label="projects" color="text-foreground" />
+          {(stats?.projects ?? 0) > 0 && (
+            <StatItem value={stats?.projects ?? 0} label="projects" color="text-foreground" />
+          )}
           <StatItem value={stats?.events ?? 0} label="events" color="text-rig-amber" />
+          <StatItem value={5} label="industries" color="text-river-slate" />
         </div>
       </div>
     </section>

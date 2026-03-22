@@ -20,11 +20,13 @@ INSERT INTO ideas (title, description, category, author_id, votes, status, is_fe
 ('Automated Safety Compliance', 'Computer vision for PPE detection on construction and oil field sites. Alert when workers enter zones without proper equipment.', 'field_pain_point', 5, 5, 'open', 0, '["Safety","CV","Construction"]'),
 ('Local Delivery Optimization', 'ML-driven route optimization for Northern Alberta delivery challenges — weather, distances, seasonal roads.', 'startup', 8, 4, 'open', 0, '["Logistics","ML","Optimization"]'),
 ('Community Job Board', 'Tech-focused job board for Grande Prairie and Peace Region. Filter by remote-friendly, trades, tech, etc.', 'business_need', 6, 3, 'open', 0, '["Jobs","Community","HR"]'),
-('Open Data Portal for GP', 'Aggregate public datasets about Grande Prairie — census, weather, economic indicators — into a developer-friendly API.', 'problem', 2, 2, 'open', 0, '["Open Data","API","Civic Tech"]');
+('Open Data Portal for GP', 'Aggregate public datasets about Grande Prairie — census, weather, economic indicators — into a developer-friendly API.', 'problem', 2, 2, 'open', 0, '["Open Data","API","Civic Tech"]'),
+('Forestry Cut Block Monitoring', 'Use satellite imagery and drone data to monitor reforestation progress on Canfor and Weyerhaeuser cut blocks across the Peace Region.', 'ai_use_case', 7, 5, 'open', 1, '["Forestry","Satellite","Drones"]'),
+('Smart Grain Bin Sensors', 'Low-cost IoT sensor network for grain bins — temperature, moisture, CO2. Alert farmers before spoilage. Works offline in rural areas.', 'startup', 3, 4, 'open', 0, '["AgTech","IoT","Sensors"]');
 
 -- Events
 INSERT INTO events (title, description, category, start_time, location, organizer_id) VALUES
-('Tech & Coffee', 'Casual morning meetup. Bring your laptop, grab a coffee, hack on projects together.', 'meetup', datetime('now', '+6 days', 'start of day', '+9 hours'), 'Beans & Bytes Cafe, GP', 1),
+('Tech & Coffee', 'Casual morning meetup for anyone who builds things — code, circuits, or business plans. All levels welcome. Show up with a project or just curiosity.', 'meetup', datetime('now', '+6 days', 'start of day', '+9 hours'), 'Beans & Bytes Cafe, GP', 1),
 ('Intro to Machine Learning', 'Workshop covering ML fundamentals with Python. Bring a laptop with Python installed.', 'workshop', datetime('now', '+13 days', 'start of day', '+18 hours'), 'NW Polytechnic Room 204', 6),
 ('GP Hackathon: Build for Local', '24-hour hackathon focused on solving Grande Prairie problems. Teams of 2-4.', 'hackathon', datetime('now', '+27 days', 'start of day', '+9 hours'), 'Innovation Hub, GP', 1),
 ('Lightning Talks Night', '5-minute talks on anything tech. Sign up on the day. Pizza provided.', 'talk', datetime('now', '+20 days', 'start of day', '+19 hours'), 'GP Public Library Meeting Room', 9),

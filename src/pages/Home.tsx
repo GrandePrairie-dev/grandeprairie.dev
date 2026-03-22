@@ -4,7 +4,7 @@ import { AuroraHero } from "@/components/AuroraHero";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Calendar, Users, Lightbulb } from "lucide-react";
+import { MapPin, Calendar, Users, Lightbulb, ExternalLink, GraduationCap, Rocket } from "lucide-react";
 import type { Idea, Profile, Event } from "@/lib/types";
 import { parseJsonArray } from "@/lib/types";
 
@@ -111,6 +111,7 @@ export default function Home() {
                     <div className="min-w-0">
                       <h3 className="font-semibold text-sm">{nextEvent.title}</h3>
                       <p className="text-xs text-muted-foreground mt-1">{nextEvent.description}</p>
+                      <p className="text-[10px] text-aurora-teal/80 mt-1 italic">All levels welcome. Show up with a project or just curiosity.</p>
                       <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
                         {nextEvent.category && <Badge variant="secondary" className="text-[10px]">{nextEvent.category}</Badge>}
                         {nextEvent.location && (
@@ -126,6 +127,43 @@ export default function Home() {
             </Link>
           </section>
         )}
+
+        {/* Local Resources */}
+        <section className="space-y-4">
+          <h2 className="text-lg font-display font-bold">Local Resources</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <a href="https://www.nwpolytech.ca/program/computing-science-degree" target="_blank" rel="noopener noreferrer">
+              <Card className="cursor-pointer hover:border-boreal-spruce-light/50 transition-colors h-full">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <GraduationCap className="w-5 h-5 text-aurora-teal shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-semibold text-sm flex items-center gap-1">
+                        Northwestern Polytechnic <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">CS degree with AI, cloud, and big data tracks. Venture AI events. Trades apprenticeships. The primary talent pipeline for GP tech.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+            <a href="https://www.innovatenorthwest.ca" target="_blank" rel="noopener noreferrer">
+              <Card className="cursor-pointer hover:border-boreal-spruce-light/50 transition-colors h-full">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Rocket className="w-5 h-5 text-prairie-amber shrink-0 mt-0.5" />
+                    <div>
+                      <div className="font-semibold text-sm flex items-center gap-1">
+                        Innovate Northwest <ExternalLink className="w-3 h-3 text-muted-foreground" />
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">Mentorship, accelerators, and ecosystem access for Peace Region startups and tech businesses.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+          </div>
+        </section>
 
         {/* Quick Links */}
         <section>
