@@ -107,3 +107,15 @@ CREATE INDEX IF NOT EXISTS idx_events_start ON events(start_time);
 CREATE INDEX IF NOT EXISTS idx_intel_created ON intel(created_at);
 CREATE INDEX IF NOT EXISTS idx_business_requests_status ON business_requests(status);
 CREATE INDEX IF NOT EXISTS idx_student_resources_type ON student_resources(resource_type);
+
+CREATE TABLE IF NOT EXISTS comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  content TEXT NOT NULL,
+  author_id INTEGER REFERENCES profiles(id),
+  idea_id INTEGER REFERENCES ideas(id),
+  project_id INTEGER REFERENCES projects(id),
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_comments_idea ON comments(idea_id);
+CREATE INDEX IF NOT EXISTS idx_comments_project ON comments(project_id);
