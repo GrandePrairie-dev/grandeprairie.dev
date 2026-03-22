@@ -8,11 +8,11 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "grandeprairie-dev-db"
-database_id = "f5ccf914-4391-48bd-aff4-c0ee80440a2c"
+database_id = "959887a4-877e-47f7-b046-46fb41fba7c7"
 
 [[kv_namespaces]]
 binding = "SESSIONS"
-id = "51c329f4ed504ac6ab29caf4d2d66bf0"
+id = "ca2463f3917048d9a1beccac8642d861"
 
 [vars]
 ENVIRONMENT = "production"

@@ -88,8 +88,9 @@ Branding research in `reference/compass_artifact_*.md`. Design tokens are implem
 
 | Resource | ID |
 |---|---|
-| D1 Database | `f5ccf914-4391-48bd-aff4-c0ee80440a2c` |
-| KV Namespace | `51c329f4ed504ac6ab29caf4d2d66bf0` |
+| D1 Database | `959887a4-877e-47f7-b046-46fb41fba7c7` |
+| KV Namespace | `ca2463f3917048d9a1beccac8642d861` |
+| Account ID | `13c2f9e7589ab58d2f4f2981b443ba49` |
 | Zone ID | `235dbf5343d71e90b981141acd199abf` |
 | Domain | `grandeprairie.dev` |
 
