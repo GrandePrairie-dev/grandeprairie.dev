@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 
 interface VoteButtonProps {
@@ -12,6 +13,7 @@ const votedIdeas = new Set<number>();
 
 export function VoteButton({ ideaId, votes }: VoteButtonProps) {
   const [hasVoted, setHasVoted] = useState(() => votedIdeas.has(ideaId));
+  const { isLoggedIn, login } = useAuth();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -28,8 +30,12 @@ export function VoteButton({ ideaId, votes }: VoteButtonProps) {
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!isLoggedIn) {
+      login(window.location.pathname);
+      return;
+    }
     if (!hasVoted) mutation.mutate();
-  }, [hasVoted, mutation]);
+  }, [hasVoted, isLoggedIn, login, mutation]);
 
   return (
     <button

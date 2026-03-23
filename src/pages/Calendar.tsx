@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import type { Event } from "@/lib/types";
 import { EVENT_CATEGORY_LABELS, EVENT_CATEGORIES } from "@/lib/types";
@@ -25,6 +26,7 @@ export default function Calendar() {
   const [startTime, setStartTime] = useState("");
   const [location, setLocation] = useState("");
   const { toast } = useToast();
+  const { isLoggedIn, login } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: events, isLoading } = useQuery<Event[]>({ queryKey: ["/api/events/upcoming"] });
@@ -36,7 +38,6 @@ export default function Calendar() {
       category: eventCategory,
       start_time: startTime,
       location,
-      organizer_id: 1,
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/events/upcoming"] });
@@ -54,35 +55,39 @@ export default function Calendar() {
     <div className="p-4 md:p-6 space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-display font-bold">Calendar</h1>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm">Add Event</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add Event</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
-              <Input placeholder="Event title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-              <Textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
-              <Select value={eventCategory} onValueChange={setEventCategory}>
-                <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
-                <SelectContent>
-                  {EVENT_CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input type="datetime-local" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
-              <Input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
-              <Button type="submit" disabled={mutation.isPending || !title || !startTime}>
-                {mutation.isPending ? "Creating..." : "Create Event"}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {isLoggedIn ? (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm">Add Event</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Add Event</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
+                <Input placeholder="Event title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                <Textarea placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                <Select value={eventCategory} onValueChange={setEventCategory}>
+                  <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+                  <SelectContent>
+                    {EVENT_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input type="datetime-local" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
+                <Input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <Button type="submit" disabled={mutation.isPending || !title || !startTime}>
+                  {mutation.isPending ? "Creating..." : "Create Event"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Button size="sm" onClick={() => login("/calendar")}>Add Event</Button>
+        )}
       </div>
 
       <RoleFilter options={filterOptions} value={category} onChange={setCategory} />

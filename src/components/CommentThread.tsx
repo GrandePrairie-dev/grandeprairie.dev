@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import type { Comment } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -13,6 +14,7 @@ interface CommentThreadProps {
 
 export function CommentThread({ ideaId }: CommentThreadProps) {
   const [content, setContent] = useState("");
+  const { isLoggedIn, login } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: comments, isLoading } = useQuery<Comment[]>({
@@ -47,17 +49,23 @@ export function CommentThread({ ideaId }: CommentThreadProps) {
           ))}
         </div>
       )}
-      <form onSubmit={(e) => { e.preventDefault(); if (content.trim()) mutation.mutate(); }} className="space-y-2">
-        <Textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Add a comment..."
-          className="min-h-[60px]"
-        />
-        <Button type="submit" size="sm" disabled={mutation.isPending || !content.trim()}>
-          {mutation.isPending ? "Posting..." : "Post Comment"}
+      {isLoggedIn ? (
+        <form onSubmit={(e) => { e.preventDefault(); if (content.trim()) mutation.mutate(); }} className="space-y-2">
+          <Textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Add a comment..."
+            className="min-h-[60px]"
+          />
+          <Button type="submit" size="sm" disabled={mutation.isPending || !content.trim()}>
+            {mutation.isPending ? "Posting..." : "Post Comment"}
+          </Button>
+        </form>
+      ) : (
+        <Button variant="outline" size="sm" onClick={() => login()}>
+          Sign in to comment
         </Button>
-      </form>
+      )}
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Lightbulb } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import type { Idea } from "@/lib/types";
 import { IDEA_CATEGORY_LABELS, IDEA_CATEGORIES } from "@/lib/types";
@@ -24,6 +25,7 @@ export default function Ideas() {
   const [ideaCategory, setIdeaCategory] = useState("");
   const [tags, setTags] = useState("");
   const { toast } = useToast();
+  const { isLoggedIn, login } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: ideas, isLoading } = useQuery<Idea[]>({ queryKey: ["/api/ideas"] });
@@ -34,7 +36,6 @@ export default function Ideas() {
       description,
       category: ideaCategory,
       tags: tags.split(",").map(t => t.trim()).filter(Boolean),
-      author_id: 1,
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/ideas"] });
@@ -53,34 +54,38 @@ export default function Ideas() {
     <div className="p-4 md:p-6 space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-display font-bold">Ideas</h1>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button size="sm">Submit Idea</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Submit an Idea</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
-              <Input placeholder="Idea title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-              <Textarea placeholder="Describe the idea..." value={description} onChange={(e) => setDescription(e.target.value)} />
-              <Select value={ideaCategory} onValueChange={setIdeaCategory}>
-                <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
-                <SelectContent>
-                  {IDEA_CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {cat.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Input placeholder="Tags (comma-separated)" value={tags} onChange={(e) => setTags(e.target.value)} />
-              <Button type="submit" disabled={mutation.isPending || !title}>
-                {mutation.isPending ? "Submitting..." : "Submit Idea"}
-              </Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+        {isLoggedIn ? (
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm">Submit Idea</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Submit an Idea</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
+                <Input placeholder="Idea title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                <Textarea placeholder="Describe the idea..." value={description} onChange={(e) => setDescription(e.target.value)} />
+                <Select value={ideaCategory} onValueChange={setIdeaCategory}>
+                  <SelectTrigger><SelectValue placeholder="Category" /></SelectTrigger>
+                  <SelectContent>
+                    {IDEA_CATEGORIES.map((cat) => (
+                      <SelectItem key={cat} value={cat}>
+                        {cat.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input placeholder="Tags (comma-separated)" value={tags} onChange={(e) => setTags(e.target.value)} />
+                <Button type="submit" disabled={mutation.isPending || !title}>
+                  {mutation.isPending ? "Submitting..." : "Submit Idea"}
+                </Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Button size="sm" onClick={() => login("/ideas")}>Submit Idea</Button>
+        )}
       </div>
 
       <RoleFilter options={filterOptions} value={category} onChange={setCategory} />

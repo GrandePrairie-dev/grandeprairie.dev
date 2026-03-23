@@ -5,6 +5,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { MobileHeader } from "@/components/MobileHeader";
 import { useMobile } from "@/hooks/useMobile";
 import { useTheme } from "@/hooks/useTheme";
+import { ProfileBanner } from "@/components/ProfileBanner";
 
 import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
@@ -43,6 +44,7 @@ export function App() {
             <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
           )}
           <main className="flex-1 overflow-auto">
+            <ProfileBanner />
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/people" component={People} />
