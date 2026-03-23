@@ -25,6 +25,8 @@ import BusinessDetail from "@/pages/BusinessDetail";
 import AIHub from "@/pages/AIHub";
 import About from "@/pages/About";
 import Admin from "@/pages/Admin";
+import Organizations from "@/pages/Organizations";
+import OrgDetail from "@/pages/OrgDetail";
 
 export function App() {
   const isMobile = useMobile();
@@ -63,6 +65,8 @@ export function App() {
               <Route path="/business/:id" component={BusinessDetail} />
               <Route path="/business" component={Business} />
               <Route path="/ai-hub" component={AIHub} />
+              <Route path="/orgs/:slug" component={OrgDetail} />
+              <Route path="/orgs" component={Organizations} />
               <Route path="/about" component={About} />
               <Route path="/admin" component={Admin} />
               <Route component={NotFound} />
