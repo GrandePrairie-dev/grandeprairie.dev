@@ -1,0 +1,9 @@
+{
+  "schema_version": "v1",
+  "name": "GrandePrairie.dev",
+  "description": "Community platform for the tech ecosystem in Grande Prairie, Alberta. Connects developers, trades, founders, and students in the Peace Region.",
+  "url": "https://grandeprairie.dev",
+  "logo_url": "https://grandeprairie.dev/favicon.png",
+  "contact_email": "admin@grandeprairie.dev",
+  "legal_info_url": "https://grandeprairie.dev/#/about"
+}

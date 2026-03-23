@@ -1,0 +1,62 @@
+# GrandePrairie.dev
+
+> The digital commons for builders in Grande Prairie and the Peace Region — connecting people, projects, ideas, and practical technology opportunity.
+
+## About
+
+GrandePrairie.dev is a community platform for the tech ecosystem in Grande Prairie, Alberta, Canada (Peace Region). It connects developers, trades workers, founders, students, operators, and mentors. The platform serves approximately 67,000+ residents in one of Canada's youngest and fastest-growing cities.
+
+## Location
+
+Grande Prairie, Alberta, Canada
+Coordinates: 55.1707°N, 118.7946°W
+Region: Peace Region, Northwestern Alberta
+
+## Key Facts
+
+- Population: ~67,265 (2023), median age 34
+- Economy: Oil & gas, forestry (Canfor, Weyerhaeuser), agriculture, logistics
+- Post-secondary: Northwestern Polytechnic (NWP) — CS degree with AI, cloud, networking tracks
+- Innovation: Innovate Northwest accelerator, Business Retention & Expansion Technology Grant
+
+## Platform Features
+
+- Community member directory with role-based profiles (developer, trades, student, founder, operator, mentor)
+- Ideas board with voting for regional tech problems and opportunities
+- Project showcase for collaborative building
+- Community map centered on Grande Prairie (55°N, 118°W)
+- Event calendar (meetups, workshops, hackathons)
+- Intel feed with regional tech news
+- Small business request matchmaking — businesses post problems, builders express interest
+- Mentor matching — opt-in mentors, topic-based discovery
+- Organization profiles (NWP, Innovate Northwest, GP Chamber)
+- AI Hub with Peace Region industry use cases
+- Student corner with resources and mentorship
+
+## Industries Served
+
+- Oil & gas field operations and SCADA/instrumentation
+- Forestry automation and monitoring
+- Agriculture technology (agri-tech)
+- Pipeline services and predictive maintenance
+- Logistics and supply chain
+- Construction safety technology
+
+## URLs
+
+- Homepage: https://grandeprairie.dev
+- People: https://grandeprairie.dev/#/people
+- Ideas: https://grandeprairie.dev/#/ideas
+- Projects: https://grandeprairie.dev/#/projects
+- Map: https://grandeprairie.dev/#/map
+- Calendar: https://grandeprairie.dev/#/calendar
+- Intel: https://grandeprairie.dev/#/intel
+- Organizations: https://grandeprairie.dev/#/orgs
+- Business: https://grandeprairie.dev/#/business
+- AI Hub: https://grandeprairie.dev/#/ai-hub
+- Students: https://grandeprairie.dev/#/students
+
+## Contact
+
+Email: admin@grandeprairie.dev
+GitHub: https://github.com/GrandePrairie-dev
