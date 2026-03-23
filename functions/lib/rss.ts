@@ -14,39 +14,24 @@ export interface FeedSource {
 
 export const RSS_SOURCES: FeedSource[] = [
   {
-    name: "NWP (Northwestern Polytechnic)",
-    url: "https://www.nwpolytech.ca/rss/news.xml",
+    name: "My Grande Prairie Now",
+    url: "https://www.mygrandeprairienow.com/feed/",
     defaultCategory: "industry",
   },
   {
-    name: "City of Grande Prairie",
-    url: "https://www.cityofgp.com/rss/news",
+    name: "EverythingGP",
+    url: "https://everythinggp.com/feed/",
     defaultCategory: "industry",
   },
   {
     name: "Grande Prairie Chamber of Commerce",
-    url: "https://www.gpchamber.com/feed/",
+    url: "https://grandeprairiechamber.com/feed/",
     defaultCategory: "opportunity",
   },
   {
     name: "Alberta Innovates",
     url: "https://albertainnovates.ca/feed/",
     defaultCategory: "opportunity",
-  },
-  {
-    name: "ATB Financial",
-    url: "https://www.atb.com/rss/news.xml",
-    defaultCategory: "industry",
-  },
-  {
-    name: "Alberta Energy Regulator (AER)",
-    url: "https://www.aer.ca/rss/news",
-    defaultCategory: "industry",
-  },
-  {
-    name: "Grande Prairie Herald-Tribune",
-    url: "https://www.grandeprairieonline.com/feed/",
-    defaultCategory: "industry",
   },
 ];
 
