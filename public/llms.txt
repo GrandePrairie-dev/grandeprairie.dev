@@ -45,16 +45,16 @@ Region: Peace Region, Northwestern Alberta
 ## URLs
 
 - Homepage: https://grandeprairie.dev
-- People: https://grandeprairie.dev/#/people
-- Ideas: https://grandeprairie.dev/#/ideas
-- Projects: https://grandeprairie.dev/#/projects
-- Map: https://grandeprairie.dev/#/map
-- Calendar: https://grandeprairie.dev/#/calendar
-- Intel: https://grandeprairie.dev/#/intel
-- Organizations: https://grandeprairie.dev/#/orgs
-- Business: https://grandeprairie.dev/#/business
-- AI Hub: https://grandeprairie.dev/#/ai-hub
-- Students: https://grandeprairie.dev/#/students
+- People: https://grandeprairie.dev/people
+- Ideas: https://grandeprairie.dev/ideas
+- Projects: https://grandeprairie.dev/projects
+- Map: https://grandeprairie.dev/map
+- Calendar: https://grandeprairie.dev/calendar
+- Intel: https://grandeprairie.dev/intel
+- Organizations: https://grandeprairie.dev/orgs
+- Business: https://grandeprairie.dev/business
+- AI Hub: https://grandeprairie.dev/ai-hub
+- Students: https://grandeprairie.dev/students
 
 ## Contact
 
