@@ -1,4 +1,5 @@
 import type { Env } from "../lib/env";
+import { isContributor } from "../lib/auth";
 import { logActivity } from "../lib/activity";
 import { notifySlack } from "../lib/slack";
 
@@ -12,6 +13,13 @@ export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
 export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) => {
   const user = (data as { user?: { profileId: number } }).user;
   if (!user) return new Response("Unauthorized", { status: 401 });
+
+  const profile = await env.DB.prepare(
+    "SELECT auth_provider, is_admin FROM profiles WHERE id = ?",
+  ).bind(user.profileId).first<{ auth_provider: string; is_admin: number }>();
+  if (!isContributor(profile?.auth_provider ?? null, !!profile?.is_admin)) {
+    return Response.json({ error: "Contributors only \u2014 sign in with GitHub" }, { status: 403 });
+  }
 
   const body = await request.json<Record<string, unknown>>();
   const { title, description, category, tags } = body;

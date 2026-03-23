@@ -50,6 +50,10 @@ export async function isAdminInDb(db: D1Database, profileId: number): Promise<bo
 
 const SAFE_RETURN_PREFIXES = ["/", "/ideas", "/people", "/projects", "/map", "/calendar", "/intel", "/tech-hub", "/students", "/business", "/ai-hub", "/about", "/admin"];
 
+export function isContributor(authProvider: string | null, isAdmin: boolean): boolean {
+  return authProvider === 'github' || isAdmin;
+}
+
 export function validateReturnTo(returnTo: string | null): string {
   if (!returnTo) return "/";
   if (returnTo.includes("//") || returnTo.includes("\\")) return "/";
