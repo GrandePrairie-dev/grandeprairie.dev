@@ -1,6 +1,5 @@
-interface Env {
-  DB: D1Database;
-}
+import type { Env } from "../../lib/env";
+import { notifySlack } from "../../lib/slack";
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const { results } = await env.DB.prepare(
@@ -19,6 +18,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   )
     .bind(business_name, contact_name ?? null, contact_email ?? null, problem, category ?? "other")
     .run();
+
+  await notifySlack(env, `\u{1F3E2} New business request from ${business_name} (${category})`);
 
   return Response.json({ id: result.meta.last_row_id }, { status: 201 });
 };

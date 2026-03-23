@@ -1,6 +1,7 @@
 import type { Env } from "../../lib/env";
 import { createSession, setSessionCookie } from "../../lib/auth";
 import { logActivity } from "../../lib/activity";
+import { notifySlack } from "../../lib/slack";
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
@@ -85,6 +86,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     profile = { id: result.meta.last_row_id as number, is_admin: 0 };
 
     await logActivity(env, "new_member", profile.id, "profile", profile.id, `${ghUser.name ?? ghUser.login} joined the community`);
+    await notifySlack(env, `\u{1F195} New member: ${ghUser.name ?? ghUser.login} joined GrandePrairie.dev`);
   }
 
   // Create session
