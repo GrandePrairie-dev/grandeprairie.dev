@@ -32,18 +32,13 @@ export default function Students() {
     queryKey: ["/api/student-resources"],
   });
 
-  const { data: profiles, isLoading: profilesLoading } = useQuery<Profile[]>({
-    queryKey: ["/api/profiles"],
+  const { data: mentors, isLoading: mentorsLoading } = useQuery<Profile[]>({
+    queryKey: ["/api/mentors"],
   });
 
   const filtered = (resources ?? []).filter(
     (r) => resourceType === "all" || r.resource_type === resourceType
   );
-
-  const mentors = (profiles ?? []).filter((p) => {
-    const badges = parseJsonArray(p.badges);
-    return badges.includes("mentor") || p.role === "mentor";
-  });
 
   return (
     <div className="p-4 md:p-6 space-y-8 max-w-4xl">
@@ -125,17 +120,17 @@ export default function Students() {
         <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
           Mentors
         </p>
-        {profilesLoading ? (
+        {mentorsLoading ? (
           <div className="grid sm:grid-cols-2 gap-3">
             {[1, 2].map((i) => (
               <Skeleton key={i} className="h-24 w-full" />
             ))}
           </div>
-        ) : mentors.length === 0 ? (
+        ) : (mentors ?? []).length === 0 ? (
           <p className="text-sm text-muted-foreground">No mentors listed yet.</p>
         ) : (
           <div className="grid sm:grid-cols-2 gap-3">
-            {mentors.map((mentor) => {
+            {(mentors ?? []).map((mentor) => {
               const skills = parseJsonArray(mentor.skills).slice(0, 3);
               const initial = mentor.name.charAt(0).toUpperCase();
               return (

@@ -1,20 +1,56 @@
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, Github, Linkedin, Globe, Pencil } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { parseJsonArray, parseJsonObject } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function PersonProfile() {
   const params = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const { user, isLoggedIn, login } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [showMentorForm, setShowMentorForm] = useState(false);
+  const [mentorMessage, setMentorMessage] = useState("");
+
   const { data: profile, isLoading } = useQuery<Profile>({
     queryKey: [`/api/profiles/${params.id}`],
+  });
+
+  const isOwnProfile = user?.id === Number(params.id);
+  const isMentor = !!(profile as any)?.mentor_available;
+  const mentorTopics = parseJsonArray((profile as any)?.mentor_topics);
+
+  // Check if current user has a pending request to this mentor
+  const { data: outgoingRequests } = useQuery<any[]>({
+    queryKey: ["/api/mentor-requests/outgoing"],
+    enabled: isLoggedIn && isMentor && !isOwnProfile,
+  });
+
+  const hasPendingRequest = (outgoingRequests ?? []).some(
+    (r: any) => r.mentor_profile_id === Number(params.id) && r.status === "pending"
+  );
+
+  const mentorRequestMutation = useMutation({
+    mutationFn: () => apiRequest("POST", `/api/mentors/${params.id}/request`, { message: mentorMessage || undefined }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/mentor-requests/outgoing"] });
+      toast({ title: "Mentor request sent!" });
+      setShowMentorForm(false);
+      setMentorMessage("");
+    },
+    onError: () => {
+      toast({ title: "Could not send request", variant: "destructive" });
+    },
   });
 
   if (isLoading) {
@@ -67,6 +103,9 @@ export default function PersonProfile() {
               <p className="text-sm text-muted-foreground">{profile.title || profile.role}</p>
               <div className="flex items-center gap-2 mt-2">
                 <Badge variant="secondary" className="text-xs capitalize">{profile.role}</Badge>
+                {isMentor && (
+                  <Badge className="text-xs bg-aurora-teal/20 text-aurora-teal border-aurora-teal/30">Mentor</Badge>
+                )}
                 {badges.map((b) => (
                   <Badge key={b} className="text-xs">{b}</Badge>
                 ))}
@@ -89,6 +128,18 @@ export default function PersonProfile() {
               <div className="flex flex-wrap gap-1">
                 {skills.map((skill) => (
                   <Badge key={skill} variant="outline" className="text-xs">{skill}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Mentor Topics */}
+          {isMentor && mentorTopics.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">Mentor Topics</h3>
+              <div className="flex flex-wrap gap-1">
+                {mentorTopics.map((topic) => (
+                  <Badge key={topic} variant="secondary" className="text-xs">{topic}</Badge>
                 ))}
               </div>
             </div>
@@ -124,6 +175,39 @@ export default function PersonProfile() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Mentor Request Section */}
+      {isMentor && !isOwnProfile && (
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            {!isLoggedIn ? (
+              <Button variant="outline" onClick={() => login(`/people/${params.id}`)}>
+                Sign in to request an intro
+              </Button>
+            ) : hasPendingRequest ? (
+              <p className="text-sm text-aurora-teal font-medium">Request Pending -- you've already requested an intro with this mentor.</p>
+            ) : showMentorForm ? (
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold">Request an intro with {profile.name}</h3>
+                <Textarea
+                  value={mentorMessage}
+                  onChange={(e) => setMentorMessage(e.target.value)}
+                  placeholder="Tell them what you'd like help with..."
+                  className="min-h-[60px]"
+                />
+                <div className="flex gap-2">
+                  <Button onClick={() => mentorRequestMutation.mutate()} disabled={mentorRequestMutation.isPending}>
+                    {mentorRequestMutation.isPending ? "Sending..." : "Send Request"}
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowMentorForm(false)}>Cancel</Button>
+                </div>
+              </div>
+            ) : (
+              <Button onClick={() => setShowMentorForm(true)}>Request Intro</Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

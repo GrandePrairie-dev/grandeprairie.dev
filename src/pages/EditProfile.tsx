@@ -34,6 +34,8 @@ export default function EditProfile() {
   const [github, setGithub] = useState("");
   const [linkedin, setLinkedin] = useState("");
   const [website, setWebsite] = useState("");
+  const [mentorAvailable, setMentorAvailable] = useState(false);
+  const [mentorTopicsText, setMentorTopicsText] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -46,6 +48,8 @@ export default function EditProfile() {
       setGithub(links.github ?? "");
       setLinkedin(links.linkedin ?? "");
       setWebsite(links.website ?? "");
+      setMentorAvailable(!!(profile as any).mentor_available);
+      setMentorTopicsText(parseJsonArray((profile as any).mentor_topics).join(", "));
     }
   }, [profile]);
 
@@ -62,6 +66,8 @@ export default function EditProfile() {
           ...(linkedin ? { linkedin } : {}),
           ...(website ? { website } : {}),
         },
+        mentor_available: mentorAvailable,
+        mentor_topics: mentorTopicsText.split(",").map(s => s.trim()).filter(Boolean),
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/profiles/${params.id}`] });
@@ -139,6 +145,24 @@ export default function EditProfile() {
                 <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Website</label>
                 <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="yoursite.com" className="mt-1" />
               </div>
+            </div>
+            <div className="border-t border-border pt-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Mentorship</p>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={mentorAvailable}
+                  onChange={(e) => setMentorAvailable(e.target.checked)}
+                  className="rounded border-border"
+                />
+                <span className="text-sm">Available as a mentor</span>
+              </label>
+              {mentorAvailable && (
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Mentor Topics (comma-separated)</label>
+                  <Input value={mentorTopicsText} onChange={(e) => setMentorTopicsText(e.target.value)} placeholder="Career advice, React, Python, Starting a business..." className="mt-1" />
+                </div>
+              )}
             </div>
             <Button type="submit" disabled={mutation.isPending || !name.trim()}>
               {mutation.isPending ? "Saving..." : "Save Profile"}

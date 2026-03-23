@@ -8,7 +8,10 @@ import { Users } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { ROLE_LABELS, parseJsonArray } from "@/lib/types";
 
-const filterOptions = Object.entries(ROLE_LABELS).map(([value, label]) => ({ value, label }));
+const filterOptions = [
+  ...Object.entries(ROLE_LABELS).map(([value, label]) => ({ value, label })),
+  { value: "mentors_available", label: "Available Mentors" },
+];
 
 export default function People() {
   const [search, setSearch] = useState("");
@@ -16,7 +19,11 @@ export default function People() {
   const { data: profiles, isLoading } = useQuery<Profile[]>({ queryKey: ["/api/profiles"] });
 
   const filtered = (profiles ?? []).filter((p) => {
-    if (role !== "all" && p.role !== role) return false;
+    if (role === "mentors_available") {
+      if (!(p as any).mentor_available) return false;
+    } else if (role !== "all" && p.role !== role) {
+      return false;
+    }
     if (search) {
       const q = search.toLowerCase();
       const skills = parseJsonArray(p.skills).join(" ").toLowerCase();
