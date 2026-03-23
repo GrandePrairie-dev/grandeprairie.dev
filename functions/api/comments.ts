@@ -1,6 +1,4 @@
-interface Env {
-  DB: D1Database;
-}
+import type { Env } from "../lib/env";
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
@@ -32,7 +30,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   return Response.json(results);
 };
 
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) => {
+  const user = (data as { user?: { profileId: number } }).user;
+  if (!user) return new Response("Unauthorized", { status: 401 });
+
   const body = await request.json<Record<string, unknown>>();
   const { content, idea_id, project_id } = body;
 
@@ -48,12 +49,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     return Response.json({ error: "idea_id or project_id is required" }, { status: 400 });
   }
 
-  // author_id is null until auth is implemented — comments are anonymous for now
   const result = await env.DB.prepare(
     `INSERT INTO comments (content, author_id, idea_id, project_id)
-     VALUES (?, NULL, ?, ?)`,
+     VALUES (?, ?, ?, ?)`,
   )
-    .bind(content, idea_id ?? null, project_id ?? null)
+    .bind(content, user.profileId, idea_id ?? null, project_id ?? null)
     .run();
 
   return Response.json({ id: result.meta.last_row_id }, { status: 201 });

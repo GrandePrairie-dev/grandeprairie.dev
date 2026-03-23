@@ -1,6 +1,4 @@
-interface Env {
-  DB: D1Database;
-}
+import type { Env } from "../../lib/env";
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const { results } = await env.DB.prepare(
@@ -9,9 +7,12 @@ export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   return Response.json(results);
 };
 
-export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
+export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) => {
+  const user = (data as { user?: { profileId: number } }).user;
+  if (!user) return new Response("Unauthorized", { status: 401 });
+
   const body = await request.json<Record<string, unknown>>();
-  const { title, description, category, start_time, location, organizer_id } = body;
+  const { title, description, category, start_time, location } = body;
 
   const result = await env.DB.prepare(
     `INSERT INTO events (title, description, category, start_time, location, organizer_id)
@@ -23,7 +24,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       category ?? null,
       start_time,
       location ?? null,
-      organizer_id ?? null,
+      user.profileId,
     )
     .run();
 
