@@ -32,6 +32,14 @@ export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request,
   if ("links" in body) {
     updates.push("links = ?"); values.push(JSON.stringify(body.links ?? {}));
   }
+  if ("mentor_available" in body) {
+    updates.push("mentor_available = ?");
+    values.push(body.mentor_available ? 1 : 0);
+  }
+  if ("mentor_topics" in body) {
+    updates.push("mentor_topics = ?");
+    values.push(JSON.stringify(body.mentor_topics ?? []));
+  }
 
   if (updates.length === 0) return Response.json({ error: "No valid fields" }, { status: 400 });
 
