@@ -11,6 +11,7 @@ import Home from "@/pages/Home";
 import NotFound from "@/pages/NotFound";
 import People from "@/pages/People";
 import PersonProfile from "@/pages/PersonProfile";
+import EditProfile from "@/pages/EditProfile";
 import Ideas from "@/pages/Ideas";
 import IdeaDetail from "@/pages/IdeaDetail";
 import Map from "@/pages/Map";
@@ -48,6 +49,7 @@ export function App() {
             <Switch>
               <Route path="/" component={Home} />
               <Route path="/people" component={People} />
+              <Route path="/people/:id/edit" component={EditProfile} />
               <Route path="/people/:id" component={PersonProfile} />
               <Route path="/ideas" component={Ideas} />
               <Route path="/ideas/:id" component={IdeaDetail} />

@@ -2,14 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Github, Linkedin, Globe } from "lucide-react";
+import { ArrowLeft, Github, Linkedin, Globe, Pencil } from "lucide-react";
 import type { Profile } from "@/lib/types";
 import { parseJsonArray, parseJsonObject } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function PersonProfile() {
   const params = useParams<{ id: string }>();
+  const { user } = useAuth();
   const { data: profile, isLoading } = useQuery<Profile>({
     queryKey: [`/api/profiles/${params.id}`],
   });
@@ -37,11 +40,20 @@ export default function PersonProfile() {
 
   return (
     <div className="p-4 md:p-6 max-w-3xl space-y-6">
-      <Link href="/people">
-        <span className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground cursor-pointer">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </span>
-      </Link>
+      <div className="flex items-center justify-between">
+        <Link href="/people">
+          <span className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground cursor-pointer">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </span>
+        </Link>
+        {user?.id === profile.id && (
+          <Link href={`/people/${profile.id}/edit`}>
+            <Button variant="outline" size="sm" className="gap-1">
+              <Pencil className="w-3 h-3" /> Edit Profile
+            </Button>
+          </Link>
+        )}
+      </div>
 
       <Card>
         <CardContent className="p-6 space-y-6">
