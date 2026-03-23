@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import type { Stats, Idea, Profile, Event, IntelPost, BusinessRequest } from "@/lib/types";
 
 const TABS = [
@@ -27,6 +29,8 @@ const STATUS_OPTIONS = ["reviewed", "matched", "in_progress", "completed"] as co
 export default function Admin() {
   const [tab, setTab] = useState("ideas");
   const queryClient = useQueryClient();
+  const { isAdmin } = useAuth();
+  const { toast } = useToast();
 
   const { data: stats, isLoading: statsLoading } = useQuery<Stats>({
     queryKey: ["/api/stats"],
@@ -65,12 +69,84 @@ export default function Admin() {
     },
   });
 
+  const toggleIdeaFeatured = useMutation({
+    mutationFn: (args: { id: number; value: boolean }) =>
+      apiRequest("PATCH", `/api/admin/ideas/${args.id}`, { is_featured: args.value }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ideas"] });
+      toast({ title: "Idea updated" });
+    },
+  });
+
+  const toggleIdeaStatus = useMutation({
+    mutationFn: (args: { id: number; status: string }) =>
+      apiRequest("PATCH", `/api/admin/ideas/${args.id}`, { status: args.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/ideas"] });
+      toast({ title: "Idea status updated" });
+    },
+  });
+
+  const toggleProfileFeatured = useMutation({
+    mutationFn: (args: { id: number; value: boolean }) =>
+      apiRequest("PATCH", `/api/admin/profiles/${args.id}`, { is_featured: args.value }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/profiles"] });
+      toast({ title: "Profile updated" });
+    },
+  });
+
+  const toggleProfileAdmin = useMutation({
+    mutationFn: (args: { id: number; value: boolean }) =>
+      apiRequest("PATCH", `/api/admin/profiles/${args.id}`, { is_admin: args.value }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/profiles"] });
+      toast({ title: "Profile admin status updated" });
+    },
+  });
+
+  const toggleIntelPinned = useMutation({
+    mutationFn: (args: { id: number; value: boolean }) =>
+      apiRequest("PATCH", `/api/admin/intel/${args.id}`, { is_pinned: args.value }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/intel"] });
+      toast({ title: "Intel updated" });
+    },
+  });
+
+  const toggleIntelFeatured = useMutation({
+    mutationFn: (args: { id: number; value: boolean }) =>
+      apiRequest("PATCH", `/api/admin/intel/${args.id}`, { is_featured: args.value }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/intel"] });
+      toast({ title: "Intel updated" });
+    },
+  });
+
+  const deleteEvent = useMutation({
+    mutationFn: (id: number) =>
+      apiRequest("DELETE", `/api/admin/events/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/events/upcoming"] });
+      toast({ title: "Event deleted" });
+    },
+  });
+
   const statCards = [
     { icon: Users, label: "Profiles", value: stats?.profiles ?? 0, color: "text-aurora-teal" },
     { icon: Lightbulb, label: "Ideas", value: stats?.ideas ?? 0, color: "text-prairie-amber" },
     { icon: Calendar, label: "Events", value: stats?.events ?? 0, color: "text-rig-amber" },
     { icon: FolderOpen, label: "Projects", value: stats?.projects ?? 0, color: "text-boreal-spruce-light" },
   ];
+
+  if (!isAdmin) {
+    return (
+      <div className="p-4 md:p-6">
+        <h1 className="text-xl font-display font-bold mb-4">Admin</h1>
+        <p className="text-muted-foreground">Access denied.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-4xl">
@@ -123,7 +199,7 @@ export default function Admin() {
           ) : (
             (ideas ?? []).map((idea) => (
               <Card key={idea.id}>
-                <CardContent className="p-3">
+                <CardContent className="p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="font-semibold text-sm truncate">{idea.title}</h3>
@@ -134,6 +210,29 @@ export default function Admin() {
                     <Badge variant={idea.is_featured ? "default" : "secondary"} className="text-[10px] shrink-0">
                       {idea.is_featured ? "Featured" : "Normal"}
                     </Badge>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    <Button
+                      variant={idea.is_featured ? "default" : "outline"}
+                      size="sm"
+                      className="text-xs"
+                      disabled={toggleIdeaFeatured.isPending}
+                      onClick={() => toggleIdeaFeatured.mutate({ id: idea.id, value: !idea.is_featured })}
+                    >
+                      {idea.is_featured ? "Featured" : "Feature"}
+                    </Button>
+                    {["open", "closed"].map((status) => (
+                      <Button
+                        key={status}
+                        variant={idea.status === status ? "default" : "outline"}
+                        size="sm"
+                        className="text-[10px] h-7 px-2 capitalize"
+                        disabled={toggleIdeaStatus.isPending}
+                        onClick={() => toggleIdeaStatus.mutate({ id: idea.id, status })}
+                      >
+                        {status}
+                      </Button>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
@@ -148,7 +247,7 @@ export default function Admin() {
           ) : (
             (profiles ?? []).map((profile) => (
               <Card key={profile.id}>
-                <CardContent className="p-3">
+                <CardContent className="p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="font-semibold text-sm truncate">{profile.name}</h3>
@@ -165,6 +264,26 @@ export default function Admin() {
                       )}
                     </div>
                   </div>
+                  <div className="flex flex-wrap gap-1">
+                    <Button
+                      variant={profile.is_featured ? "default" : "outline"}
+                      size="sm"
+                      className="text-xs"
+                      disabled={toggleProfileFeatured.isPending}
+                      onClick={() => toggleProfileFeatured.mutate({ id: profile.id, value: !profile.is_featured })}
+                    >
+                      {profile.is_featured ? "Featured" : "Feature"}
+                    </Button>
+                    <Button
+                      variant={profile.is_admin ? "destructive" : "outline"}
+                      size="sm"
+                      className="text-xs"
+                      disabled={toggleProfileAdmin.isPending}
+                      onClick={() => toggleProfileAdmin.mutate({ id: profile.id, value: !profile.is_admin })}
+                    >
+                      {profile.is_admin ? "Remove Admin" : "Make Admin"}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))
@@ -178,11 +297,28 @@ export default function Admin() {
           ) : (
             (events ?? []).map((event) => (
               <Card key={event.id}>
-                <CardContent className="p-3">
-                  <h3 className="font-semibold text-sm">{event.title}</h3>
-                  <p className="text-xs text-muted-foreground">
-                    {event.category} &middot; {formatDate(event.start_time)}
-                  </p>
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <h3 className="font-semibold text-sm">{event.title}</h3>
+                      <p className="text-xs text-muted-foreground">
+                        {event.category} &middot; {formatDate(event.start_time)}
+                      </p>
+                    </div>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="text-xs shrink-0"
+                      disabled={deleteEvent.isPending}
+                      onClick={() => {
+                        if (window.confirm(`Delete event "${event.title}"?`)) {
+                          deleteEvent.mutate(event.id);
+                        }
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))
@@ -196,7 +332,7 @@ export default function Admin() {
           ) : (
             (intel ?? []).map((post) => (
               <Card key={post.id}>
-                <CardContent className="p-3">
+                <CardContent className="p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <h3 className="font-semibold text-sm truncate">{post.title}</h3>
@@ -212,6 +348,26 @@ export default function Admin() {
                         {post.is_featured ? "Featured" : "Normal"}
                       </Badge>
                     </div>
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    <Button
+                      variant={post.is_pinned ? "default" : "outline"}
+                      size="sm"
+                      className="text-xs"
+                      disabled={toggleIntelPinned.isPending}
+                      onClick={() => toggleIntelPinned.mutate({ id: post.id, value: !post.is_pinned })}
+                    >
+                      {post.is_pinned ? "Pinned" : "Pin"}
+                    </Button>
+                    <Button
+                      variant={post.is_featured ? "default" : "outline"}
+                      size="sm"
+                      className="text-xs"
+                      disabled={toggleIntelFeatured.isPending}
+                      onClick={() => toggleIntelFeatured.mutate({ id: post.id, value: !post.is_featured })}
+                    >
+                      {post.is_featured ? "Featured" : "Feature"}
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
