@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -154,10 +155,10 @@ export default function Business() {
         </CardContent>
       </Card>
 
-      {/* Recent Requests */}
+      {/* Open Requests */}
       <div className="space-y-4">
         <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
-          Recent Requests
+          Open Requests
         </p>
         {isLoading ? (
           <div className="space-y-3">
@@ -165,36 +166,38 @@ export default function Business() {
               <Skeleton key={i} className="h-24 w-full" />
             ))}
           </div>
-        ) : (requests ?? []).length === 0 ? (
-          <p className="text-sm text-muted-foreground">No requests yet.</p>
+        ) : (requests ?? []).filter((r) => r.status !== "completed").length === 0 ? (
+          <p className="text-sm text-muted-foreground">No open requests yet.</p>
         ) : (
           <div className="space-y-3">
-            {(requests ?? []).map((req) => (
-              <Card key={req.id} className="border border-border bg-card">
-                <CardContent className="p-4 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-display font-semibold text-sm">{req.business_name}</h3>
-                    <div className="flex gap-1 shrink-0">
-                      {req.category && (
-                        <Badge variant="secondary" className="text-xs capitalize">
-                          {req.category}
-                        </Badge>
-                      )}
-                      {req.status && (
-                        <span
-                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
-                            STATUS_BADGE_CLASSES[req.status] ?? "bg-muted text-muted-foreground"
-                          }`}
-                        >
-                          {req.status.replace(/_/g, " ")}
-                        </span>
-                      )}
+            {(requests ?? []).filter((r) => r.status !== "completed").map((req) => (
+              <Link key={req.id} href={`/business/${req.id}`}>
+                <Card className="border border-border bg-card hover:border-aurora-teal/50 transition-colors cursor-pointer">
+                  <CardContent className="p-4 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="font-display font-semibold text-sm">{req.business_name}</h3>
+                      <div className="flex gap-1 shrink-0">
+                        {req.category && (
+                          <Badge variant="secondary" className="text-xs capitalize">
+                            {req.category}
+                          </Badge>
+                        )}
+                        {req.status && (
+                          <span
+                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                              STATUS_BADGE_CLASSES[req.status] ?? "bg-muted text-muted-foreground"
+                            }`}
+                          >
+                            {req.status.replace(/_/g, " ")}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground line-clamp-2">{req.problem}</p>
-                  <p className="text-xs text-muted-foreground/60">{formatDate(req.created_at)}</p>
-                </CardContent>
-              </Card>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{req.problem}</p>
+                    <p className="text-xs text-muted-foreground/60">{formatDate(req.created_at)}</p>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}

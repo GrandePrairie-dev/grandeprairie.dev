@@ -21,6 +21,7 @@ import Intel from "@/pages/Intel";
 import TechHub from "@/pages/TechHub";
 import Students from "@/pages/Students";
 import Business from "@/pages/Business";
+import BusinessDetail from "@/pages/BusinessDetail";
 import AIHub from "@/pages/AIHub";
 import About from "@/pages/About";
 import Admin from "@/pages/Admin";
@@ -59,6 +60,7 @@ export function App() {
               <Route path="/intel" component={Intel} />
               <Route path="/tech-hub" component={TechHub} />
               <Route path="/students" component={Students} />
+              <Route path="/business/:id" component={BusinessDetail} />
               <Route path="/business" component={Business} />
               <Route path="/ai-hub" component={AIHub} />
               <Route path="/about" component={About} />
