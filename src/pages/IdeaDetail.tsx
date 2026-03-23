@@ -6,14 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { VoteButton } from "@/components/VoteButton";
 import { CommentThread } from "@/components/CommentThread";
 import { ArrowLeft } from "lucide-react";
-import type { Idea, Profile } from "@/lib/types";
+import type { Idea } from "@/lib/types";
 import { parseJsonArray, IDEA_CATEGORY_LABELS } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 
 export default function IdeaDetail() {
   const params = useParams<{ id: string }>();
   const { data: idea, isLoading } = useQuery<Idea>({ queryKey: [`/api/ideas/${params.id}`] });
-  const { data: profiles } = useQuery<Profile[]>({ queryKey: ["/api/profiles"] });
 
   if (isLoading) {
     return <div className="p-4 md:p-6 max-w-3xl space-y-4"><Skeleton className="h-8 w-48" /><Skeleton className="h-40 w-full" /></div>;
@@ -24,7 +23,6 @@ export default function IdeaDetail() {
   }
 
   const tags = parseJsonArray(idea.tags);
-  const author = profiles?.find(p => p.id === idea.author_id);
   const categoryLabel = IDEA_CATEGORY_LABELS[idea.category ?? ""] ?? idea.category;
 
   return (
@@ -41,8 +39,6 @@ export default function IdeaDetail() {
             <div>
               <h1 className="text-xl font-display font-bold">{idea.title}</h1>
               <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
-                {author && <span>By {author.name}</span>}
-                <span>·</span>
                 <span>{formatDate(idea.created_at)}</span>
                 {idea.category && <Badge variant="secondary" className="text-[10px]">{categoryLabel}</Badge>}
               </div>

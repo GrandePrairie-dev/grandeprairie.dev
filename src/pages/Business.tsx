@@ -11,6 +11,7 @@ import { CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import type { BusinessRequest } from "@/lib/types";
+import { formatDate } from "@/lib/utils";
 
 const BUSINESS_CATEGORIES = ["automation", "website", "data", "ai", "other"] as const;
 
@@ -21,14 +22,6 @@ const STATUS_BADGE_CLASSES: Record<string, string> = {
   in_progress: "bg-rig-amber/10 text-rig-amber",
   completed: "bg-green-500/10 text-green-700 dark:text-green-400",
 };
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString("en-CA", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
 
 export default function Business() {
   const [submitted, setSubmitted] = useState(false);

@@ -10,13 +10,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm install              # Install dependencies
-npm run dev              # Vite dev server (frontend only)
+npm run dev              # Vite dev server (frontend only — API calls will 404)
 npm run build            # TypeScript check + Vite production build
 npm run typecheck        # TypeScript type checking only
 npm run lint             # ESLint
 
-# Cloudflare Pages local dev (serves frontend + API functions with D1/KV bindings)
-npm run pages:dev
+# Cloudflare Pages local dev (REQUIRED for full-stack — serves frontend + API functions with D1/KV)
+npm run pages:dev        # Use this instead of `npm run dev` for full-stack development
 
 # Database
 npm run db:migrate:local # Apply schema to local D1

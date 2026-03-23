@@ -20,7 +20,7 @@ export function CommentThread({ ideaId }: CommentThreadProps) {
   });
 
   const mutation = useMutation({
-    mutationFn: () => apiRequest("POST", "/api/comments", { content, idea_id: ideaId, author_id: 1 }),
+    mutationFn: () => apiRequest("POST", "/api/comments", { content, idea_id: ideaId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/comments?idea_id=${ideaId}`] });
       setContent("");
