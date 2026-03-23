@@ -15,6 +15,8 @@ import {
   Cpu,
   Heart,
   Settings,
+  Github,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -23,6 +25,7 @@ import {
   SheetContent,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useAuth } from "@/hooks/useAuth";
 
 import type { ComponentType, SVGProps } from "react";
 
@@ -104,6 +107,7 @@ function SidebarContent({
   toggleTheme: () => void;
 }) {
   const [location] = useLocation();
+  const { user, isLoggedIn, login, logout } = useAuth();
 
   return (
     <div className="flex flex-col h-full w-[210px] bg-sidebar border-r border-sidebar-border">
@@ -188,18 +192,51 @@ function SidebarContent({
 
       {/* Footer */}
       <div className="px-3 pb-4 pt-2 space-y-3 border-t border-sidebar-border">
-        {/* User profile */}
-        <div className="flex items-center gap-2.5 px-1">
-          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-boreal-spruce text-boreal-spruce-light text-[10px] font-semibold shrink-0">
-            CJ
+        {/* User profile / sign-in */}
+        {isLoggedIn && user ? (
+          <div className="flex items-center gap-2.5 px-1">
+            {user.avatar_url ? (
+              <img
+                src={user.avatar_url}
+                alt={user.name}
+                className="w-7 h-7 rounded-full object-cover shrink-0"
+              />
+            ) : (
+              <div className="flex items-center justify-center w-7 h-7 rounded-full bg-boreal-spruce text-boreal-spruce-light text-[10px] font-semibold shrink-0">
+                {user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase()}
+              </div>
+            )}
+            <div className="flex flex-col leading-none min-w-0 flex-1">
+              <span className="text-[12px] text-sidebar-foreground font-medium truncate">
+                {user.name}
+              </span>
+              <span className="text-[10px] text-[#8B95A5] capitalize">
+                {user.role}
+              </span>
+            </div>
+            <button
+              onClick={logout}
+              className="shrink-0 text-[#8B95A5] hover:text-sidebar-foreground transition-colors"
+              aria-label="Sign out"
+              title="Sign out"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+            </button>
           </div>
-          <div className="flex flex-col leading-none min-w-0">
-            <span className="text-[12px] text-sidebar-foreground font-medium truncate">
-              CJ Elliott
-            </span>
-            <span className="text-[10px] text-[#8B95A5]">Founder</span>
-          </div>
-        </div>
+        ) : (
+          <button
+            onClick={() => login()}
+            className="flex items-center gap-2 w-full px-2.5 py-[7px] rounded-md text-[11px] text-[#8B95A5] hover:bg-white/5 hover:text-sidebar-foreground transition-colors"
+          >
+            <Github className="h-3.5 w-3.5 shrink-0" />
+            Sign in with GitHub
+          </button>
+        )}
 
         {/* Theme toggle */}
         <Button
