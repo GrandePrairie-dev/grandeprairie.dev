@@ -3,7 +3,10 @@ import { notifySlack } from "../../lib/slack";
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const { results } = await env.DB.prepare(
-    "SELECT * FROM business_requests ORDER BY created_at DESC",
+    `SELECT br.*,
+       (SELECT COUNT(*) FROM business_request_interests WHERE business_request_id = br.id) as interest_count
+     FROM business_requests br
+     ORDER BY br.created_at DESC`,
   ).all();
   return Response.json(results);
 };

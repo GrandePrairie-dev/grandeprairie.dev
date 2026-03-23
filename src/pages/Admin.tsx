@@ -9,12 +9,15 @@ import {
   Lightbulb,
   Calendar,
   FolderOpen,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import type { Stats, Idea, Profile, Event, IntelPost, BusinessRequest } from "@/lib/types";
+import { parseJsonArray } from "@/lib/types";
 
 const TABS = [
   { value: "ideas", label: "Ideas" },
@@ -61,12 +64,20 @@ export default function Admin() {
     enabled: tab === "requests",
   });
 
+  const [expandedRequestId, setExpandedRequestId] = useState<number | null>(null);
+
   const statusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: number; status: string }) =>
-      apiRequest("PATCH", `/api/business-requests/${id}/status`, { status }),
+    mutationFn: ({ id, status, matched_profile_id }: { id: number; status: string; matched_profile_id?: number }) =>
+      apiRequest("PATCH", `/api/business-requests/${id}/status`, { status, matched_profile_id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/business-requests"] });
+      toast({ title: "Status updated" });
     },
+  });
+
+  const { data: expandedInterests, isLoading: interestsLoading } = useQuery<any[]>({
+    queryKey: [`/api/business-requests/${expandedRequestId}/interests`],
+    enabled: expandedRequestId !== null,
   });
 
   const toggleIdeaFeatured = useMutation({
@@ -385,9 +396,19 @@ export default function Admin() {
                 <CardContent className="p-3 space-y-2">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
-                      <h3 className="font-semibold text-sm truncate">{req.business_name}</h3>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-sm truncate">{req.business_name}</h3>
+                        {(req as any).interest_count > 0 && (
+                          <Badge variant="secondary" className="text-[10px]">
+                            {(req as any).interest_count} interested
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground">
                         {req.contact_name} &middot; {req.category} &middot; {formatDate(req.created_at)}
+                        {req.matched_profile_id && (
+                          <span className="text-aurora-teal"> &middot; Matched: #{req.matched_profile_id}</span>
+                        )}
                       </p>
                     </div>
                     <Badge variant="outline" className="text-[10px] shrink-0 capitalize">
@@ -395,7 +416,7 @@ export default function Admin() {
                     </Badge>
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {STATUS_OPTIONS.map((status) => (
+                    {STATUS_OPTIONS.filter(s => s !== "matched").map((status) => (
                       <Button
                         key={status}
                         variant={req.status === status ? "default" : "outline"}
@@ -407,7 +428,63 @@ export default function Admin() {
                         {status.replace(/_/g, " ")}
                       </Button>
                     ))}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-[10px] h-6 px-2 ml-auto"
+                      onClick={() => setExpandedRequestId(expandedRequestId === req.id ? null : req.id)}
+                    >
+                      {expandedRequestId === req.id ? <ChevronUp className="w-3 h-3 mr-1" /> : <ChevronDown className="w-3 h-3 mr-1" />}
+                      View Interests
+                    </Button>
                   </div>
+
+                  {/* Expanded Interests Section */}
+                  {expandedRequestId === req.id && (
+                    <div className="border-t border-border pt-2 mt-2 space-y-2">
+                      {interestsLoading ? (
+                        <Skeleton className="h-12 w-full" />
+                      ) : (expandedInterests ?? []).length === 0 ? (
+                        <p className="text-xs text-muted-foreground">No interests yet.</p>
+                      ) : (
+                        (expandedInterests ?? []).map((interest: any) => {
+                          const skills = parseJsonArray(interest.skills);
+                          return (
+                            <div key={interest.id} className="flex items-start justify-between gap-2 p-2 rounded bg-muted/50">
+                              <div className="min-w-0 space-y-1">
+                                <p className="text-sm font-medium">{interest.profile_name}</p>
+                                <p className="text-xs text-muted-foreground capitalize">{interest.role}</p>
+                                {skills.length > 0 && (
+                                  <div className="flex flex-wrap gap-1">
+                                    {skills.slice(0, 5).map((skill: string) => (
+                                      <Badge key={skill} variant="outline" className="text-[10px]">{skill}</Badge>
+                                    ))}
+                                  </div>
+                                )}
+                                {interest.note && (
+                                  <p className="text-xs text-muted-foreground italic">"{interest.note}"</p>
+                                )}
+                                <p className="text-[10px] text-muted-foreground/60">{formatDate(interest.created_at)}</p>
+                              </div>
+                              <Button
+                                variant={req.matched_profile_id === interest.profile_id ? "default" : "outline"}
+                                size="sm"
+                                className="text-[10px] h-6 px-2 shrink-0"
+                                disabled={statusMutation.isPending}
+                                onClick={() => statusMutation.mutate({
+                                  id: req.id,
+                                  status: "matched",
+                                  matched_profile_id: interest.profile_id,
+                                })}
+                              >
+                                {req.matched_profile_id === interest.profile_id ? "Matched" : "Assign Match"}
+                              </Button>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))
