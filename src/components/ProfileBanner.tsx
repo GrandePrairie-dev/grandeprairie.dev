@@ -19,7 +19,7 @@ export function ProfileBanner() {
 
   return (
     <div className="mx-4 mt-4 p-3 rounded-md bg-prairie-amber/10 border border-prairie-amber/20 flex items-center justify-between gap-3">
-      <p className="text-sm text-prairie-amber">
+      <p className="text-sm text-[#8B5E00] dark:text-prairie-amber">
         <Link href={`/people/${user.id}/edit`}>
           <span className="font-semibold underline cursor-pointer">Complete your profile</span>
         </Link>

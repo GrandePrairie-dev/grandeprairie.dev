@@ -54,7 +54,7 @@ export default function Calendar() {
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-4xl">
       <div className="relative h-32 -mx-4 -mt-4 md:-mx-6 md:-mt-6 mb-6 overflow-hidden rounded-b-lg">
-        <img src="/images/community-meetup.webp" alt="" className="w-full h-full object-cover opacity-40 dark:opacity-30" />
+        <img src="/images/community-meetup.webp" alt="" className="w-full h-full object-cover opacity-50 dark:opacity-30" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
       </div>
       <div className="flex items-center justify-between">

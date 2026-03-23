@@ -174,7 +174,7 @@ function SidebarContent({
       <nav className="flex-1 overflow-y-auto px-3 space-y-5 mt-2">
         {NAV_GROUPS.map((group) => (
           <div key={group.title}>
-            <span className="block px-2.5 mb-1.5 text-river-slate text-[9px] uppercase tracking-[0.08em] font-semibold select-none">
+            <span className="block px-2.5 mb-1.5 text-sidebar-foreground/50 text-[9px] uppercase tracking-[0.08em] font-semibold select-none">
               {group.title}
             </span>
             <ul className="space-y-0.5">

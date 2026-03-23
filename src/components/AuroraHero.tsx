@@ -17,10 +17,10 @@ export function AuroraHero() {
       <img
         src="/images/hero-golden-hour.webp"
         alt=""
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none block dark:hidden opacity-25"
+        className="absolute inset-0 w-full h-full object-cover pointer-events-none block dark:hidden opacity-40"
       />
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400/10 via-background/70 to-background dark:from-transparent dark:via-background/60 dark:to-background pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-400/5 via-background/40 to-background dark:from-transparent dark:via-background/60 dark:to-background pointer-events-none" />
       <div className="absolute top-[-60px] left-1/2 -translate-x-1/2 w-[500px] h-[180px] bg-[radial-gradient(ellipse,rgba(61,191,168,0.12)_0%,rgba(45,74,62,0.06)_40%,transparent_70%)] pointer-events-none" />
       <div className="absolute top-[-30px] right-[15%] w-[300px] h-[120px] bg-[radial-gradient(ellipse,rgba(212,162,78,0.08)_0%,transparent_60%)] pointer-events-none" />
 

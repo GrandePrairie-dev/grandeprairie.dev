@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Light mode — Prairie Sky Blue */
+    /* Light mode — Prairie Sky Blue + Dark Sidebar */
     --background: 210 40% 97%;        /* #F1F7FC Prairie Sky Mist */
     --foreground: 215 35% 15%;        /* #1A2535 Deep Midnight */
     --card: 0 0% 100%;
@@ -18,18 +18,19 @@
     --secondary: 42 55% 92%;          /* #F5EDD4 Wheat Gold Light */
     --secondary-foreground: 215 35% 15%;
     --muted: 210 25% 92%;
-    --muted-foreground: 215 15% 42%;  /* Dusty prairie grey */
+    --muted-foreground: 215 12% 30%;  /* Darkened for WCAG AA on light bg */
     --accent: 42 75% 55%;             /* #D4922A Harvest Amber */
     --accent-foreground: 215 35% 15%;
-    --destructive: 0 42% 56%;         /* Pipeline Red — same */
+    --destructive: 0 42% 56%;         /* Pipeline Red */
     --destructive-foreground: 0 0% 100%;
-    --border: 210 20% 85%;
-    --input: 210 20% 85%;
+    --border: 210 15% 72%;            /* Darkened — visible borders on white cards */
+    --input: 210 15% 72%;
     --ring: 210 65% 35%;
     --radius: 0.375rem;
-    --sidebar: 210 35% 94%;
-    --sidebar-foreground: 215 35% 15%;
-    --sidebar-border: 210 20% 85%;
+    /* Dark sidebar in light mode — forest green identity (VS Code / Linear pattern) */
+    --sidebar: 162 22% 16%;           /* Dark Boreal Spruce */
+    --sidebar-foreground: 30 14% 94%; /* Light text on dark sidebar */
+    --sidebar-border: 162 18% 22%;
   }
 
   .dark {
