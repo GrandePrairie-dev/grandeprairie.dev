@@ -26,7 +26,7 @@ export default function Calendar() {
   const [startTime, setStartTime] = useState("");
   const [location, setLocation] = useState("");
   const { toast } = useToast();
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, isContributor, login } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: events, isLoading } = useQuery<Event[]>({ queryKey: ["/api/events/upcoming"] });
@@ -55,7 +55,7 @@ export default function Calendar() {
     <div className="p-4 md:p-6 space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-display font-bold">Calendar</h1>
-        {isLoggedIn ? (
+        {isContributor ? (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm">Add Event</Button>
@@ -85,6 +85,10 @@ export default function Calendar() {
               </form>
             </DialogContent>
           </Dialog>
+        ) : isLoggedIn ? (
+          <Button size="sm" variant="outline" onClick={() => login("/calendar")}>
+            Sign in with GitHub to add events
+          </Button>
         ) : (
           <Button size="sm" onClick={() => login("/calendar")}>Add Event</Button>
         )}

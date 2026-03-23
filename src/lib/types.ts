@@ -14,6 +14,9 @@ export interface Profile {
   is_featured: number;
   is_admin: number;
   avatar_url: string | null;
+  auth_provider: string | null;
+  google_id: string | null;
+  email_verified: number;
   created_at: string;
   updated_at: string;
 }

@@ -12,10 +12,12 @@ export function useAuth() {
 
   const isLoggedIn = !!user;
   const isAdmin = !!user?.is_admin;
+  const isContributor = !!user && (user.auth_provider === 'github' || !!user.is_admin);
 
-  const login = (returnTo?: string) => {
+  const login = (returnTo?: string, provider?: string) => {
     const params = new URLSearchParams();
     if (returnTo) params.set("return_to", returnTo);
+    if (provider) params.set("provider", provider);
     window.location.href = `/api/auth/login?${params}`;
   };
 
@@ -25,5 +27,5 @@ export function useAuth() {
     window.location.href = "/";
   };
 
-  return { user, isLoggedIn, isAdmin, isLoading, login, logout };
+  return { user, isLoggedIn, isAdmin, isContributor, isLoading, login, logout };
 }

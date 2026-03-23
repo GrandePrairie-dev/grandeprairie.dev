@@ -25,7 +25,7 @@ export default function Ideas() {
   const [ideaCategory, setIdeaCategory] = useState("");
   const [tags, setTags] = useState("");
   const { toast } = useToast();
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, isContributor, login } = useAuth();
   const queryClient = useQueryClient();
 
   const { data: ideas, isLoading } = useQuery<Idea[]>({ queryKey: ["/api/ideas"] });
@@ -54,7 +54,7 @@ export default function Ideas() {
     <div className="p-4 md:p-6 space-y-6 max-w-4xl">
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-display font-bold">Ideas</h1>
-        {isLoggedIn ? (
+        {isContributor ? (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button size="sm">Submit Idea</Button>
@@ -83,6 +83,10 @@ export default function Ideas() {
               </form>
             </DialogContent>
           </Dialog>
+        ) : isLoggedIn ? (
+          <Button size="sm" variant="outline" onClick={() => login("/ideas")}>
+            Sign in with GitHub to submit
+          </Button>
         ) : (
           <Button size="sm" onClick={() => login("/ideas")}>Submit Idea</Button>
         )}
