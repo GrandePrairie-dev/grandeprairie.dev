@@ -4,7 +4,7 @@ import { RoleFilter } from "@/components/RoleFilter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Newspaper, Pin, ExternalLink } from "lucide-react";
+import { Newspaper, Pin, ExternalLink, Bot } from "lucide-react";
 import type { IntelPost } from "@/lib/types";
 import { parseJsonArray, INTEL_CATEGORY_LABELS } from "@/lib/types";
 
@@ -19,11 +19,21 @@ interface IntelCardProps {
   post: IntelPost;
 }
 
+function AutoBadge({ sourceFeed }: { sourceFeed: string | null }) {
+  return (
+    <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground mt-1">
+      <Bot className="w-3 h-3 shrink-0" />
+      via {sourceFeed ?? "pipeline"}
+    </span>
+  );
+}
+
 function IntelCard({ post }: IntelCardProps) {
   const tags = parseJsonArray(post.tags);
   const categoryLabel = INTEL_CATEGORY_LABELS[post.category ?? ""] ?? post.category;
   const isPinned = !!post.is_pinned;
   const isFeatured = !!post.is_featured;
+  const isAutomated = !!post.is_automated;
 
   const meta = (
     <div className="flex flex-wrap items-center gap-1 mt-2">
@@ -56,6 +66,7 @@ function IntelCard({ post }: IntelCardProps) {
               )}
               <span className="text-[10px] text-muted-foreground">{formatDate(post.created_at)}</span>
             </div>
+            {isAutomated && <AutoBadge sourceFeed={post.source_feed} />}
           </div>
         </div>
       </div>
@@ -86,6 +97,7 @@ function IntelCard({ post }: IntelCardProps) {
                 </a>
               )}
               {meta}
+              {isAutomated && <AutoBadge sourceFeed={post.source_feed} />}
             </div>
           </div>
         </CardContent>
@@ -114,6 +126,7 @@ function IntelCard({ post }: IntelCardProps) {
             </a>
           )}
           {meta}
+          {isAutomated && <AutoBadge sourceFeed={post.source_feed} />}
         </div>
       </CardContent>
     </Card>

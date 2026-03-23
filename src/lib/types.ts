@@ -73,6 +73,8 @@ export interface IntelPost {
   author_id: number | null;
   is_pinned: number;
   is_featured: number;
+  is_automated: number;
+  source_feed: string | null;
   tags: string; // JSON array string
   created_at: string;
 }
