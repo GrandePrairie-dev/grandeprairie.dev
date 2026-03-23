@@ -1,0 +1,5 @@
+INSERT INTO organizations (slug, name, type, description, website_url, location) VALUES
+('nwp', 'Northwestern Polytechnic', 'education', 'Computing Science degree with AI, cloud, networking, and big data tracks. Venture AI events. Trades apprenticeships. The primary talent pipeline for GP tech.', 'https://nwpolytech.ca', 'Grande Prairie, AB'),
+('innovate-nw', 'Innovate Northwest', 'community', 'Mentorship, accelerators, and ecosystem access for Peace Region startups and tech businesses.', 'https://innovatenorthwest.ca', 'Grande Prairie, AB'),
+('gp-chamber', 'Grande Prairie Chamber of Commerce', 'community', 'Business network, advocacy, and community events for Grande Prairie and the Peace Region.', 'https://grandeprairiechamber.com', 'Grande Prairie, AB'),
+('grandeprairie-dev', 'GrandePrairie.dev', 'community', 'The digital commons for builders in Grande Prairie and the Peace Region — connecting people, projects, ideas, and practical technology opportunity.', 'https://grandeprairie.dev', 'Grande Prairie, AB');
