@@ -15,7 +15,7 @@ Two independent sub-projects:
 ### Non-goals
 - User-facing AI/API access (no paying subscribers)
 - Full ElystrumCore intelligence layer (Phase 4 proper)
-- Account linking/merging across providers (future)
+- Account linking/merging across providers (future — expect this as first user complaint; manual v1: user creates GitHub profile, admin merges on request via D1 update)
 
 ---
 
@@ -154,14 +154,15 @@ Sources stored in a config array in the worker code — not in D1. Easy to add/r
   For each news item, produce a JSON object:
   { "title": "...", "body": "2-3 sentence summary", "category": "hiring|industry|opportunity|events|project_activity", "tags": ["tag1", "tag2"], "relevant": true|false }
 
-  Only mark relevant=true if the item relates to:
-  - Grande Prairie, Peace Region, or Northern Alberta
-  - Technology, trades-tech, oil & gas tech, agri-tech, forestry tech
-  - Post-secondary education in the region (NWP)
-  - Startup/business development in the region
-  - AI, data, automation applicable to regional industries
+  Only mark relevant=true if the item has a DIRECT connection to:
+  - Grande Prairie, Peace Region, or Northern Alberta (must name-drop the region or a regional entity)
+  - Technology, trades-tech, oil & gas tech, agri-tech, forestry tech IN the Peace Region
+  - Post-secondary education in the region (NWP, GPRC)
+  - Startup/business development specifically in the Peace Region
+  - Well licensing, drilling activity, or pipeline projects in the Montney/Peace Region
 
-  Skip generic national news, sports, weather, politics. Be concise and practical — no hype.
+  REJECT generic national/provincial news that merely mentions Alberta without a regional connection.
+  REJECT national AI/tech news that could apply anywhere. Be concise and practical — no hype.
   ```
 - Send batch of items in one call. Parse response. Filter `relevant === true`.
 
@@ -210,6 +211,20 @@ Sources stored in a config array in the worker code — not in D1. Easy to add/r
 ```sql
 ALTER TABLE intel ADD COLUMN is_automated INTEGER DEFAULT 0;
 ALTER TABLE intel ADD COLUMN source_feed TEXT;
+
+-- Pipeline run log — tracks quality over time for prompt tuning and ElystrumCore training
+CREATE TABLE IF NOT EXISTS pipeline_runs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  run_date TEXT NOT NULL,
+  sources_checked INTEGER DEFAULT 0,
+  items_fetched INTEGER DEFAULT 0,
+  items_drafted INTEGER DEFAULT 0,
+  items_accepted INTEGER DEFAULT 0,
+  items_rejected INTEGER DEFAULT 0,
+  reject_reasons TEXT DEFAULT '[]',
+  duration_ms INTEGER,
+  created_at TEXT DEFAULT (datetime('now'))
+);
 ```
 
 ### Wrangler Configuration
