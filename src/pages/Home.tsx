@@ -4,7 +4,7 @@ import { AuroraHero } from "@/components/AuroraHero";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Calendar, Users, Lightbulb, ExternalLink, GraduationCap, Rocket } from "lucide-react";
+import { MapPin, Calendar, Users, Lightbulb, ExternalLink, GraduationCap, Rocket, UserPlus, MessageSquare } from "lucide-react";
 import type { Idea, Profile, Event } from "@/lib/types";
 import { parseJsonArray } from "@/lib/types";
 
@@ -12,6 +12,7 @@ export default function Home() {
   const { data: ideas, isLoading: ideasLoading } = useQuery<Idea[]>({ queryKey: ["/api/ideas/featured"] });
   const { data: profiles, isLoading: profilesLoading } = useQuery<Profile[]>({ queryKey: ["/api/profiles/featured"] });
   const { data: events } = useQuery<Event[]>({ queryKey: ["/api/events/upcoming"] });
+  const { data: activity } = useQuery<any[]>({ queryKey: ["/api/activity?limit=5"] });
 
   const nextEvent = events?.[0];
 
@@ -125,6 +126,34 @@ export default function Home() {
                 </CardContent>
               </Card>
             </Link>
+          </section>
+        )}
+
+        {/* Recent Activity */}
+        {activity && activity.length > 0 && (
+          <section className="space-y-4">
+            <h2 className="text-lg font-display font-bold">Recent Activity</h2>
+            <div className="space-y-2">
+              {activity.map((item: any) => {
+                const Icon = item.type === "new_member" ? UserPlus
+                  : item.type === "new_idea" ? Lightbulb
+                  : item.type === "new_event" ? Calendar
+                  : MessageSquare;
+                return (
+                  <div key={item.id} className="flex items-center gap-3 text-sm py-2 border-b border-border last:border-0">
+                    <Icon className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <span className="text-muted-foreground">
+                      <span className="text-foreground font-medium">{item.profile_name}</span>
+                      {" "}
+                      {item.type === "new_member" ? "joined the community"
+                        : item.type === "new_idea" ? `submitted "${item.summary}"`
+                        : item.type === "new_event" ? `created "${item.summary}"`
+                        : item.summary}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
           </section>
         )}
 

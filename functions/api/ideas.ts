@@ -1,4 +1,5 @@
 import type { Env } from "../lib/env";
+import { logActivity } from "../lib/activity";
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const { results } = await env.DB.prepare(
@@ -20,6 +21,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
   )
     .bind(title, description ?? null, category ?? null, user.profileId, JSON.stringify(tags ?? []))
     .run();
+
+  await logActivity(env, "new_idea", user.profileId, "idea", result.meta.last_row_id as number, String(title));
 
   return Response.json({ id: result.meta.last_row_id }, { status: 201 });
 };

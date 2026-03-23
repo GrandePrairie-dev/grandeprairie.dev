@@ -1,5 +1,6 @@
 import type { Env } from "../../lib/env";
 import { createSession, setSessionCookie } from "../../lib/auth";
+import { logActivity } from "../../lib/activity";
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
@@ -82,6 +83,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     ).run();
 
     profile = { id: result.meta.last_row_id as number, is_admin: 0 };
+
+    await logActivity(env, "new_member", profile.id, "profile", profile.id, `${ghUser.name ?? ghUser.login} joined the community`);
   }
 
   // Create session
