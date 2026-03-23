@@ -17,3 +17,4 @@ id = "ca2463f3917048d9a1beccac8642d861"
 [vars]
 ENVIRONMENT = "production"
 SITE_URL = "https://grandeprairie.dev"
+GITHUB_CLIENT_ID = "Ov23lilk4Mw1MxTACEWk"
