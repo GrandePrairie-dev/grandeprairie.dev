@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://grandeprairie.dev/sitemap.xml
+Sitemap: https://grandeprairie.dev/sitemap
 
 # AI Crawlers welcome
 User-agent: GPTBot
