@@ -10,7 +10,10 @@ import { parseJsonArray } from "@/lib/types";
 
 export default function Home() {
   const { data: ideas, isLoading: ideasLoading } = useQuery<Idea[]>({ queryKey: ["/api/ideas/featured"] });
-  const { data: profiles, isLoading: profilesLoading } = useQuery<Profile[]>({ queryKey: ["/api/profiles/featured"] });
+  const { data: allProfiles, isLoading: profilesLoading } = useQuery<Profile[]>({ queryKey: ["/api/profiles"] });
+  const displayProfiles = (allProfiles ?? [])
+    .sort((a, b) => b.is_featured - a.is_featured)
+    .slice(0, 4);
   const { data: events } = useQuery<Event[]>({ queryKey: ["/api/events/upcoming"] });
   const { data: activity } = useQuery<any[]>({ queryKey: ["/api/activity?limit=5"] });
 
@@ -57,10 +60,10 @@ export default function Home() {
           )}
         </section>
 
-        {/* Featured Builders */}
+        {/* Builders */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-display font-bold">Featured Builders</h2>
+            <h2 className="text-lg font-display font-bold">Builders</h2>
             <Link href="/people">
               <span className="text-aurora-teal text-sm font-medium cursor-pointer">View all →</span>
             </Link>
@@ -69,7 +72,7 @@ export default function Home() {
             <div className="grid gap-3 sm:grid-cols-2">{[1,2].map(i => <Skeleton key={i} className="h-20 w-full" />)}</div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
-              {(profiles ?? []).slice(0, 4).map((profile) => (
+              {displayProfiles.map((profile) => (
                 <Link key={profile.id} href={`/people/${profile.id}`}>
                   <Card className="cursor-pointer hover:border-boreal-spruce-light/50 transition-colors">
                     <CardContent className="p-4 flex items-center gap-3">

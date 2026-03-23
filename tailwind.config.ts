@@ -20,6 +20,9 @@ export default {
         "rig-amber": "#D08770",
         "pipeline-red": "#C45B5B",
         "clear-sky": "#6BA3BE",
+        "prairie-sky": "#1E5FA0",
+        "wheat-gold": "#D4A84B",
+        "harvest-amber": "#D4922A",
         // shadcn/ui tokens
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
