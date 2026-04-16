@@ -8,6 +8,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { ProfileBanner } from "@/components/ProfileBanner";
 
 import Home from "@/pages/Home";
+import Agency from "@/pages/Agency";
 import NotFound from "@/pages/NotFound";
 import People from "@/pages/People";
 import PersonProfile from "@/pages/PersonProfile";
@@ -35,6 +36,9 @@ export function App() {
 
   return (
     <>
+      <Route path="/agency" component={Agency} />
+      <Route path="/agency">
+        {(match) => match ? null : (
       <div className="flex h-screen w-full">
         <Sidebar
           isMobile={isMobile}
@@ -74,6 +78,8 @@ export function App() {
           </main>
         </div>
       </div>
+        )}
+      </Route>
       <Toaster />
     </>
   );
