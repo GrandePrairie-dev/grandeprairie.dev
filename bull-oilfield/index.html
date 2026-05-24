@@ -60,7 +60,7 @@
 
   .logo { display: flex; align-items: center; gap: 14px; text-decoration: none; }
 
-  .logo-bull-svg { width: 50px; height: 50px; filter: drop-shadow(0 2px 6px rgba(198,40,40,0.4)); }
+  .logo-img { height: 56px; width: auto; display: block; filter: drop-shadow(0 2px 8px rgba(198,40,40,0.35)); }
 
   .logo-text { display: flex; flex-direction: column; }
   .logo-text .name { font-family: 'Archivo Black', sans-serif; font-size: 18px; color: var(--white); letter-spacing: 0.5px; line-height: 1.1; }
@@ -356,30 +356,8 @@
 <header id="header">
   <div class="header-inner">
     <a href="#" class="logo">
-      <!-- Bull Head SVG Logo — matching the oval bull silhouette from the trailer -->
-      <svg class="logo-bull-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="50" cy="50" rx="46" ry="46" fill="var(--bull-red)" stroke="var(--bull-red-light)" stroke-width="2"/>
-        <!-- Horns -->
-        <path d="M18 42c-6-12-2-24 6-30" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <path d="M82 42c6-12 2-24-6-30" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
-        <!-- Head shape -->
-        <ellipse cx="50" cy="52" rx="22" ry="26" fill="white"/>
-        <!-- Eyes -->
-        <circle cx="40" cy="44" r="3.5" fill="#1a1a1a"/>
-        <circle cx="60" cy="44" r="3.5" fill="#1a1a1a"/>
-        <circle cx="41" cy="43" r="1" fill="white" opacity="0.6"/>
-        <circle cx="61" cy="43" r="1" fill="white" opacity="0.6"/>
-        <!-- Nostrils -->
-        <ellipse cx="44" cy="62" rx="2.5" ry="3" fill="#999"/>
-        <ellipse cx="56" cy="62" rx="2.5" ry="3" fill="#999"/>
-        <!-- Muzzle line -->
-        <path d="M40 56 Q50 62 60 56" stroke="#666" stroke-width="1.5" fill="none"/>
-        <!-- Ears -->
-        <ellipse cx="28" cy="36" rx="6" ry="4" fill="white" transform="rotate(-20 28 36)"/>
-        <ellipse cx="72" cy="36" rx="6" ry="4" fill="white" transform="rotate(20 72 36)"/>
-      </svg>
+      <img src="logo.png" alt="Bull Oilfield Instrumentation" class="logo-img" width="84" height="56" />
       <div class="logo-text">
-        <span class="name">Bull Oilfield</span>
         <span class="tagline">Instrumentation</span>
       </div>
     </a>
