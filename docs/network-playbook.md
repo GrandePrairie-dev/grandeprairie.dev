@@ -289,6 +289,7 @@ Don't build this prematurely — the docs + script approach is honest and works 
 3. **Don't commit the prospect data files to the public repo.** They're commercial intelligence; keep them in `~/Downloads/` or gitignored under `docs/leads/data/`.
 4. **Don't skip mobile breakpoints when adding new sections.** Every new grid needs a `@media (max-width: 900px)` rule, and ideally a `560px` phone rule too. (Bull launched with broken mobile twice before this was added to the build template.)
 5. **Don't claim 24/7 if it's actually on-call.** Owners hate misrepresentation more than they hate weak copy. "On-call after hours" is honest and still strong.
+6. **Don't trust the scrape's `web_presence` column without manual verification.** The first two Tier 1 / "No Website" / "Ghost" picks from `gp_low_digital_presence_leads.csv` (D & D Energy Services, Kinetic Transport) both had real websites + domains on a quick manual Google check. Treat the scrape as a *first-pass filter that needs spot-checking*. Before scaffolding a demo, **always**: (a) Google `"{company name}" Grande Prairie`, (b) check the WHOIS / domain registrar for `{slug}.com` and `{slug}.ca`, (c) only proceed if there's a real gap. Five minutes of verification saves an hour of scaffolding the wrong site and an awkward pitch.
 
 ---
 
