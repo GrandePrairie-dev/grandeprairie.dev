@@ -51,6 +51,7 @@
   "url": "https://bulloilfield.grandeprairie.dev/",
   "telephone": "+1-780-532-5959",
   "faxNumber": "+1-780-539-6059",
+  "email": "bulloil@telus.net",
   "priceRange": "$$",
   "description": "Oilfield instrumentation sales, rental, NIST-traceable calibration and repair. Chart recorders, Hawk digital data loggers, dead weight testers, precision gauges, and Baker pumps for Northern Alberta's oil & gas sector.",
   "slogan": "Precision Oilfield Instrumentation You Can Trust",
@@ -72,13 +73,14 @@
       "@type": "OpeningHoursSpecification",
       "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
       "opens": "07:00",
-      "closes": "17:00"
+      "closes": "16:00",
+      "description": "On-call available before and after business hours via (780) 532-5959"
     }
   ],
   "areaServed": [
     { "@type": "City", "name": "Grande Prairie" },
     { "@type": "AdministrativeArea", "name": "Peace Region, Alberta" },
-    { "@type": "AdministrativeArea", "name": "Northern Alberta" },
+    { "@type": "AdministrativeArea", "name": "Northwest Alberta (NWAB)" },
     { "@type": "AdministrativeArea", "name": "Northeast British Columbia" }
   ],
   "knowsAbout": [
@@ -139,7 +141,7 @@
       "name": "What pressure range can you calibrate and test?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Our digital dead-weight testers and gauges cover vacuum through 30,000 PSI. Field rental gauges and Hawk recorders are available across the full oilfield service range from 1,000 PSI up to 15,000 PSI."
+        "text": "Our digital dead-weight testers and gauges cover vacuum through 10,000 PSI. Field rental gauges and Hawk recorders are available across the full oilfield service range from 1,000 PSI up to 15,000 PSI."
       }
     },
     {
@@ -155,15 +157,15 @@
       "name": "What is your service area?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Grande Prairie and the surrounding Peace Region, all of Northern Alberta (Montney, Duvernay, Deep Basin), and Northeast British Columbia. Field service to wellsites and facilities throughout the WCSB."
+        "text": "Grande Prairie and the surrounding Peace Region, all of Northwest Alberta (NWAB — Montney, Duvernay, Deep Basin), and Northeast British Columbia. Field service to wellsites and facilities throughout the WCSB."
       }
     },
     {
       "@type": "Question",
-      "name": "Do you provide 24/7 emergency instrumentation support?",
+      "name": "Are you available after hours?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. After-hours emergency support is available by calling (780) 532-5959. Same-day rental dispatch is typical during business hours (Monday–Friday, 7 AM – 5 PM)."
+        "text": "Yes — on-call before and after business hours by calling (780) 532-5959. Standard business hours are Monday–Friday, 7 AM – 4 PM. Same-day rental dispatch is typical during business hours."
       }
     },
     {
@@ -599,6 +601,67 @@
   .faq-answer a { color: var(--bull-red-light); text-decoration: none; font-weight: 700; }
   .faq-answer a:hover { text-decoration: underline; }
 
+  /* ═══ MOBILE MENU ═══ */
+  .menu-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--bronze);
+    color: var(--bronze);
+    width: 44px; height: 44px;
+    border-radius: 4px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .menu-toggle:hover { background: var(--bronze); color: var(--navy); }
+  .menu-toggle svg { width: 22px; height: 22px; }
+  .menu-toggle[aria-expanded="true"] .menu-icon-open { display: none; }
+  .menu-toggle[aria-expanded="false"] .menu-icon-close { display: none; }
+
+  .mobile-menu {
+    display: none;
+    position: fixed; top: 72px; left: 0; right: 0;
+    background: var(--matte-black);
+    border-top: 1px solid rgba(169,120,69,0.3);
+    border-bottom: 2px solid var(--bronze);
+    padding: 12px 24px 24px;
+    z-index: 999;
+    flex-direction: column;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.7);
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    color: var(--cream);
+    text-decoration: none;
+    font-family: 'Bebas Neue', 'Oswald', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    padding: 16px 4px;
+    border-bottom: 1px solid var(--steel);
+    text-transform: uppercase;
+    transition: color 0.15s;
+  }
+  .mobile-menu a:hover { color: var(--bronze-light); }
+  .mobile-menu a:last-child { border-bottom: none; }
+  .mobile-menu .mobile-phone {
+    color: var(--bronze-light);
+    margin-top: 10px;
+    padding-top: 18px;
+    border-top: 1px solid var(--bronze);
+    border-bottom: none;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 18px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
   /* ═══ RESPONSIVE ═══ */
   @media (max-width: 900px) {
     .hero { padding: 130px 0 70px; min-height: auto; }
@@ -614,6 +677,7 @@
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .form-row { grid-template-columns: 1fr; }
     nav { display: none; }
+    .menu-toggle { display: flex; }
 
     /* Service strip → single column stack on mobile */
     .service-strip { padding: 32px 0; }
@@ -660,12 +724,28 @@
       <a href="#equipment">Equipment</a>
       <a href="#services">Services</a>
       <a href="#about">About</a>
+      <a href="#faq">FAQ</a>
       <a href="#contact">Contact</a>
       <a href="tel:7805325959" class="nav-phone">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
         (780) 532-5959
       </a>
     </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+      <svg class="menu-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <svg class="menu-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#equipment">Equipment</a>
+    <a href="#services">Services</a>
+    <a href="#about">About</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+    <a href="tel:7805325959" class="mobile-phone">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      (780) 532-5959
+    </a>
   </div>
 </header>
 
@@ -676,7 +756,7 @@
       <div class="hero-text">
         <div class="pre-heading"><div class="pre-heading-line"></div> Grande Prairie, Alberta</div>
         <h1>Precision Oilfield<br><span>Instrumentation</span><br>You Can Trust</h1>
-        <p class="hero-desc">Sales, rental, calibration and repair of chart recorders, digital dead weights, pressure gauges, Baker pumps, and Hawk digital recorders. Serving Northern Alberta's oil and gas sector.</p>
+        <p class="hero-desc">Sales, rental, calibration and repair of chart recorders, digital dead weights, pressure gauges, Baker pumps, and Hawk digital recorders. Serving Northwest Alberta's oil and gas sector.</p>
         <div class="hero-ctas">
           <a href="tel:7805325959" class="btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -774,10 +854,10 @@
 <div class="stats-bar">
   <div class="container">
     <div class="stats-grid">
-      <div class="stat-item"><div class="stat-number">24/7</div><div class="stat-label">Emergency Service</div></div>
-      <div class="stat-item"><div class="stat-number">15K+</div><div class="stat-label">PSI Test Range</div></div>
+      <div class="stat-item"><div class="stat-number">ON CALL</div><div class="stat-label">After-Hours Support</div></div>
+      <div class="stat-item"><div class="stat-number">10K</div><div class="stat-label">PSI Stock Range</div></div>
       <div class="stat-item"><div class="stat-number">NIST</div><div class="stat-label">Traceable Calibration</div></div>
-      <div class="stat-item"><div class="stat-number">N. AB</div><div class="stat-label">Service Coverage</div></div>
+      <div class="stat-item"><div class="stat-number">NWAB</div><div class="stat-label">Service Coverage</div></div>
     </div>
   </div>
 </div>
@@ -844,13 +924,13 @@
       <div class="equip-card">
         <div class="equip-icon" style="background:rgba(21,101,192,0.1); color:var(--pipe-blue)">⚖️</div>
         <h3>Digital Dead Weights</h3>
-        <p>High-accuracy digital dead weight testers for primary standard pressure calibration. Hydraulic and pneumatic configurations with electronic readout. NIST traceable for certifying transmitters, gauges, switches, and safety devices up to 30,000 PSI.</p>
+        <p>High-accuracy digital dead weight testers for primary standard pressure calibration. Hydraulic and pneumatic configurations with electronic readout. NIST traceable for certifying transmitters, gauges, and switches up to 10,000 PSI.</p>
         <span class="spec-tag">Calibration Standard</span>
       </div>
       <div class="equip-card">
         <div class="equip-icon" style="background:rgba(0,131,143,0.1); color:var(--gauge-teal)">🔧</div>
         <h3>Precision Gauges</h3>
-        <p>Pressure test gauges, digital indicators, and wellhead monitoring gauges. Ranges from vacuum to 20,000 PSI with accuracy classes for production operations, hydrostatic testing, and instrument calibration.</p>
+        <p>Pressure test gauges, digital indicators, and wellhead monitoring gauges. Ranges from vacuum to 10,000 PSI with accuracy classes for production operations, hydrostatic testing, and instrument calibration.</p>
         <span class="spec-tag">All Ranges</span>
       </div>
       <div class="equip-card">
@@ -862,7 +942,7 @@
       <div class="equip-card">
         <div class="equip-icon" style="background:rgba(46,125,50,0.1); color:var(--safety-green)">📡</div>
         <h3>Hawk Digital Recorders</h3>
-        <p>Calscan Hawk 9000 surface data loggers with integrated pressure, temperature, and flow sensors. Battery-powered for Div 1 Class 1 hazardous locations. Rated -40°C to 80°C with quartz sensors to 30,000 PSI and internet streaming.</p>
+        <p>Calscan Hawk 9000 surface data loggers with integrated pressure, temperature, and flow sensors. Battery-powered for Div 1 Class 1 hazardous locations. Rated -40°C to 80°C with quartz sensors to 10,000 PSI and internet streaming.</p>
         <span class="spec-tag">Calscan Hawk 9000</span>
       </div>
       <div class="equip-card">
@@ -926,7 +1006,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
         </div>
         <h3>Accurate</h3>
-        <p>NIST-traceable calibration to 30,000 PSI. Certificates that pass every audit, every time.</p>
+        <p>NIST-traceable calibration to 10,000 PSI. Certificates that pass every audit, every time.</p>
       </div>
       <div class="trust-item">
         <div class="trust-item-icon">
@@ -954,12 +1034,11 @@
       <div class="about-text">
         <p>Bull Oilfield Instrumentation is Grande Prairie's trusted source for oilfield measurement and testing equipment. We supply, rent, calibrate, and repair the precision instruments that Northern Alberta's producers and service companies depend on every day.</p>
         <p>From the Montney and Duvernay plays south and west of town to the Deep Basin and beyond, our equipment is on wellheads, in test shacks, and inside plant control rooms across the Peace Region. We understand the conditions — the cold, the sour gas, the pressure — because we've been working in them alongside our customers.</p>
-        <p>Whether you need a chart recorder for a 48-hour well test, a dead weight tester to certify your PSVs, or a Hawk digital system for permanent installation, we've got the inventory and the expertise to get you what you need, when you need it.</p>
+        <p>Whether you need a chart recorder for a 48-hour well test, a dead weight tester to verify your shop gauges, or a Hawk digital system for permanent installation, we've got the inventory and the expertise to get you what you need, when you need it.</p>
       </div>
       <div class="credentials-list">
         <div class="credential"><div class="credential-icon">🎯</div><div><h4>NIST Traceable Standards</h4><p>All calibrations referenced to National Institute of Standards & Technology</p></div></div>
-        <div class="credential"><div class="credential-icon">🌡️</div><div><h4>-40°C Rated Equipment</h4><p>Everything we supply is built and tested for northern Alberta winters</p></div></div>
-        <div class="credential"><div class="credential-icon">⚡</div><div><h4>Class 1 Div 1 Compliant</h4><p>Intrinsically safe digital equipment for hazardous location deployment</p></div></div>
+        <div class="credential"><div class="credential-icon">🌡️</div><div><h4>-40°C Rated Equipment</h4><p>Everything we supply is built and tested for northwest Alberta winters</p></div></div>
         <div class="credential"><div class="credential-icon">🔄</div><div><h4>Fast Turnaround</h4><p>Same-day rental dispatch and rapid calibration service</p></div></div>
         <div class="credential"><div class="credential-icon">📋</div><div><h4>AER Compliant Reporting</h4><p>Documentation and data formats that meet Alberta Energy Regulator requirements</p></div></div>
       </div>
@@ -969,7 +1048,7 @@
 
 <!-- ═══ EMERGENCY ═══ -->
 <div class="emergency-strip">
-  <p>24/7 Emergency Instrumentation Support — <a href="tel:7805325959">(780) 532-5959</a></p>
+  <p>On-Call After-Hours Instrumentation Support — <a href="tel:7805325959">(780) 532-5959</a></p>
 </div>
 
 <!-- ═══ FAQ (visible content to support FAQPage schema / AEO) ═══ -->
@@ -991,7 +1070,7 @@
       </details>
       <details class="faq-item">
         <summary>What pressure range can you calibrate and test?</summary>
-        <div class="faq-answer">Our digital dead-weight testers and gauges cover vacuum through 30,000 PSI. Field rental gauges and Hawk recorders are available across the full oilfield service range from 1,000 PSI up to 15,000 PSI.</div>
+        <div class="faq-answer">Our digital dead-weight testers and gauges cover vacuum through 10,000 PSI. Field rental gauges and Hawk recorders are available across the full oilfield service range from 1,000 PSI up to 15,000 PSI.</div>
       </details>
       <details class="faq-item">
         <summary>Do you service Calscan Hawk digital recorders?</summary>
@@ -999,11 +1078,11 @@
       </details>
       <details class="faq-item">
         <summary>What is your service area?</summary>
-        <div class="faq-answer">Grande Prairie and the surrounding Peace Region, all of Northern Alberta (Montney, Duvernay, Deep Basin), and Northeast British Columbia. Field service is available to wellsites and facilities throughout the WCSB.</div>
+        <div class="faq-answer">Grande Prairie and the surrounding Peace Region, all of Northwest Alberta (NWAB — Montney, Duvernay, Deep Basin), and Northeast British Columbia. Field service is available to wellsites and facilities throughout the WCSB.</div>
       </details>
       <details class="faq-item">
-        <summary>Do you provide 24/7 emergency instrumentation support?</summary>
-        <div class="faq-answer">Yes. After-hours emergency support is available by calling <a href="tel:7805325959">(780) 532-5959</a>. Same-day rental dispatch is typical during business hours (Monday–Friday, 7 AM – 5 PM).</div>
+        <summary>Are you available after hours?</summary>
+        <div class="faq-answer">Yes — on-call before and after business hours by calling <a href="tel:7805325959">(780) 532-5959</a>. Standard business hours are Monday–Friday, 7 AM – 4 PM. Same-day rental dispatch is typical during business hours.</div>
       </details>
       <details class="faq-item">
         <summary>Do you rebuild Barton chart recorders?</summary>
@@ -1020,9 +1099,10 @@
     <div class="contact-layout">
       <div class="contact-left">
         <div class="contact-block"><h3>Phone</h3><a href="tel:7805325959">(780) 532-5959</a><p>Fax: (780) 539-6059</p></div>
+        <div class="contact-block"><h3>Email</h3><a href="mailto:bulloil@telus.net" style="font-size:18px;">bulloil@telus.net</a></div>
         <div class="contact-block"><h3>Address</h3><p>11450 89 Avenue<br>Grande Prairie, AB T8V 5V8</p></div>
-        <div class="contact-block"><h3>Hours</h3><p>Monday – Friday: 7:00 AM – 5:00 PM<br>After-hours emergency available</p></div>
-        <div class="contact-block"><h3>Service Area</h3><p>Grande Prairie, Peace Region, Northern Alberta, NE British Columbia — field service to wellsites and facilities throughout the WCSB.</p></div>
+        <div class="contact-block"><h3>Hours</h3><p>Monday – Friday: 7:00 AM – 4:00 PM<br>On-call before and after hours</p></div>
+        <div class="contact-block"><h3>Service Area</h3><p>Grande Prairie, Peace Region, Northwest Alberta (NWAB), and Northeast British Columbia — field service to wellsites and facilities throughout the WCSB.</p></div>
       </div>
 
       <!-- ═══ INFORMATION REQUEST FORM ═══ -->
@@ -1139,6 +1219,21 @@
     document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
   });
 
+  // ─── Mobile menu toggle ───
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const setMenu = (open) => {
+    mobileMenu.classList.toggle('open', open);
+    menuToggle.setAttribute('aria-expanded', String(open));
+    mobileMenu.setAttribute('aria-hidden', String(!open));
+    menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  menuToggle.addEventListener('click', () => setMenu(menuToggle.getAttribute('aria-expanded') !== 'true'));
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  window.addEventListener('resize', () => { if (window.innerWidth > 900) setMenu(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+
   // ─── Smooth scroll ───
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
@@ -1199,22 +1294,22 @@
 
   const bullIcon = L.divIcon({
     html: `<div style="
-      width: 40px; height: 40px; border-radius: 50%;
-      background: #c62828; border: 3px solid rgba(255,255,255,0.5);
+      width: 42px; height: 42px; border-radius: 50%;
+      background: #0D1B2A; border: 2.5px solid #A97845;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 800; color: white;
-      font-family: 'Montserrat', sans-serif;
-      box-shadow: 0 0 20px rgba(169,120,69,0.5);
+      font-size: 13px; font-weight: 800; color: #A97845;
+      font-family: 'Bebas Neue', sans-serif; letter-spacing: 1.5px;
+      box-shadow: 0 0 18px rgba(169,120,69,0.55), inset 0 0 8px rgba(169,120,69,0.25);
     ">BO</div>`,
-    className: '', iconSize: [40, 40], iconAnchor: [20, 20]
+    className: '', iconSize: [42, 42], iconAnchor: [21, 21]
   });
 
   L.marker([55.15903, -118.84271], { icon: bullIcon }).addTo(map)
     .bindPopup(`
-      <div style="font-family:'Barlow',sans-serif; padding: 4px;">
+      <div style="font-family:'Montserrat',sans-serif; padding: 4px;">
         <strong style="font-size:14px; color:#fff;">Bull Oilfield Instrumentation</strong><br>
         <span style="font-size:12px; color:#999;">11450 89 Avenue, Grande Prairie, AB T8V 5V8</span><br>
-        <a href="tel:7805325959" style="color:#e53935; font-weight:700; font-size:13px; text-decoration:none;">(780) 532-5959</a>
+        <a href="tel:7805325959" style="color:#C99356; font-weight:700; font-size:13px; text-decoration:none;">(780) 532-5959</a>
       </div>
     `).openPopup();
 </script>
