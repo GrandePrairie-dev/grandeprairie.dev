@@ -94,6 +94,7 @@ Each prospect has a tracker file at `docs/leads/{slug}.md` (copy from `docs/lead
   - LinkedIn for "Owner" / "President" / "Operations Manager"
   - Alberta corporate registry director name (often public)
   - Mutual contacts on LinkedIn / Facebook
+- [ ] **Check the founder is still active.** Google `"{founder name}" obituary` — sole-proprietor trades businesses often go dormant within ~12 months of the founder's death even if the Alberta corporate registry still shows them as Active. (Raiwet Enterprises was flagged "Active 2024" by the scrape but the founder passed away Jan 2025 — wasted scaffold pre-empted by the obit search.)
 - [ ] Classify the warmth:
   - **Warm intro** — you know them or mutual
   - **Warm referral** — mutual contact, no direct relationship
