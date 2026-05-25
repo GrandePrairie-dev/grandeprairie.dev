@@ -601,9 +601,10 @@
 
   /* ═══ RESPONSIVE ═══ */
   @media (max-width: 900px) {
+    .hero { padding: 130px 0 70px; min-height: auto; }
     .hero-content { grid-template-columns: 1fr; gap: 40px; }
     .hero-visual { display: none; }
-    .hero-text h1 { font-size: 36px; }
+    .hero-text h1 { font-size: 44px; line-height: 1; }
     .equipment-grid { grid-template-columns: 1fr; }
     .services-grid { grid-template-columns: 1fr; }
     .about-grid { grid-template-columns: 1fr; }
@@ -613,6 +614,34 @@
     .footer-grid { grid-template-columns: 1fr 1fr; }
     .form-row { grid-template-columns: 1fr; }
     nav { display: none; }
+
+    /* Service strip → single column stack on mobile */
+    .service-strip { padding: 32px 0; }
+    .service-strip-grid { grid-template-columns: 1fr; }
+    .service-strip-item { padding: 22px 20px; }
+
+    /* Trust indicators → 2x2 grid on tablet, stack on phone */
+    .trust-section { padding: 64px 0; }
+    .trust-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+    /* Section padding tighter for tighter screens */
+    section { padding: 70px 0; }
+    .section-header { margin-bottom: 36px; }
+    .section-header h2 { font-size: 30px; }
+
+    /* Contact form padding */
+    .contact-form-wrapper { padding: 24px; }
+  }
+
+  @media (max-width: 560px) {
+    /* Phone-sized — collapse trust indicators to single column too */
+    .trust-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .container { padding: 0 18px; }
+    .hero-text h1 { font-size: 36px; }
+    .hero-ctas { flex-direction: column; }
+    .hero-ctas .btn-primary, .hero-ctas .btn-secondary { width: 100%; justify-content: center; }
   }
 </style>
 </head>
