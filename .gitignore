@@ -24,3 +24,7 @@ vite.config.d.ts
 
 # Playwright MCP browser snapshots / artifacts
 .playwright-mcp/
+
+# Prospect / lead intelligence (commercial data, not for public repo)
+docs/leads/data/
+*.xlsx
