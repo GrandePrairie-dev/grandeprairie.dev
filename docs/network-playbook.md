@@ -21,17 +21,28 @@ We build a brand-aligned landing page on a memorable `*.grandeprairie.dev` subdo
 | File | Rows | Use |
 |---|---|---|
 | `gp_prospects_deduplicated.csv` | 2,843 | Full pool (Alberta corporate registry + industry filter) |
-| `gp_prospects_narrowed_top200.csv` | 200 | **Work this list first** — scored 100+ on industry × activity |
+| `gp_prospects_narrowed_top200.csv` | 200 | First-pass narrowed by industry × activity score |
 | `gp_prospect_database_1.xlsx` | n/a | Source-of-truth with extra columns |
+| **`gp_low_digital_presence_leads.csv`** | **43** | **Work this list first** — web-scraped, tiered, with per-row notes on current digital footprint |
 
-Columns: `company_name, trade_name, city, industry, size, latest_year, score, reasons, normalized`
+The low-digital-presence list adds columns: `tier, web_presence, research_notes, search_query`. Tiers reflect company *value* (size/revenue), not gap size — so cross-reference `web_presence` when picking:
 
-**Top-200 composition** (informs playbook tone):
-- 93% trades/oilfield/construction
-- 60% Small or Medium (5–50 employees) — owner-operator decision making
-- Cities: Grande Prairie, County of GP, Clairmont, Sexsmith
+- **No Website + Tier 1/2** = highest conversion likelihood (clear value prop)
+- **Has Website + Tier 1** = harder sell (replacement, not greenfield) — defer unless the existing site is genuinely bad
+- **Ghost (No Results)** = best-of-both — high tier, zero existing presence
 
-These files live in `~/Downloads/`. **Do not commit them to the repo** — they're commercial intelligence. If we ever ingest them, gate it to `docs/leads/data/` and add to `.gitignore`.
+**Picking order within the low-presence list:**
+1. `tier == "Tier 1"` AND `web_presence` ∈ {`No Website`, `Ghost`} (the rarest, do these first)
+2. `tier == "Tier 2"` AND `web_presence == "No Website"` (the bulk, easiest pitch)
+3. Tier 3 (still qualified, still no website, just smaller)
+
+**Composition of the 43:**
+- Tier 1 (high value): 12 — but only 2 have no website
+- Tier 2 (strong lead): 21 — almost all no-website
+- Tier 3 (qualified): 10
+- Industries: Oilfield Trucking (16), Construction Trade (12), Welding (6), Concrete (5), other (4)
+
+These files live in `~/Downloads/`. **Do not commit them to the repo** — they're commercial intelligence. The `.gitignore` already covers `docs/leads/data/` and `*.xlsx` if you ever want to organize them inside the repo for local-only access.
 
 ---
 
