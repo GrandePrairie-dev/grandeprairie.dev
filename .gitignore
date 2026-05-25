@@ -21,3 +21,6 @@ Thumbs.db
 .superpowers/
 *.tsbuildinfo
 vite.config.d.ts
+
+# Playwright MCP browser snapshots / artifacts
+.playwright-mcp/
