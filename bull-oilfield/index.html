@@ -760,7 +760,7 @@
 <!-- ═══ HEADER ═══ -->
 <header id="header">
   <div class="header-inner">
-    <a href="#" class="logo">
+    <a href="#home" class="logo">
       <img src="logo.png" alt="Bull Oilfield Instrumentation" class="logo-img" width="84" height="56" />
       <div class="logo-text">
         <span class="tagline">Instrumentation</span>
@@ -1313,13 +1313,19 @@
 </button>
 
 <script>
-  // ─── Header scroll + back-to-top visibility ───
+  // ─── Header scroll + back-to-top visibility (rAF-throttled, passive) ───
   const headerEl = document.getElementById('header');
   const backToTop = document.getElementById('backToTop');
+  let scrollTicking = false;
   window.addEventListener('scroll', () => {
-    headerEl.classList.toggle('scrolled', window.scrollY > 50);
-    backToTop.classList.toggle('visible', window.scrollY > 600);
-  });
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(() => {
+      headerEl.classList.toggle('scrolled', window.scrollY > 50);
+      backToTop.classList.toggle('visible', window.scrollY > 600);
+      scrollTicking = false;
+    });
+  }, { passive: true });
   backToTop.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -1342,9 +1348,18 @@
   // ─── Smooth scroll ───
   document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
-      e.preventDefault();
-      const target = document.querySelector(a.getAttribute('href'));
-      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const href = a.getAttribute('href');
+      if (!href || href === '#') {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+      let target = null;
+      try { target = document.querySelector(href); } catch { /* invalid selector — bail */ }
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   });
 
