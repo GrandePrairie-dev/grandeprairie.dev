@@ -1022,13 +1022,12 @@
       <p>Complete instrumentation lifecycle support — from initial calibration through field deployment to repair and re-certification.</p>
     </div>
     <div class="services-grid">
-      <div class="service-card"><div class="service-num">01</div><div><h3>Equipment Rental</h3><p>Fast-turnaround rental fleet of chart recorders, Hawk data loggers, dead weight testers, test gauges, and Baker pumps. Configured to spec, field-ready.</p></div></div>
+      <div class="service-card"><div class="service-num">01</div><div><h3>Equipment Rental & Sales</h3><p>Fast-turnaround rental fleet plus new and reconditioned equipment from all major brands — chart recorders, Hawk data loggers, dead weight testers, test gauges, and Baker pumps. Configured to spec, field-ready.</p></div></div>
       <div class="service-card"><div class="service-num">02</div><div><h3>Calibration & Certification</h3><p>NIST traceable calibration lab for pressure and temperature instrumentation. Dead weight verified gauge certification with documented certificates for AER compliance.</p></div></div>
       <div class="service-card"><div class="service-num">03</div><div><h3>Repair & Rebuild</h3><p>Expert in-house repair for chart recorders, gauges, Baker pumps, and electronic instrumentation. Barton recorder specialists with full rebuild capability.</p></div></div>
-      <div class="service-card"><div class="service-num">04</div><div><h3>Equipment Sales</h3><p>New and reconditioned chart recorders, pressure gauges, Hawk digital systems, dead weight testers, and Baker pumps from all major brands.</p></div></div>
-      <div class="service-card"><div class="service-num">05</div><div><h3>Hydrostatic Testing</h3><p>High-pressure hydro test equipment and support for pipeline testing, vessel certification, and pressure system validation with digital chart recording.</p></div></div>
-      <div class="service-card"><div class="service-num">06</div><div><h3>Production Testing Support</h3><p>Complete well testing instrumentation — flow measurement, pressure recording, temperature logging, and AER-standard reporting.</p></div></div>
-      <div class="service-card"><div class="service-num">07</div><div><h3>Digital Transition</h3><p>Migration from analog chart recorders to Hawk digital systems without losing regulatory compliance or operational continuity.</p></div></div>
+      <div class="service-card"><div class="service-num">04</div><div><h3>Hydrostatic Testing</h3><p>High-pressure hydro test equipment and support for pipeline testing, vessel certification, and pressure system validation with digital chart recording.</p></div></div>
+      <div class="service-card"><div class="service-num">05</div><div><h3>Production Testing Support</h3><p>Complete well testing instrumentation — flow measurement, pressure recording, temperature logging, and AER-standard reporting.</p></div></div>
+      <div class="service-card"><div class="service-num">06</div><div><h3>Digital Transition</h3><p>Migration from analog chart recorders to Hawk digital systems without losing regulatory compliance or operational continuity.</p></div></div>
     </div>
   </div>
 </section>
@@ -1389,9 +1388,13 @@
   }
 
   // ─── Leaflet Map ───
+  // scrollWheelZoom disabled so the embedded map doesn't capture
+  // page scroll when the cursor passes over it. Users can still
+  // use the +/- buttons or pinch/double-tap to zoom.
   const map = L.map('contact-map', {
     center: [55.15903, -118.84271],
-    zoom: 16, zoomControl: true, attributionControl: false
+    zoom: 16, zoomControl: true, attributionControl: false,
+    scrollWheelZoom: false
   });
 
   L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
