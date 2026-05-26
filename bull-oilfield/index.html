@@ -264,8 +264,8 @@
 
   /* ═══ HERO ═══ */
   .hero {
-    padding: 160px 0 100px; position: relative; overflow: hidden;
-    min-height: 85vh; display: flex; align-items: center;
+    padding: 140px 0 60px; position: relative; overflow: hidden;
+    min-height: auto; display: flex; align-items: center;
   }
   .hero::before {
     content: ''; position: absolute; inset: 0;
@@ -314,12 +314,12 @@
 
   .btn-secondary {
     display: inline-flex; align-items: center; gap: 10px; padding: 16px 32px;
-    background: transparent; color: var(--cream); font-family: 'Bebas Neue', 'Rajdhani', sans-serif;
+    background: transparent; color: var(--bronze-light); font-family: 'Bebas Neue', 'Rajdhani', sans-serif;
     font-weight: 700; font-size: 16px; text-transform: uppercase; letter-spacing: 2px;
-    text-decoration: none; border: 2px solid var(--iron); border-radius: 4px;
+    text-decoration: none; border: 2px solid var(--bronze); border-radius: 4px;
     cursor: pointer; transition: all 0.25s;
   }
-  .btn-secondary:hover { border-color: var(--ash); color: white; background: rgba(255,255,255,0.04); }
+  .btn-secondary:hover { border-color: var(--bronze-light); color: var(--navy); background: var(--bronze); }
 
   /* Animated Gauge */
   .hero-visual { display: flex; align-items: center; justify-content: center; position: relative; }
@@ -392,7 +392,17 @@
     background: radial-gradient(circle at top right, rgba(169,120,69,0.06), transparent 70%);
     pointer-events: none;
   }
-  .equip-icon { width: 48px; height: 48px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 22px; }
+  .equip-icon {
+    width: 56px; height: 56px; border-radius: 50%;
+    border: 1.5px solid var(--bronze);
+    background: rgba(169,120,69,0.06);
+    color: var(--bronze);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 22px;
+    transition: all 0.25s;
+  }
+  .equip-icon svg { width: 26px; height: 26px; }
+  .equip-card:hover .equip-icon { background: var(--bronze); color: var(--navy); border-color: var(--bronze-light); }
   .equip-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 20px; color: var(--white); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
   .equip-card p { font-size: 15px; color: var(--ash); line-height: 1.7; }
   .spec-tag { display: inline-block; margin-top: 16px; font-family: 'Bebas Neue', 'Rajdhani', sans-serif; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--bull-red-light); border: 1px solid rgba(169,120,69,0.3); padding: 4px 12px; border-radius: 3px; }
@@ -418,7 +428,8 @@
   .about-text p:first-of-type::first-letter { font-family: 'Bebas Neue', 'Oswald', sans-serif; font-size: 48px; float: left; line-height: 0.8; margin-right: 8px; margin-top: 6px; color: var(--bull-red-light); }
   .credentials-list { display: flex; flex-direction: column; gap: 16px; }
   .credential { display: flex; align-items: center; gap: 16px; padding: 20px; background: var(--charcoal); border: 1px solid var(--steel); border-radius: 6px; }
-  .credential-icon { width: 44px; height: 44px; border-radius: 8px; background: rgba(169,120,69,0.1); border: 1px solid rgba(169,120,69,0.25); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .credential-icon { width: 48px; height: 48px; border-radius: 50%; background: rgba(169,120,69,0.06); border: 1.5px solid var(--bronze); color: var(--bronze); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .credential-icon svg { width: 22px; height: 22px; }
   .credential h4 { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
   .credential p { font-size: 13px; color: var(--ash); }
 
@@ -582,7 +593,7 @@
 
   /* ═══ FAQ ═══ */
   .faq-section { padding: 100px 0; background: var(--black); }
-  .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: 880px; }
+  .faq-list { display: flex; flex-direction: column; gap: 12px; max-width: none; }
   .faq-item { background: var(--charcoal); border: 1px solid var(--steel); border-radius: 6px; overflow: hidden; transition: border-color 0.25s; }
   .faq-item[open] { border-color: rgba(169,120,69,0.4); }
   .faq-item summary {
@@ -600,6 +611,37 @@
   .faq-answer { padding: 0 26px 24px; color: var(--bone); font-size: 15px; line-height: 1.75; border-top: 1px solid var(--steel); padding-top: 18px; }
   .faq-answer a { color: var(--bull-red-light); text-decoration: none; font-weight: 700; }
   .faq-answer a:hover { text-decoration: underline; }
+
+  /* ═══ MAP SECTION HEADER ═══ */
+  .map-section { padding: 80px 0 0; }
+  .map-section .container { padding-bottom: 40px; }
+  .map-section .section-header { margin-bottom: 32px; }
+
+  /* ═══ BACK TO TOP ═══ */
+  .back-to-top {
+    position: fixed; bottom: 24px; right: 24px; z-index: 998;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--bronze); border: none; color: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; opacity: 0; pointer-events: none;
+    transform: translateY(12px);
+    transition: opacity 0.25s, transform 0.25s, background 0.2s;
+    box-shadow: 0 4px 18px rgba(169,120,69,0.4);
+  }
+  .back-to-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
+  .back-to-top:hover { background: var(--bronze-light); }
+  .back-to-top svg { width: 22px; height: 22px; }
+
+  /* ═══ FOOTER SOCIAL ═══ */
+  .footer-social { display: flex; gap: 10px; margin-top: 14px; }
+  .footer-social a {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--steel); color: var(--smoke);
+    display: flex; align-items: center; justify-content: center;
+    padding: 0; transition: all 0.2s;
+  }
+  .footer-social a:hover { border-color: var(--bronze); color: var(--bronze-light); }
+  .footer-social svg { width: 16px; height: 16px; }
 
   /* ═══ MOBILE MENU ═══ */
   .menu-toggle {
@@ -915,38 +957,50 @@
       <p>From mechanical chart recorders to modern digital data acquisition — we stock, rent, sell, and service the instrumentation that keeps Northern Alberta's wells and plants running.</p>
     </div>
     <div class="equipment-grid">
-      <div class="equip-card">
-        <div class="equip-icon" style="background:rgba(169,120,69,0.1); color:var(--bull-red-light)">📊</div>
+      <div class="equip-card" id="equip-chart-recorders">
+        <div class="equip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 4v2M20 12h-2M12 20v-2M4 12h2"/><path d="M12 12L17 8"/></svg>
+        </div>
         <h3>Chart Recorders</h3>
         <p>Mechanical and electronic circular chart recorders for pressure, temperature, differential pressure and flow measurement. Barton-compatible systems with full parts inventory. 12" circular charts, single and dual pen configurations for wellhead monitoring, production testing, and AER compliance.</p>
         <span class="spec-tag">Rental & Sales</span>
       </div>
-      <div class="equip-card">
-        <div class="equip-icon" style="background:rgba(21,101,192,0.1); color:var(--pipe-blue)">⚖️</div>
+      <div class="equip-card" id="equip-dead-weights">
+        <div class="equip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M5 6h14"/><path d="M3 11h6l-3 5H3z"/><path d="M15 11h6l-3 5h-6z"/><path d="M8 21h8"/></svg>
+        </div>
         <h3>Digital Dead Weights</h3>
         <p>High-accuracy digital dead weight testers for primary standard pressure calibration. Hydraulic and pneumatic configurations with electronic readout. NIST traceable for certifying transmitters, gauges, and switches up to 10,000 PSI.</p>
         <span class="spec-tag">Calibration Standard</span>
       </div>
-      <div class="equip-card">
-        <div class="equip-icon" style="background:rgba(0,131,143,0.1); color:var(--gauge-teal)">🔧</div>
+      <div class="equip-card" id="equip-gauges">
+        <div class="equip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17a9 9 0 0 1 18 0"/><path d="M3 17h18"/><path d="M12 17L7 9"/><circle cx="12" cy="17" r="1.5" fill="currentColor"/></svg>
+        </div>
         <h3>Precision Gauges</h3>
         <p>Pressure test gauges, digital indicators, and wellhead monitoring gauges. Ranges from vacuum to 10,000 PSI with accuracy classes for production operations, hydrostatic testing, and instrument calibration.</p>
         <span class="spec-tag">All Ranges</span>
       </div>
-      <div class="equip-card">
-        <div class="equip-icon" style="background:rgba(230,81,0,0.1); color:var(--bull-orange)">🔩</div>
+      <div class="equip-card" id="equip-baker-pumps">
+        <div class="equip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="14" rx="1"/><path d="M9 7h6M9 11h6"/><path d="M10 17v4M14 17v4"/><path d="M5 21h14"/></svg>
+        </div>
         <h3>Baker Pumps</h3>
         <p>CNC-machined Baker hand injection pumps for chemical injection, valve de-icing, and pressure testing. 10L and 20L capacities rated to 1,000, 3,000 and 10,000 PSI. Complete repair kits for all major makes and models.</p>
         <span class="spec-tag">1K–10K PSI</span>
       </div>
-      <div class="equip-card">
-        <div class="equip-icon" style="background:rgba(46,125,50,0.1); color:var(--safety-green)">📡</div>
+      <div class="equip-card" id="equip-hawk">
+        <div class="equip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M8.5 16.43a6 6 0 0 1 7 0"/><path d="M2 8.82a15 15 0 0 1 20 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+        </div>
         <h3>Hawk Digital Recorders</h3>
         <p>Calscan Hawk 9000 surface data loggers with integrated pressure, temperature, and flow sensors. Battery-powered for Div 1 Class 1 hazardous locations. Rated -40°C to 80°C with quartz sensors to 10,000 PSI and internet streaming.</p>
         <span class="spec-tag">Calscan Hawk 9000</span>
       </div>
-      <div class="equip-card">
-        <div class="equip-icon" style="background:rgba(249,168,37,0.1); color:var(--caution-yellow)">🛠️</div>
+      <div class="equip-card" id="equip-parts">
+        <div class="equip-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        </div>
         <h3>Parts & Accessories</h3>
         <p>Chart paper, pens, pen arms, chart drives, clock mechanisms, pressure elements, diaphragms, and replacement components. Fast turnaround on Barton recorder rebuilds. In-stock inventory for minimal downtime.</p>
         <span class="spec-tag">In Stock</span>
@@ -1037,10 +1091,30 @@
         <p>Whether you need a chart recorder for a 48-hour well test, a dead weight tester to verify your shop gauges, or a Hawk digital system for permanent installation, we've got the inventory and the expertise to get you what you need, when you need it.</p>
       </div>
       <div class="credentials-list">
-        <div class="credential"><div class="credential-icon">🎯</div><div><h4>NIST Traceable Standards</h4><p>All calibrations referenced to National Institute of Standards & Technology</p></div></div>
-        <div class="credential"><div class="credential-icon">🌡️</div><div><h4>-40°C Rated Equipment</h4><p>Everything we supply is built and tested for northwest Alberta winters</p></div></div>
-        <div class="credential"><div class="credential-icon">🔄</div><div><h4>Fast Turnaround</h4><p>Same-day rental dispatch and rapid calibration service</p></div></div>
-        <div class="credential"><div class="credential-icon">📋</div><div><h4>AER Compliant Reporting</h4><p>Documentation and data formats that meet Alberta Energy Regulator requirements</p></div></div>
+        <div class="credential">
+          <div class="credential-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+          </div>
+          <div><h4>NIST Traceable Standards</h4><p>All calibrations referenced to National Institute of Standards &amp; Technology</p></div>
+        </div>
+        <div class="credential">
+          <div class="credential-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M12 22v-2"/><path d="M5 5l3 3"/><path d="M16 16l3 3"/><path d="M2 12h6"/><path d="M16 8l3-3"/><path d="M5 19l3-3"/><circle cx="12" cy="14" r="2"/></svg>
+          </div>
+          <div><h4>-40°C Rated Equipment</h4><p>Everything we supply is built and tested for northwest Alberta winters</p></div>
+        </div>
+        <div class="credential">
+          <div class="credential-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+          </div>
+          <div><h4>Fast Turnaround</h4><p>Same-day rental dispatch and rapid calibration service</p></div>
+        </div>
+        <div class="credential">
+          <div class="credential-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 14 11 16 15 12"/></svg>
+          </div>
+          <div><h4>AER Compliant Reporting</h4><p>Documentation and data formats that meet Alberta Energy Regulator requirements</p></div>
+        </div>
       </div>
     </div>
   </div>
@@ -1175,9 +1249,16 @@
 </section>
 
 <!-- ═══ MAP ═══ -->
-<div class="map-section">
+<section class="map-section" id="location">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Find Us</div>
+      <h2>Our Location</h2>
+      <p>11450 89 Avenue, Grande Prairie, AB T8V 5V8 — drop in during business hours or call ahead for after-hours pickups.</p>
+    </div>
+  </div>
   <div class="map-full" id="contact-map"></div>
-</div>
+</section>
 
 <!-- ═══ FOOTER ═══ -->
 <footer>
@@ -1185,25 +1266,39 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <div class="name">Bull Oilfield Instrumentation</div>
-        <p>Precision oilfield instrumentation sales, rental, calibration and repair. Serving Grande Prairie and Northern Alberta's energy sector.</p>
+        <p>Precision oilfield instrumentation sales, rental, calibration and repair. Serving Grande Prairie and northwest Alberta's energy sector.</p>
+        <div class="footer-social">
+          <!-- TODO: replace href="#" with real LinkedIn URL once Bull confirms social presence -->
+          <a href="#" aria-label="LinkedIn (coming soon)" title="LinkedIn — coming soon">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14zM8.34 18V10H5.67v8h2.67zM7 8.86A1.55 1.55 0 1 0 7 5.76a1.55 1.55 0 0 0 0 3.1zM18.34 18v-4.38c0-2.47-1.32-3.62-3.08-3.62a2.66 2.66 0 0 0-2.41 1.32V10h-2.67v8h2.67v-4.46c0-1.18.22-2.32 1.68-2.32s1.46 1.35 1.46 2.4V18h2.35z"/></svg>
+          </a>
+          <a href="https://www.google.com/maps/search/?api=1&query=11450+89+Avenue+Grande+Prairie+AB" aria-label="View on Google Maps" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </a>
+        </div>
       </div>
       <div class="footer-col">
         <h4>Equipment</h4>
-        <a href="#equipment">Chart Recorders</a><a href="#equipment">Digital Dead Weights</a>
-        <a href="#equipment">Precision Gauges</a><a href="#equipment">Baker Pumps</a>
-        <a href="#equipment">Hawk Recorders</a><a href="#equipment">Parts & Accessories</a>
+        <a href="#equip-chart-recorders">Chart Recorders</a>
+        <a href="#equip-dead-weights">Digital Dead Weights</a>
+        <a href="#equip-gauges">Precision Gauges</a>
+        <a href="#equip-baker-pumps">Baker Pumps</a>
+        <a href="#equip-hawk">Hawk Recorders</a>
+        <a href="#equip-parts">Parts & Accessories</a>
       </div>
       <div class="footer-col">
         <h4>Services</h4>
-        <a href="#services">Equipment Rental</a><a href="#services">Calibration</a>
-        <a href="#services">Repair & Rebuild</a><a href="#services">Hydro Testing</a>
+        <a href="#services">Equipment Rental</a>
+        <a href="#services">Calibration</a>
+        <a href="#services">Repair & Rebuild</a>
+        <a href="#services">Hydro Testing</a>
         <a href="#services">Field Support</a>
       </div>
       <div class="footer-col">
         <h4>Contact</h4>
         <a href="tel:7805325959">(780) 532-5959</a>
-        <a href="#">11450 89 Ave, Grande Prairie</a>
-        <a href="#">AB T8V 5V8</a>
+        <a href="mailto:bulloil@telus.net">bulloil@telus.net</a>
+        <a href="#location">11450 89 Ave, Grande Prairie, AB T8V 5V8</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -1213,10 +1308,21 @@
   </div>
 </footer>
 
+<!-- ═══ BACK TO TOP ═══ -->
+<button class="back-to-top" id="backToTop" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
 <script>
-  // ─── Header scroll ───
+  // ─── Header scroll + back-to-top visibility ───
+  const headerEl = document.getElementById('header');
+  const backToTop = document.getElementById('backToTop');
   window.addEventListener('scroll', () => {
-    document.getElementById('header').classList.toggle('scrolled', window.scrollY > 50);
+    headerEl.classList.toggle('scrolled', window.scrollY > 50);
+    backToTop.classList.toggle('visible', window.scrollY > 600);
+  });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
   // ─── Mobile menu toggle ───
