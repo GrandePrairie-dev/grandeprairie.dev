@@ -1067,5 +1067,5 @@ git push origin main
 In Cloudflare dashboard:
 1. Go to Zero Trust → Access → Applications
 2. Create application: Self-hosted, path `/admin*`
-3. Add policy: Allow email = `cj.elliott@outlook.com`
+3. Add policy: Allow email = configured admin allowlist address
 4. Identity provider: One-time PIN

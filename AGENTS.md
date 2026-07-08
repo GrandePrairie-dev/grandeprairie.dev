@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Code Intelligence (CodeGraph)
 
@@ -140,7 +140,9 @@ All in `functions/api/`. TanStack Query uses the URL path as `queryKey[0]`.
 
 ## Design System
 
-Branding research in `reference/compass_artifact_*.md`. Design tokens are implemented in `src/styles/globals.css` and `tailwind.config.ts`.
+Branding research lives in `reference/compass_artifact_*.md`. The reviewed design-system bundle is documented in `docs/design-system.md`; the source zip was `C:\Users\cjell\Downloads\GrandePrairie.dev Design System.zip`. Design tokens are implemented in `src/styles/globals.css` and `tailwind.config.ts`.
+
+Do not dump the design-system export into app code. Incorporate it through the existing React/Tailwind/shadcn surfaces: global CSS variables, Tailwind theme aliases, shared `src/components/ui/*` primitives, page components, and public assets.
 
 **Color Palette** (Tailwind classes: `boreal-spruce`, `prairie-amber`, `aurora-teal`, `river-slate`, `midnight-prairie`, `fresh-snow`):
 - **Boreal Spruce** `#2D4A3E` — primary brand (dark: `#4A7C6A`)
@@ -150,9 +152,17 @@ Branding research in `reference/compass_artifact_*.md`. Design tokens are implem
 - **Midnight Prairie** `#161B22` — dark mode background
 - **Fresh Snow** `#F7F5F2` — light mode background
 
-**Typography**: Geist Sans (display/headings), Inter (body), JetBrains Mono (code). Tailwind classes: `font-display`, `font-sans`, `font-mono`.
+**Typography**: Geist (display/headings), Inter (body), JetBrains Mono (code, coordinates, labels). Tailwind classes: `font-display`, `font-sans`, `font-mono`.
 
-**Principles**: Dark mode first. No blue (every GP org uses blue). Colors from the land. Restraint over variety. Industrial warmth meets developer precision.
+**Layout / density**: Dark mode first. Fixed 210px sidebar on desktop, compact 14px body text, 56rem content column, 16px card padding, 6px radius anchor, minimum 44px interactive targets.
+
+**Depth / polish**: Use the tokenized polish layer in `src/styles/globals.css`: `shadow-gp-*`, `gp-glow`, `gp-glass`, and `gp-toplit`. Use glow/glass sparingly for hero, auth, dialogs, or floating controls. The ambient network overlay is `public/scripts/neural-net.js` and can be rendered with `<neural-net>` behind hero/auth/header content.
+
+**Agency route**: `/agency` is a separate Build / Run / Show marketing language. Keep it scoped under `.gp-agency` with near-black canvas, bronze-gold accent, Instrument Serif display, DM Sans body, IBM Plex Mono labels, sharper corners, film grain, and measured scroll reveals. Do not let agency tokens leak into the community platform shell.
+
+**Assets**: `public/images/` contains the reviewed brand photography and `logo-swan.png`. The design bundle's swan logo currently has a white background; do not place it on dark surfaces until a transparent/knockout export exists. Continue using the diamond mark for favicon/sidebar contexts.
+
+**Principles**: Dark mode first. No blue as a dominant brand color. Colors from the land. Restraint over variety. Industrial warmth meets developer precision. The UI is a working community platform, not a marketing landing page unless editing `/agency`.
 
 ## Cloudflare Resources
 

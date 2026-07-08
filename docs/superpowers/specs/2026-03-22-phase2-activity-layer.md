@@ -69,7 +69,7 @@ These decisions apply across Sub-projects A–C so implementation stays consiste
 
 ### Cloudflare Access vs GitHub identity
 
-- **Access** (e.g. OTP to `cj.elliott@outlook.com`) is **independent** of GitHub login email. Expect **two layers**: Access gate on `/admin*`, then app-level `is_admin` from D1. They do not need to match.
+- **Access** (e.g. OTP to an admin allowlist email) is **independent** of GitHub login email. Expect **two layers**: Access gate on `/admin*`, then app-level `is_admin` from D1. They do not need to match.
 
 ### Optional API naming (cosmetic)
 
@@ -253,7 +253,7 @@ ALTER TABLE projects ADD COLUMN source_idea_id INTEGER REFERENCES ideas(id);
 
 Configure via Cloudflare dashboard or API:
 - Access policy on path `/admin*`
-- Allow: email = `cj.elliott@outlook.com`
+- Allow: email = configured admin allowlist address
 - Identity provider: One-time PIN (email OTP)
 - This is a second layer — app-level admin checks remain; **GitHub email and Access email need not match**
 

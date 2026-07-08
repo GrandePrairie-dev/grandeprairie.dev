@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Stats } from "@/lib/types";
 
@@ -7,24 +8,31 @@ export function AuroraHero() {
   const { data: stats } = useQuery<Stats>({ queryKey: ["/api/stats"] });
 
   return (
-    <section className="relative overflow-hidden py-16 md:py-24">
+    <section className="relative overflow-hidden py-16 md:py-24 gp-glow">
       {/* Hero background image — dark: aurora, light: golden hour */}
       <img
         src="/images/hero-aurora.webp"
         alt=""
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none hidden dark:block dark:opacity-35"
+        className="absolute inset-0 z-0 w-full h-full object-cover pointer-events-none hidden dark:block dark:opacity-35"
       />
       <img
         src="/images/hero-golden-hour.webp"
         alt=""
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none block dark:hidden opacity-40"
+        className="absolute inset-0 z-0 w-full h-full object-cover pointer-events-none block dark:hidden opacity-40"
       />
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400/5 via-background/40 to-background dark:from-transparent dark:via-background/60 dark:to-background pointer-events-none" />
-      <div className="absolute top-[-60px] left-1/2 -translate-x-1/2 w-[500px] h-[180px] bg-[radial-gradient(ellipse,rgba(61,191,168,0.12)_0%,rgba(45,74,62,0.06)_40%,transparent_70%)] pointer-events-none" />
-      <div className="absolute top-[-30px] right-[15%] w-[300px] h-[120px] bg-[radial-gradient(ellipse,rgba(212,162,78,0.08)_0%,transparent_60%)] pointer-events-none" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-background/40 to-background dark:via-background/60 pointer-events-none" />
+      <neural-net
+        color="#3DBFA8"
+        density="0.00008"
+        opacity="0.32"
+        speed="0.12"
+        link="140"
+        aria-hidden="true"
+        className="absolute inset-0 z-[2]"
+      />
 
-      <div className="relative text-center px-4">
+      <div className="relative z-10 text-center px-4">
         {/* Badges */}
         <div className="inline-flex gap-2 mb-6">
           <Link href="/map">
@@ -51,13 +59,13 @@ export function AuroraHero() {
         {/* CTAs */}
         <div className="inline-flex gap-3 mb-10">
           <Link href="/people">
-            <Button className="bg-boreal-spruce text-aurora-teal border border-boreal-spruce-light font-bold">
+            <Button variant="spruce">
               Join the Community
             </Button>
           </Link>
           <Link href="/ideas">
             <Button variant="outline" className="text-muted-foreground">
-              Explore Ideas →
+              Explore Ideas <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
         </div>
