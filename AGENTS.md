@@ -128,6 +128,7 @@ All in `functions/api/`. TanStack Query uses the URL path as `queryKey[0]`.
 - `GET /api/activity`
 - `GET|POST /api/comments`
 - `GET /api/student-resources`
+- `POST /api/invites`
 - `POST /api/pipeline/run`
 
 **Admin**
@@ -176,6 +177,7 @@ Public deploy configuration lives in `wrangler.toml`; treat D1/KV IDs and OAuth 
 | KV Namespace binding | `wrangler.toml` / Cloudflare dashboard |
 | Account ID | `CLOUDFLARE_ACCOUNT_ID` env or GitHub Actions secret |
 | API token | `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_API_KEY` secret only |
+| Resend API key | `RESEND_API_KEY` secret only |
 | Domain | `grandeprairie.dev` |
 
 ## Key Differentiators
