@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Lightbulb } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -62,6 +62,9 @@ export default function Ideas() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Submit an Idea</DialogTitle>
+                <DialogDescription>
+                  Capture a local problem, startup concept, or field workflow builders can help move forward.
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
                 <Input placeholder="Idea title" value={title} onChange={(e) => setTitle(e.target.value)} required />

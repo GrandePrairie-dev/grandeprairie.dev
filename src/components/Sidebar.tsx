@@ -22,6 +22,7 @@ import {
   Mail,
   Send,
   CheckCircle,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
@@ -90,6 +92,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "Connect",
     items: [
       { label: "Calendar", href: "/calendar", icon: Calendar },
+      { label: "Board", href: "/board", icon: MessageSquare },
       { label: "Business", href: "/business", icon: Building2 },
       { label: "Organizations", href: "/orgs", icon: Building2 },
       { label: "Showcase", href: "/showcase", icon: Sparkles },
@@ -372,6 +375,9 @@ export function Sidebar({
       <Sheet open={open} onOpenChange={onOpenChange}>
         <SheetContent side="left" className="p-0 w-[210px]">
           <SheetTitle className="sr-only">Navigation</SheetTitle>
+          <SheetDescription className="sr-only">
+            Main navigation and sign-in controls for GrandePrairie.dev.
+          </SheetDescription>
           <SidebarContent theme={theme} toggleTheme={toggleTheme} />
         </SheetContent>
       </Sheet>

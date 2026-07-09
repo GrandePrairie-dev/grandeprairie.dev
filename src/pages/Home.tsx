@@ -3,27 +3,114 @@ import { Link } from "wouter";
 import { AuroraHero } from "@/components/AuroraHero";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MapPin, Calendar, Users, Lightbulb, ExternalLink, GraduationCap, Rocket, UserPlus, MessageSquare } from "lucide-react";
 import type { Idea, Profile, Event } from "@/lib/types";
 import { parseJsonArray } from "@/lib/types";
 
+const LOCAL_ANSWERS = [
+  {
+    question: "What is GrandePrairie.dev?",
+    answer:
+      "GrandePrairie.dev is a digital commons for builders in Grande Prairie and the Peace Region. It connects developers, trades workers, founders, students, mentors, organizations, and small businesses.",
+  },
+  {
+    question: "Who is GrandePrairie.dev for?",
+    answer:
+      "Anyone building practical technology locally: software developers, electricians, welders, operators, NWP students, startup founders, mentors, and business owners.",
+  },
+  {
+    question: "What industries does it serve?",
+    answer:
+      "The platform focuses on regional industries including oil and gas field operations, pipeline services, agriculture, forestry, logistics, construction, and local services.",
+  },
+  {
+    question: "Is GrandePrairie.dev connected to Northwestern Polytechnic?",
+    answer:
+      "Students can find beginner-friendly projects, mentors, community profiles, events, and local paths connected to Northwestern Polytechnic and the wider Peace Region ecosystem.",
+  },
+  {
+    question: "How can a small business get tech help in Grande Prairie?",
+    answer:
+      "A business can post a request for help with automation, websites, data, or AI so local builders can review the problem and express interest.",
+  },
+];
+
 export default function Home() {
   const { data: ideas, isLoading: ideasLoading } = useQuery<Idea[]>({ queryKey: ["/api/ideas/featured"] });
   const { data: allProfiles, isLoading: profilesLoading } = useQuery<Profile[]>({ queryKey: ["/api/profiles"] });
-  const displayProfiles = (allProfiles ?? [])
+  const sortedProfiles = [...(allProfiles ?? [])]
     .sort((a, b) => b.is_featured - a.is_featured)
-    .slice(0, 4);
+  const displayProfiles = sortedProfiles.slice(0, 4);
+  const featuredIdeas = (ideas ?? []).slice(0, 3);
   const { data: events } = useQuery<Event[]>({ queryKey: ["/api/events/upcoming"] });
   const { data: activity } = useQuery<any[]>({ queryKey: ["/api/activity?limit=5"] });
 
+  const leadIdea = featuredIdeas[0];
+  const leadProfile = sortedProfiles[0];
   const nextEvent = events?.[0];
+  const pulseItems = [
+    {
+      href: leadIdea ? `/ideas/${leadIdea.id}` : "/ideas",
+      icon: Lightbulb,
+      label: "Idea board",
+      title: leadIdea?.title ?? "First field problem wanted",
+      detail: leadIdea ? `${leadIdea.votes} votes` : "Add a local problem builders can solve",
+      color: "text-prairie-amber",
+    },
+    {
+      href: leadProfile ? `/people/${leadProfile.id}` : "/people",
+      icon: Users,
+      label: "Builder network",
+      title: leadProfile?.name ?? "First builders welcome",
+      detail: leadProfile ? leadProfile.title || leadProfile.role : "Create a profile and get discoverable",
+      color: "text-aurora-teal",
+    },
+    {
+      href: "/calendar",
+      icon: Calendar,
+      label: "Next meetup",
+      title: nextEvent?.title ?? "Events forming",
+      detail: nextEvent
+        ? new Date(nextEvent.start_time).toLocaleDateString("en-CA", { month: "short", day: "numeric" })
+        : "Put a workshop or demo night on the calendar",
+      color: "text-rig-amber",
+    },
+  ];
 
   return (
     <div className="max-w-4xl mx-auto">
       <AuroraHero />
 
       <div className="px-4 md:px-6 pb-12 space-y-10">
+        <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-display font-bold">Community Pulse</h2>
+            <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
+              Live from GP
+            </span>
+          </div>
+          <div className="grid gap-3 md:grid-cols-3">
+            {pulseItems.map(({ href, icon: Icon, label, title, detail, color }) => (
+              <Link key={label} href={href}>
+                <Card className="h-full cursor-pointer border-border/80 bg-card/70 transition-colors hover:border-boreal-spruce-light/50">
+                  <CardContent className="p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <Icon className={`h-5 w-5 ${color}`} />
+                      <span className="text-[9px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
+                        {label}
+                      </span>
+                    </div>
+                    <h3 className="line-clamp-1 text-sm font-semibold">{title}</h3>
+                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{detail}</p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         {/* Featured Ideas */}
         <section className="space-y-4">
           <div className="flex items-center justify-between">
@@ -34,9 +121,30 @@ export default function Home() {
           </div>
           {ideasLoading ? (
             <div className="space-y-3">{[1,2].map(i => <Skeleton key={i} className="h-24 w-full" />)}</div>
+          ) : featuredIdeas.length === 0 ? (
+            <Card className="border-dashed border-aurora-teal/40 bg-aurora-teal/5">
+              <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-aurora-teal/10 text-aurora-teal">
+                    <Lightbulb className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold">No featured ideas yet</h3>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      Start with a local problem, a half-built tool, or a field workflow that needs better software.
+                    </p>
+                  </div>
+                </div>
+                <Link href="/ideas">
+                  <Button size="sm" variant="outline" className="w-full shrink-0 text-muted-foreground sm:w-auto">
+                    Open Ideas
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           ) : (
             <div className="space-y-3">
-              {(ideas ?? []).slice(0, 3).map((idea) => (
+              {featuredIdeas.map((idea) => (
                 <Link key={idea.id} href={`/ideas/${idea.id}`}>
                   <Card className="cursor-pointer hover:border-boreal-spruce-light/50 transition-colors border-l-2 border-l-aurora-teal">
                     <CardContent className="p-4">
@@ -70,6 +178,27 @@ export default function Home() {
           </div>
           {profilesLoading ? (
             <div className="grid gap-3 sm:grid-cols-2">{[1,2].map(i => <Skeleton key={i} className="h-20 w-full" />)}</div>
+          ) : displayProfiles.length === 0 ? (
+            <Card className="border-dashed border-prairie-amber/40 bg-prairie-amber/5">
+              <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-start gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-prairie-amber/10 text-prairie-amber">
+                    <Users className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold">Be one of the first builders listed</h3>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      Add a profile so founders, students, trades teams, and local organizations can find you.
+                    </p>
+                  </div>
+                </div>
+                <Link href="/people">
+                  <Button size="sm" variant="outline" className="w-full shrink-0 text-muted-foreground sm:w-auto">
+                    Open People
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
               {displayProfiles.map((profile) => (
@@ -160,6 +289,25 @@ export default function Home() {
           </section>
         )}
 
+        <section className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-display font-bold">Peace Region Answers</h2>
+            <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-muted-foreground">
+              Local context
+            </span>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {LOCAL_ANSWERS.map((item) => (
+              <Card key={item.question} className="border-border/80 bg-card/70">
+                <CardContent className="p-4">
+                  <h3 className="text-sm font-semibold">{item.question}</h3>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">{item.answer}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
         {/* Local Resources */}
         <section className="space-y-4">
           <h2 className="text-lg font-display font-bold">Local Resources</h2>
@@ -199,12 +347,13 @@ export default function Home() {
 
         {/* Quick Links */}
         <section>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             {[
               { href: "/people", icon: Users, label: "People", color: "text-aurora-teal" },
               { href: "/ideas", icon: Lightbulb, label: "Ideas", color: "text-prairie-amber" },
+              { href: "/board", icon: MessageSquare, label: "Board", color: "text-rig-amber" },
               { href: "/map", icon: MapPin, label: "Map", color: "text-boreal-spruce-light" },
-              { href: "/calendar", icon: Calendar, label: "Calendar", color: "text-rig-amber" },
+              { href: "/calendar", icon: Calendar, label: "Calendar", color: "text-river-slate" },
             ].map(({ href, icon: Icon, label, color }) => (
               <Link key={href} href={href}>
                 <Card className="cursor-pointer hover:border-boreal-spruce-light/50 transition-colors">

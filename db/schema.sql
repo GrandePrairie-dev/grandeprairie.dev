@@ -127,6 +127,19 @@ CREATE TABLE IF NOT EXISTS comments (
   created_at TEXT DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS board_posts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT,
+  body TEXT NOT NULL,
+  category TEXT DEFAULT 'general',
+  author_id INTEGER REFERENCES profiles(id) ON DELETE SET NULL,
+  parent_id INTEGER REFERENCES board_posts(id) ON DELETE CASCADE,
+  is_pinned INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'open',
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
 -- ============================================================
 -- Phase 2 — Votes & Activity (002-add-votes-activity)
 -- ============================================================
@@ -253,6 +266,11 @@ CREATE INDEX IF NOT EXISTS idx_student_resources_type ON student_resources(resou
 -- comments
 CREATE INDEX IF NOT EXISTS idx_comments_idea ON comments(idea_id);
 CREATE INDEX IF NOT EXISTS idx_comments_project ON comments(project_id);
+
+-- board_posts
+CREATE INDEX IF NOT EXISTS idx_board_posts_parent ON board_posts(parent_id);
+CREATE INDEX IF NOT EXISTS idx_board_posts_category ON board_posts(category);
+CREATE INDEX IF NOT EXISTS idx_board_posts_created ON board_posts(created_at);
 
 -- activity
 CREATE INDEX IF NOT EXISTS idx_activity_created ON activity(created_at);

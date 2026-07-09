@@ -1,11 +1,14 @@
 {
   "name": "GrandePrairie.dev",
   "short_name": "GP.dev",
-  "description": "Build together in the Peace Region",
+  "description": "Grande Prairie's community platform for developers, trades workers, founders, students, mentors, organizations, and small businesses building technology in the Peace Region.",
   "start_url": "/",
+  "scope": "/",
+  "lang": "en-CA",
   "display": "standalone",
   "background_color": "#161B22",
   "theme_color": "#2D4A3E",
+  "categories": ["community", "business", "education", "productivity"],
   "icons": [
     {
       "src": "/favicon.svg",

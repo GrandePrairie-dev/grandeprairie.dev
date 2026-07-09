@@ -11,6 +11,7 @@ import {
   FolderOpen,
   ChevronDown,
   ChevronUp,
+  Trash2,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
@@ -32,7 +33,7 @@ const STATUS_OPTIONS = ["reviewed", "matched", "in_progress", "completed"] as co
 export default function Admin() {
   const [tab, setTab] = useState("ideas");
   const queryClient = useQueryClient();
-  const { isAdmin } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { toast } = useToast();
 
   const { data: stats, isLoading: statsLoading } = useQuery<Stats>({
@@ -113,6 +114,23 @@ export default function Admin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/profiles"] });
       toast({ title: "Profile admin status updated" });
+    },
+  });
+
+  const deleteProfile = useMutation({
+    mutationFn: (id: number) =>
+      apiRequest("DELETE", `/api/admin/profiles/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/profiles"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/stats"] });
+      toast({ title: "Profile deleted" });
+    },
+    onError: (error) => {
+      toast({
+        title: "Could not delete profile",
+        description: error instanceof Error ? error.message : "Delete failed",
+        variant: "destructive",
+      });
     },
   });
 
@@ -293,6 +311,21 @@ export default function Admin() {
                       onClick={() => toggleProfileAdmin.mutate({ id: profile.id, value: !profile.is_admin })}
                     >
                       {profile.is_admin ? "Remove Admin" : "Make Admin"}
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="text-xs"
+                      disabled={deleteProfile.isPending || profile.id === user?.id}
+                      title={profile.id === user?.id ? "You cannot delete your own admin account" : "Delete this user profile"}
+                      onClick={() => {
+                        if (window.confirm(`Delete user "${profile.name}"? Public content will remain but ownership links, votes, interests, memberships, and mentor requests tied to this profile will be removed.`)) {
+                          deleteProfile.mutate(profile.id);
+                        }
+                      }}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      {profile.id === user?.id ? "Current User" : "Delete User"}
                     </Button>
                   </div>
                 </CardContent>
