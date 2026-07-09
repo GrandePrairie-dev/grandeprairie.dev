@@ -113,6 +113,23 @@ export interface Comment {
   created_at: string;
 }
 
+export interface BoardPost {
+  id: number;
+  title: string | null;
+  body: string;
+  category: string;
+  author_id: number | null;
+  author_name?: string | null;
+  author_role?: string | null;
+  author_avatar_url?: string | null;
+  parent_id: number | null;
+  reply_count: number;
+  is_pinned: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Stats {
   profiles: number;
   ideas: number;
@@ -169,6 +186,18 @@ export const INTEL_CATEGORY_LABELS: Record<string, string> = {
   industry: "Industry",
   events: "Events",
   opportunity: "Opportunity",
+};
+
+export const BOARD_CATEGORIES = ["general", "help", "jobs", "events", "showcase", "field_notes"] as const;
+
+export const BOARD_CATEGORY_LABELS: Record<string, string> = {
+  all: "All",
+  general: "General",
+  help: "Help",
+  jobs: "Jobs",
+  events: "Events",
+  showcase: "Showcase",
+  field_notes: "Field Notes",
 };
 
 export const ROLE_COLORS: Record<string, string> = {

@@ -52,7 +52,7 @@
 
     disconnectedCallback() {
       cancelAnimationFrame(this._raf);
-      this._ro && this._ro.disconnect();
+      if (this._ro) this._ro.disconnect();
     }
 
     _rgb() {

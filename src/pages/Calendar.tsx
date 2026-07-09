@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -67,6 +67,9 @@ export default function Calendar() {
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Add Event</DialogTitle>
+                <DialogDescription>
+                  Share a meetup, workshop, demo night, or community event for Grande Prairie builders.
+                </DialogDescription>
               </DialogHeader>
               <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(); }} className="space-y-3">
                 <Input placeholder="Event title" value={title} onChange={(e) => setTitle(e.target.value)} required />
