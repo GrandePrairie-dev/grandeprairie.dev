@@ -129,7 +129,7 @@ const Agency = () => {
   const sr = (id: string) => ({ ref: (el: HTMLElement | null) => { refs.current[id] = el; }, "data-s": id, className: `sr ${v(id) ? "sv" : ""}` });
 
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif", background: "#08090B", color: "#E8E6E1", minHeight: "100vh" }}>
+    <div className="gp-agency" style={{ minHeight: "100vh" }}>
       <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
       <style>{`
         *{margin:0;padding:0;box-sizing:border-box}

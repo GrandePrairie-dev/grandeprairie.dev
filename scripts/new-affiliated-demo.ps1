@@ -30,6 +30,8 @@
   - $env:CLOUDFLARE_API_TOKEN set with scopes:
       Account -> Cloudflare Pages -> Edit
       Zone -> DNS -> Edit (for grandeprairie.dev zone only)
+  - $env:CLOUDFLARE_ACCOUNT_ID set to the Cloudflare account ID
+  - $env:CLOUDFLARE_ZONE_ID set to the grandeprairie.dev zone ID
   - wrangler available via npx (npm dependency)
 #>
 [CmdletBinding()]
@@ -42,10 +44,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-# --- Constants (grandeprairie.dev specific, from CLAUDE.md) ---
-$AccountId = '13c2f9e7589ab58d2f4f2981b443ba49'
-$ZoneId    = '235dbf5343d71e90b981141acd199abf'
+# --- Constants (grandeprairie.dev specific) ---
+$AccountId = $env:CLOUDFLARE_ACCOUNT_ID
+$ZoneId    = $env:CLOUDFLARE_ZONE_ID
 $BaseDomain = 'grandeprairie.dev'
+
+if (-not $AccountId) {
+    throw "CLOUDFLARE_ACCOUNT_ID env var not set."
+}
+if (-not $ZoneId) {
+    throw "CLOUDFLARE_ZONE_ID env var not set."
+}
 
 # --- Validate inputs ---
 if ($Slug -notmatch '^[a-z0-9-]+$') {

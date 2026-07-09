@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .wrangler/
+.codegraph/
 .dev.vars
 .env
 .env.*
@@ -24,6 +25,11 @@ vite.config.d.ts
 
 # Playwright MCP browser snapshots / artifacts
 .playwright-mcp/
+.codex-pages-dev.*.log
+
+# Local/generated review artifacts
+/bull-*.png
+/lib/
 
 # Prospect / lead intelligence (commercial data, not for public repo)
 docs/leads/data/
