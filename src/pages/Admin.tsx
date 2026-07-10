@@ -20,6 +20,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import type { Stats, Idea, Profile, Event, IntelPost, BusinessRequest, ContentReport } from "@/lib/types";
 import { parseJsonArray } from "@/lib/types";
+import { BuilderRecommendations } from "@/components/BuilderRecommendations";
 
 const TABS = [
   { value: "ideas", label: "Ideas" },
@@ -75,8 +76,18 @@ export default function Admin() {
   const [expandedRequestId, setExpandedRequestId] = useState<number | null>(null);
 
   const statusMutation = useMutation({
-    mutationFn: ({ id, status, matched_profile_id }: { id: number; status: string; matched_profile_id?: number }) =>
-      apiRequest("PATCH", `/api/business-requests/${id}/status`, { status, matched_profile_id }),
+    mutationFn: ({ id, status, matched_profile_id, recommendation_run_id, rationale }: {
+      id: number;
+      status: string;
+      matched_profile_id?: number;
+      recommendation_run_id?: string;
+      rationale?: string;
+    }) => apiRequest("PATCH", `/api/business-requests/${id}/status`, {
+      status,
+      matched_profile_id,
+      recommendation_run_id,
+      rationale,
+    }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/business-requests"] });
       toast({ title: "Status updated" });
@@ -484,13 +495,28 @@ export default function Admin() {
                       onClick={() => setExpandedRequestId(expandedRequestId === req.id ? null : req.id)}
                     >
                       {expandedRequestId === req.id ? <ChevronUp className="w-3 h-3 mr-1" /> : <ChevronDown className="w-3 h-3 mr-1" />}
-                      View Interests
+                      Review Match
                     </Button>
                   </div>
 
                   {/* Expanded Interests Section */}
                   {expandedRequestId === req.id && (
                     <div className="border-t border-border pt-2 mt-2 space-y-2">
+                      <BuilderRecommendations
+                        requestId={req.id}
+                        matchedProfileId={req.matched_profile_id}
+                        isMatching={statusMutation.isPending}
+                        onMatch={(profileId, runId, rationale) => statusMutation.mutate({
+                          id: req.id,
+                          status: "matched",
+                          matched_profile_id: profileId,
+                          recommendation_run_id: runId,
+                          rationale,
+                        })}
+                      />
+                      <div className="border-t border-border pt-2">
+                        <h4 className="mb-2 text-xs font-semibold">Expressed interest</h4>
+                      </div>
                       {interestsLoading ? (
                         <Skeleton className="h-12 w-full" />
                       ) : (expandedInterests ?? []).length === 0 ? (

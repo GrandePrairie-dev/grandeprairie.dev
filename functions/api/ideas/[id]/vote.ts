@@ -1,4 +1,5 @@
 import type { Env } from "../../../lib/env";
+import { recordSignal } from "../../../lib/intelligence";
 
 export const onRequestPost: PagesFunction<Env> = async ({ params, env, data }) => {
   const user = (data as { user?: { profileId: number } }).user;
@@ -21,6 +22,16 @@ export const onRequestPost: PagesFunction<Env> = async ({ params, env, data }) =
     env.DB.prepare("UPDATE ideas SET votes = votes + 1 WHERE id = ?").bind(ideaId),
   ]);
 
-  const idea = await env.DB.prepare("SELECT * FROM ideas WHERE id = ?").bind(ideaId).first();
+  const idea = await env.DB.prepare("SELECT * FROM ideas WHERE id = ?").bind(ideaId).first<{ category: string | null }>();
+  await recordSignal(env, {
+    actorProfileId: user.profileId,
+    signalType: "idea_vote",
+    targetType: "idea",
+    targetId: ideaId,
+    topic: idea?.category ?? "ideas",
+    source: "ideas",
+    outcome: "voted",
+    dedupeKey: `idea-vote:${ideaId}:${user.profileId}`,
+  });
   return Response.json(idea);
 };

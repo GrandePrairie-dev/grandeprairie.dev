@@ -1,4 +1,5 @@
 import type { Env } from "../lib/env";
+import { recordSignal } from "../lib/intelligence";
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
@@ -56,5 +57,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
     .bind(content, user.profileId, idea_id ?? null, project_id ?? null)
     .run();
 
-  return Response.json({ id: result.meta.last_row_id }, { status: 201 });
+  const commentId = result.meta.last_row_id as number;
+  await recordSignal(env, {
+    actorProfileId: user.profileId,
+    signalType: "comment_created",
+    targetType: idea_id ? "idea" : "project",
+    targetId: String(idea_id ?? project_id),
+    topic: idea_id ? "ideas" : "projects",
+    source: "comments",
+    outcome: "published",
+    metadata: { comment_id: commentId },
+    dedupeKey: `comment:${commentId}:published`,
+  });
+
+  return Response.json({ id: commentId }, { status: 201 });
 };

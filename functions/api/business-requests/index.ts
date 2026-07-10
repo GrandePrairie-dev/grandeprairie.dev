@@ -1,5 +1,6 @@
 import type { Env } from "../../lib/env";
 import { notifySlack } from "../../lib/slack";
+import { recordSignal } from "../../lib/intelligence";
 
 export const onRequestGet: PagesFunction<Env> = async ({ env }) => {
   const { results } = await env.DB.prepare(
@@ -23,6 +24,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     .run();
 
   await notifySlack(env, `\u{1F3E2} New business request from ${business_name} (${category})`);
+
+  await recordSignal(env, {
+    signalType: "business_request_submitted",
+    targetType: "business_request",
+    targetId: result.meta.last_row_id as number,
+    topic: typeof category === "string" ? category : "other",
+    source: "opportunity",
+    outcome: "submitted",
+    privacyTier: "aggregate",
+    dedupeKey: `business-request:${String(result.meta.last_row_id)}:submitted`,
+  });
 
   return Response.json({ id: result.meta.last_row_id }, { status: 201 });
 };

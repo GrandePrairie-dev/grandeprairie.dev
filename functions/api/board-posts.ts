@@ -2,6 +2,7 @@ import type { Env } from "../lib/env";
 import { logActivity } from "../lib/activity";
 import { notifySlack } from "../lib/slack";
 import { recordCommunityAction } from "../lib/community";
+import { recordSignal } from "../lib/intelligence";
 
 const BOARD_CATEGORIES = new Set([
   "general",
@@ -133,6 +134,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
     "board_post",
     postId,
   );
+  await recordSignal(env, {
+    actorProfileId: user.profileId,
+    signalType: parentId ? "board_reply_created" : "board_post_created",
+    targetType: "board_post",
+    targetId: postId,
+    topic: category,
+    source: "board",
+    outcome: "published",
+    metadata: { parent_id: parentId },
+    dedupeKey: `board-post:${postId}:published`,
+  });
 
   if (!parentId) {
     await notifySlack(env, `\u{1F4AC} New board thread: "${title}"`);

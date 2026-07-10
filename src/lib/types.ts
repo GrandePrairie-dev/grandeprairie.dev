@@ -117,6 +117,35 @@ export interface BusinessRequest {
   updated_at: string;
 }
 
+export interface RecommendationFactor {
+  score: number;
+  max: number;
+  detail: string;
+  matches?: string[];
+}
+
+export interface BuilderRecommendation {
+  profile_id: number;
+  name: string;
+  username: string;
+  title: string | null;
+  role: string;
+  skills: string[];
+  score: number;
+  rank: number;
+  factors: Record<string, RecommendationFactor>;
+  explanation: string;
+}
+
+export interface BuilderRecommendationRun {
+  id: string;
+  algorithm_key: string;
+  algorithm_version: string;
+  created_at: string;
+  expires_at: string | null;
+  items: BuilderRecommendation[];
+}
+
 export interface StudentResource {
   id: number;
   title: string;

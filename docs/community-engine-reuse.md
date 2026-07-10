@@ -17,6 +17,9 @@ Reuse the event vocabulary, scoring rules, selection ideas, and workflow shapes.
 | `server/services/points.js` | Immutable points ledger concept | Rebuilt as `reputation_events` with a unique `dedupe_key` |
 | `data/alberta-badges.json` | Data-driven badge definitions | Retheme only community-relevant criteria; purchase/seller badges do not transfer |
 | `social-service/`, `elystrum-social/` | Promotional copy generation | Optional downstream publishing helper, not community product infrastructure |
+| `zci/api/.../recursive_learning.py` | Signal, feedback, and evaluation loop | Rebuilt as durable D1 signals and outcomes; process-local prompt mutation was not ported |
+| `server/services/experiments.js` | Stable assignment and metric tracking | Rebuilt as D1 experiments, assignments, and registered outcome events |
+| `server/api/ai-feedback.js` | Explicit recommendation feedback | Rebuilt as recommendation feedback tied to versioned runs and items |
 
 ## Implemented Foundation
 
@@ -33,6 +36,11 @@ Migration `008-community-delivery-hardening.sql` adds:
 - A unique subscriber/week delivery ledger with retry-safe claims and stale-claim recovery.
 - A unique event/member reminder ledger for 24-hour RSVP reminders.
 - Bounded batch continuation through `.github/workflows/community-scheduler.yml`.
+
+Migration `009-intelligence-foundation.sql` adds the signal, recommendation, matching-decision,
+relationship, trend, experiment, and learning-progress ledgers documented in
+`docs/intelligence-layer.md`. The initial builder matcher is an explainable rules baseline,
+not a self-modifying model.
 
 User-facing surfaces:
 
