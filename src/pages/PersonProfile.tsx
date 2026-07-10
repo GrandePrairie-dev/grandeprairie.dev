@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Activity, ArrowLeft, Award, Github, Linkedin, Globe, Pencil, ShieldCheck } from "lucide-react";
-import type { Profile, ReputationSummary } from "@/lib/types";
+import type { CommunityGroup, Profile, ReputationSummary } from "@/lib/types";
 import { parseJsonArray, parseJsonObject } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
@@ -47,6 +47,9 @@ export default function PersonProfile() {
   });
   const { data: reputation } = useQuery<ReputationSummary>({
     queryKey: [`/api/profiles/${params.id}/reputation`],
+  });
+  const { data: groups } = useQuery<CommunityGroup[]>({
+    queryKey: [`/api/profiles/${params.id}/groups`],
   });
 
   const isOwnProfile = user?.id === Number(params.id);
@@ -198,6 +201,21 @@ export default function PersonProfile() {
           </div>
         </CardContent>
       </Card>
+
+      {!!groups?.length && (
+        <section>
+          <h2 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">Community groups</h2>
+          <div className="flex flex-wrap gap-2">
+            {groups.map((group) => (
+              <Link key={group.id} href={`/groups/${group.slug}`}>
+                <Badge variant="outline" className="cursor-pointer hover:border-aurora-teal/60">
+                  {group.name}{group.viewer_role === "organizer" ? " · Organizer" : ""}
+                </Badge>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {reputation && (
         <Card>

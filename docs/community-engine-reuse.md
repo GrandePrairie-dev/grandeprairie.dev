@@ -88,7 +88,9 @@ and contribution counts without exposing an opaque social score.
   The existing board `jobs` category remains suitable for informal leads.
 - CareerLynx remains a read-only import boundary. Imported records use `source='careerlynx'`
   plus a stable `source_id`; GP.dev does not duplicate applicant or hiring workflow state.
-- Start groups as curated topic pages plus membership and organizer roles. Defer chat and Liveblocks until participation proves demand.
+- Curated group pages, membership, organizer roles, and profile visibility are implemented by
+  migration `013-community-groups.sql`. Discussion stays on the shared Board; group chat and
+  Liveblocks remain deferred until participation proves demand.
 
 ### Phase 4: Reputation Presentation
 

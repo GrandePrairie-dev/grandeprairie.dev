@@ -1,5 +1,5 @@
 -- GrandePrairie.dev — Complete D1 Schema
--- This file is the consolidated schema reflecting all migrations (001-012).
+-- This file is the consolidated schema reflecting all migrations (001-013).
 -- For incremental updates, add new migration files in db/migrations/
 -- Last consolidated: 2026-07-10
 
@@ -127,6 +127,25 @@ CREATE TABLE IF NOT EXISTS jobs (
   CHECK (
     compensation_min IS NULL OR compensation_max IS NULL OR compensation_max >= compensation_min
   )
+);
+
+CREATE TABLE IF NOT EXISTS community_groups (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  slug TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  tags TEXT NOT NULL DEFAULT '[]',
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS group_memberships (
+  group_id INTEGER NOT NULL REFERENCES community_groups(id) ON DELETE CASCADE,
+  profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  role TEXT NOT NULL DEFAULT 'member' CHECK (role IN ('member', 'organizer')),
+  joined_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (group_id, profile_id)
 );
 
 CREATE TABLE IF NOT EXISTS events (
@@ -661,6 +680,8 @@ CREATE INDEX IF NOT EXISTS idx_jobs_public ON jobs(status, expires_at, created_a
 CREATE INDEX IF NOT EXISTS idx_jobs_type ON jobs(employment_type, workplace_type, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_jobs_poster ON jobs(posted_by_profile_id, created_at DESC);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_jobs_external_source ON jobs(source, source_id) WHERE source_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_group_memberships_profile ON group_memberships(profile_id, joined_at DESC);
+CREATE INDEX IF NOT EXISTS idx_group_memberships_group ON group_memberships(group_id, role, joined_at);
 
 -- intelligence
 CREATE INDEX IF NOT EXISTS idx_signals_actor_time ON community_signals(actor_profile_id, occurred_at DESC);
@@ -678,3 +699,11 @@ CREATE INDEX IF NOT EXISTS idx_learning_events_profile ON learning_events(profil
 -- mentor_requests
 CREATE INDEX IF NOT EXISTS idx_mentor_req_mentor ON mentor_requests(mentor_profile_id, status);
 CREATE INDEX IF NOT EXISTS idx_mentor_req_mentee ON mentor_requests(mentee_profile_id);
+
+INSERT OR IGNORE INTO community_groups (slug, name, description, tags) VALUES
+  ('ai', 'Applied AI', 'Practical AI for field operations, local businesses, education, and regional industries.', '["AI","automation","data"]'),
+  ('founders', 'Founders', 'People starting, testing, funding, and operating new ventures in the Peace Region.', '["startups","business","funding"]'),
+  ('developers', 'Developers', 'Software, cloud, web, mobile, data, and infrastructure builders at every level.', '["software","cloud","web"]'),
+  ('students', 'Students', 'Learners, interns, new graduates, and people making their first technical contribution.', '["students","learning","internships"]'),
+  ('design', 'Design', 'Product, service, brand, user experience, and communication design for useful local work.', '["design","product","UX"]'),
+  ('cybersecurity', 'Cybersecurity', 'Security, privacy, resilience, and safe technology practices for regional organizations.', '["security","privacy","infrastructure"]');
