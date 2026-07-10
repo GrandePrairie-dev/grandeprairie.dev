@@ -2,6 +2,7 @@ import type { Env } from "../../../lib/env";
 import { isAdminInDb } from "../../../lib/auth";
 import { notifySlack } from "../../../lib/slack";
 import { logActivity } from "../../../lib/activity";
+import { deliverMatchNotification } from "../../../lib/notifications";
 import {
   recordRecommendationFeedback,
   recordSignal,
@@ -20,6 +21,8 @@ interface StatusBody {
 
 interface BusinessRequestState {
   business_name: string;
+  contact_name: string | null;
+  contact_email: string | null;
   category: string;
   status: string;
   matched_profile_id: number | null;
@@ -43,7 +46,7 @@ export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request,
     return Response.json({ error: "Invalid business request id." }, { status: 400 });
   }
   const current = await env.DB.prepare(
-    "SELECT business_name, category, status, matched_profile_id FROM business_requests WHERE id = ?",
+    "SELECT business_name, contact_name, contact_email, category, status, matched_profile_id FROM business_requests WHERE id = ?",
   ).bind(requestId).first<BusinessRequestState>();
   if (!current) return Response.json({ error: "Business request not found." }, { status: 404 });
   if (body.status === current.status && (body.status !== "matched" || body.matched_profile_id === current.matched_profile_id)) {
@@ -54,8 +57,8 @@ export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request,
     if (!body.matched_profile_id) {
       return Response.json({ error: "matched_profile_id is required when status is 'matched'" }, { status: 400 });
     }
-    const matchedProfile = await env.DB.prepare("SELECT id, name FROM profiles WHERE id = ?")
-      .bind(body.matched_profile_id).first<{ id: number; name: string }>();
+    const matchedProfile = await env.DB.prepare("SELECT id, name, email FROM profiles WHERE id = ?")
+      .bind(body.matched_profile_id).first<{ id: number; name: string; email: string | null }>();
     if (!matchedProfile) return Response.json({ error: "Selected profile not found." }, { status: 404 });
 
     let recommendationExplanation: string | null = null;
@@ -108,6 +111,10 @@ export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request,
       );
     }
     await env.DB.batch(statements);
+    const decision = await env.DB.prepare(
+      `SELECT id FROM matching_decisions WHERE business_request_id = ?
+       ORDER BY decided_at DESC, id DESC LIMIT 1`,
+    ).bind(requestId).first<{ id: number }>();
 
     if (current.matched_profile_id && current.matched_profile_id !== body.matched_profile_id) {
       await upsertRelationship(env, {
@@ -162,6 +169,32 @@ export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request,
     await logActivity(env, "business_matched", user.profileId, "business_request", requestId,
       `${current.business_name} matched with ${matchedProfile.name}`);
     await notifySlack(env, `\u{1F91D} ${current.business_name} has been matched with ${matchedProfile.name}`);
+    if (decision) {
+      await Promise.all([
+        deliverMatchNotification(env, {
+          decisionId: decision.id,
+          recipientId: matchedProfile.id,
+          to: matchedProfile.email ?? "",
+          recipientName: matchedProfile.name,
+          recipientType: "builder",
+          businessName: current.business_name,
+          category: current.category,
+          builderName: matchedProfile.name,
+          requestId,
+        }),
+        deliverMatchNotification(env, {
+          decisionId: decision.id,
+          recipientId: requestId,
+          to: current.contact_email ?? "",
+          recipientName: current.contact_name ?? current.business_name,
+          recipientType: "business",
+          businessName: current.business_name,
+          category: current.category,
+          builderName: matchedProfile.name,
+          requestId,
+        }),
+      ]).catch((error) => console.error("[notifications] match delivery failed", error));
+    }
   } else {
     const statements = [
       env.DB.prepare(

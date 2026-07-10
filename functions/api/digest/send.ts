@@ -60,10 +60,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
        ORDER BY start_time ASC LIMIT 8`,
     ).all<{ title: string; location: string | null; start_time: string }>(),
     env.DB.prepare(
-      `SELECT id, title, category FROM board_posts
+      `SELECT id, title, category, post_type, accepted_reply_id, needs_mentor FROM board_posts
        WHERE parent_id IS NULL AND created_at >= datetime('now', '-7 days')
        ORDER BY is_pinned DESC, created_at DESC LIMIT 8`,
-    ).all<{ id: number; title: string; category: string }>(),
+    ).all<{
+      id: number;
+      title: string;
+      category: string;
+      post_type: string;
+      accepted_reply_id: number | null;
+      needs_mentor: number;
+    }>(),
     env.DB.prepare(
       `SELECT id, title, category FROM projects
        WHERE created_at >= datetime('now', '-30 days')
@@ -93,7 +100,9 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }));
   const boardPosts: DigestItem[] = boardResult.results.map((post) => ({
     title: post.title,
-    detail: post.category.replace(/_/g, " "),
+    detail: post.post_type === "question"
+      ? `${post.accepted_reply_id ? "answered question" : post.needs_mentor ? "question · needs mentor" : "unanswered question"} · ${post.category.replace(/_/g, " ")}`
+      : post.category.replace(/_/g, " "),
     href: "/board",
   }));
   const projects: DigestItem[] = projectsResult.results.map((project) => ({

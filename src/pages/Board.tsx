@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
-import { MessageSquare, Pin, Reply, Send, Sparkles } from "lucide-react";
+import { CheckCircle2, CircleHelp, MessageSquare, Pin, Reply, Send, Sparkles, ThumbsUp, UserRoundSearch } from "lucide-react";
 import { RoleFilter } from "@/components/RoleFilter";
 import { ReportContentDialog } from "@/components/ReportContentDialog";
 import { Badge } from "@/components/ui/badge";
@@ -19,6 +19,12 @@ import type { BoardPost } from "@/lib/types";
 import { BOARD_CATEGORIES, BOARD_CATEGORY_LABELS } from "@/lib/types";
 
 const filterOptions = Object.entries(BOARD_CATEGORY_LABELS).map(([value, label]) => ({ value, label }));
+const boardViews = [
+  ["all", "All posts"],
+  ["questions", "Questions"],
+  ["unanswered", "Unanswered"],
+  ["needs_mentor", "Needs mentor"],
+] as const;
 
 function invalidateBoardQueries(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({
@@ -36,13 +42,19 @@ function categoryLabel(category: string) {
 
 export default function Board() {
   const [category, setCategory] = useState("all");
+  const [view, setView] = useState("all");
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [postType, setPostType] = useState<"discussion" | "question">("discussion");
+  const [needsMentor, setNeedsMentor] = useState(false);
   const [postCategory, setPostCategory] = useState<(typeof BOARD_CATEGORIES)[number]>("general");
   const queryClient = useQueryClient();
   const { isLoggedIn, login } = useAuth();
   const { toast } = useToast();
-  const queryKey = category === "all" ? "/api/board-posts" : `/api/board-posts?category=${category}`;
+  const queryParams = new URLSearchParams();
+  if (category !== "all") queryParams.set("category", category);
+  if (view !== "all") queryParams.set("view", view);
+  const queryKey = `/api/board-posts${queryParams.size > 0 ? `?${queryParams.toString()}` : ""}`;
 
   const { data: posts, isLoading } = useQuery<BoardPost[]>({ queryKey: [queryKey] });
 
@@ -51,11 +63,15 @@ export default function Board() {
       title,
       body,
       category: postCategory,
+      post_type: postType,
+      needs_mentor: postType === "question" && needsMentor,
     }),
     onSuccess: () => {
       setTitle("");
       setBody("");
       setPostCategory("general");
+      setPostType("discussion");
+      setNeedsMentor(false);
       invalidateBoardQueries(queryClient);
       toast({ title: "Thread posted" });
     },
@@ -105,6 +121,31 @@ export default function Board() {
               }}
               className="space-y-3"
             >
+              <div className="inline-flex rounded-md border border-border bg-background p-1">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={postType === "discussion" ? "default" : "ghost"}
+                  className="h-8"
+                  onClick={() => {
+                    setPostType("discussion");
+                    setNeedsMentor(false);
+                  }}
+                >
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  Discussion
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={postType === "question" ? "default" : "ghost"}
+                  className="h-8"
+                  onClick={() => setPostType("question")}
+                >
+                  <CircleHelp className="h-3.5 w-3.5" />
+                  Question
+                </Button>
+              </div>
               <div className="grid gap-3 md:grid-cols-[1fr_180px]">
                 <Input
                   value={title}
@@ -134,9 +175,22 @@ export default function Board() {
                 required
               />
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs text-muted-foreground">
-                  Keep it practical, local, and useful for people building in the Peace Region.
-                </p>
+                {postType === "question" ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={needsMentor ? "secondary" : "ghost"}
+                    className="justify-start"
+                    onClick={() => setNeedsMentor((value) => !value)}
+                  >
+                    <UserRoundSearch className="h-3.5 w-3.5" />
+                    {needsMentor ? "Mentor requested" : "Needs a mentor"}
+                  </Button>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    Keep it practical, local, and useful for people building in the Peace Region.
+                  </p>
+                )}
                 <Button type="submit" disabled={createThread.isPending || title.trim().length < 3 || !body.trim()}>
                   <Send className="h-4 w-4" />
                   {createThread.isPending ? "Posting..." : "Post Thread"}
@@ -162,6 +216,20 @@ export default function Board() {
         <p className="text-xs text-muted-foreground">
           {category === "all" ? "Showing all channels" : `Showing ${categoryLabel(category)}`}
         </p>
+      </div>
+      <div className="flex flex-wrap gap-1">
+        {boardViews.map(([value, label]) => (
+          <Button
+            key={value}
+            type="button"
+            size="sm"
+            variant={view === value ? "default" : "secondary"}
+            className="text-xs"
+            onClick={() => setView(value)}
+          >
+            {label}
+          </Button>
+        ))}
       </div>
 
       {isLoading ? (
@@ -195,7 +263,7 @@ function BoardThread({ post }: { post: BoardPost }) {
   const [expanded, setExpanded] = useState(false);
   const [replyBody, setReplyBody] = useState("");
   const queryClient = useQueryClient();
-  const { isLoggedIn, login } = useAuth();
+  const { user, isLoggedIn, isAdmin, login } = useAuth();
   const { toast } = useToast();
 
   const { data: replies, isLoading } = useQuery<BoardPost[]>({
@@ -216,6 +284,20 @@ function BoardThread({ post }: { post: BoardPost }) {
     },
   });
 
+  const helpfulMutation = useMutation({
+    mutationFn: ({ replyId, helpful }: { replyId: number; helpful: boolean }) =>
+      apiRequest(helpful ? "DELETE" : "POST", `/api/board-posts/${replyId}/helpful`),
+    onSuccess: () => invalidateBoardQueries(queryClient),
+  });
+
+  const acceptMutation = useMutation({
+    mutationFn: (replyId: number) => apiRequest("PATCH", `/api/board-posts/${replyId}/accept`),
+    onSuccess: () => {
+      invalidateBoardQueries(queryClient);
+      toast({ title: "Answer accepted" });
+    },
+  });
+
   return (
     <Card className={post.is_pinned ? "border-l-2 border-l-prairie-amber" : ""}>
       <CardContent className="p-4">
@@ -232,6 +314,24 @@ function BoardThread({ post }: { post: BoardPost }) {
               <Badge variant="outline" className="text-[10px]">
                 {categoryLabel(post.category)}
               </Badge>
+              {post.post_type === "question" && (
+                <Badge variant="secondary" className="text-[10px]">
+                  <CircleHelp className="mr-1 h-3 w-3" />
+                  Question
+                </Badge>
+              )}
+              {post.needs_mentor > 0 && !post.accepted_reply_id && (
+                <Badge variant="outline" className="text-[10px] text-prairie-amber">
+                  <UserRoundSearch className="mr-1 h-3 w-3" />
+                  Needs mentor
+                </Badge>
+              )}
+              {post.accepted_reply_id && (
+                <Badge variant="outline" className="text-[10px] text-aurora-teal">
+                  <CheckCircle2 className="mr-1 h-3 w-3" />
+                  Answered
+                </Badge>
+              )}
               {post.is_pinned ? (
                 <Badge variant="secondary" className="text-[10px]">
                   <Pin className="mr-1 h-3 w-3" />
@@ -280,18 +380,50 @@ function BoardThread({ post }: { post: BoardPost }) {
               <p className="text-sm text-muted-foreground">No replies yet.</p>
             ) : (
               <div className="space-y-3">
-                {(replies ?? []).map((reply) => (
-                  <div key={reply.id} className="rounded-md border border-border bg-background/50 p-3">
+                {(replies ?? []).map((reply) => {
+                  const accepted = post.accepted_reply_id === reply.id;
+                  const canAccept = post.post_type === "question" && (post.author_id === user?.id || isAdmin);
+                  return (
+                  <div key={reply.id} className={`rounded-md border bg-background/50 p-3 ${accepted ? "border-aurora-teal/70" : "border-border"}`}>
                     <div className="mb-1 flex items-center gap-2 text-xs text-muted-foreground">
                       <span className="font-medium text-foreground">{reply.author_name ?? "Deleted user"}</span>
                       <span>{formatDate(reply.created_at)}</span>
+                      {accepted && <Badge className="text-[10px]">Accepted answer</Badge>}
                     </div>
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{reply.body}</p>
-                    <div className="mt-2">
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant={reply.viewer_found_helpful ? "secondary" : "ghost"}
+                        className="h-7 text-xs"
+                        disabled={helpfulMutation.isPending || reply.author_id === user?.id}
+                        title={reply.author_id === user?.id ? "You cannot mark your own reply helpful" : "Mark this answer helpful"}
+                        onClick={() => {
+                          if (!isLoggedIn) return login("/board");
+                          helpfulMutation.mutate({ replyId: reply.id, helpful: Boolean(reply.viewer_found_helpful) });
+                        }}
+                      >
+                        <ThumbsUp className="h-3.5 w-3.5" />
+                        Helpful {reply.helpful_count > 0 ? reply.helpful_count : ""}
+                      </Button>
+                      {canAccept && !accepted && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          className="h-7 text-xs"
+                          disabled={acceptMutation.isPending}
+                          onClick={() => acceptMutation.mutate(reply.id)}
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Accept answer
+                        </Button>
+                      )}
                       <ReportContentDialog targetType="board_post" targetId={reply.id} />
                     </div>
                   </div>
-                ))}
+                );})}
               </div>
             )}
 

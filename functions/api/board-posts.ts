@@ -24,23 +24,32 @@ function clampSummary(value: string, max = 90): string {
   return trimmed.length > max ? `${trimmed.slice(0, max - 1)}...` : trimmed;
 }
 
-export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
+export const onRequestGet: PagesFunction<Env> = async ({ request, env, data }) => {
   const url = new URL(request.url);
   const parentId = parseId(url.searchParams.get("parent_id"));
   const category = url.searchParams.get("category");
+  const view = url.searchParams.get("view") ?? "all";
+  const viewer = (data as { user?: { profileId: number } }).user;
+  const validViews = new Set(["all", "questions", "unanswered", "needs_mentor"]);
 
   if (url.searchParams.has("parent_id") && !parentId) {
     return Response.json({ error: "Invalid parent_id" }, { status: 400 });
   }
+  if (!validViews.has(view)) return Response.json({ error: "Invalid board view" }, { status: 400 });
 
   if (parentId) {
     const { results } = await env.DB.prepare(
-      `SELECT bp.*, p.name as author_name, p.role as author_role, p.avatar_url as author_avatar_url, 0 as reply_count
+      `SELECT bp.*, p.name as author_name, p.role as author_role, p.avatar_url as author_avatar_url,
+         0 as reply_count,
+         EXISTS(
+           SELECT 1 FROM board_helpful_votes bhv
+           WHERE bhv.reply_id = bp.id AND bhv.profile_id = ?
+         ) as viewer_found_helpful
        FROM board_posts bp
        LEFT JOIN profiles p ON bp.author_id = p.id
        WHERE bp.parent_id = ?
        ORDER BY bp.created_at ASC`,
-    ).bind(parentId).all();
+    ).bind(viewer?.profileId ?? null, parentId).all();
     return Response.json(results);
   }
 
@@ -54,6 +63,9 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     where += " AND bp.category = ?";
     bindings.push(category);
   }
+  if (view === "questions") where += " AND bp.post_type = 'question'";
+  if (view === "unanswered") where += " AND bp.post_type = 'question' AND bp.accepted_reply_id IS NULL";
+  if (view === "needs_mentor") where += " AND bp.post_type = 'question' AND bp.needs_mentor = 1 AND bp.accepted_reply_id IS NULL";
 
   const { results } = await env.DB.prepare(
     `SELECT bp.*, p.name as author_name, p.role as author_role, p.avatar_url as author_avatar_url,
@@ -77,6 +89,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
     body?: string;
     category?: string;
     parent_id?: number | string | null;
+    post_type?: string;
+    needs_mentor?: boolean;
   }>();
 
   const postBody = body.body?.trim();
@@ -92,6 +106,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
 
   let title: string | null = null;
   let category = body.category ?? "general";
+  let postType = "discussion";
+  let needsMentor = 0;
 
   if (parentId) {
     const parent = await env.DB.prepare(
@@ -111,12 +127,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
     if (!BOARD_CATEGORIES.has(category)) {
       return Response.json({ error: "Invalid category" }, { status: 400 });
     }
+    postType = body.post_type ?? "discussion";
+    if (!new Set(["discussion", "question"]).has(postType)) {
+      return Response.json({ error: "Invalid post_type" }, { status: 400 });
+    }
+    needsMentor = postType === "question" && body.needs_mentor ? 1 : 0;
   }
 
   const result = await env.DB.prepare(
-    `INSERT INTO board_posts (title, body, category, author_id, parent_id)
-     VALUES (?, ?, ?, ?, ?)`,
-  ).bind(title, postBody, category, user.profileId, parentId).run();
+    `INSERT INTO board_posts (title, body, category, author_id, parent_id, post_type, needs_mentor)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ).bind(title, postBody, category, user.profileId, parentId, postType, needsMentor).run();
 
   const postId = result.meta.last_row_id as number;
   await logActivity(
@@ -142,7 +163,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
     topic: category,
     source: "board",
     outcome: "published",
-    metadata: { parent_id: parentId },
+    metadata: { parent_id: parentId, post_type: postType, needs_mentor: Boolean(needsMentor) },
     dedupeKey: `board-post:${postId}:published`,
   });
 
