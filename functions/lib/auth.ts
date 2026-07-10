@@ -48,7 +48,7 @@ export async function isAdminInDb(db: D1Database, profileId: number): Promise<bo
   return row?.is_admin === 1;
 }
 
-const SAFE_RETURN_PREFIXES = ["/", "/ideas", "/people", "/projects", "/launches", "/jobs", "/map", "/calendar", "/intel", "/tech-hub", "/students", "/business", "/ai-hub", "/about", "/admin"];
+const SAFE_RETURN_PREFIXES = ["/", "/ideas", "/people", "/projects", "/launches", "/jobs", "/groups", "/map", "/calendar", "/intel", "/tech-hub", "/students", "/business", "/ai-hub", "/about", "/admin"];
 
 export function isContributor(authProvider: string | null, isAdmin: boolean): boolean {
   return authProvider === 'github' || isAdmin;

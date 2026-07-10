@@ -34,6 +34,8 @@ const Showcase = lazy(() => import("@/pages/Showcase"));
 const LaunchBoard = lazy(() => import("@/pages/LaunchBoard"));
 const Jobs = lazy(() => import("@/pages/Jobs"));
 const JobDetail = lazy(() => import("@/pages/JobDetail"));
+const Groups = lazy(() => import("@/pages/Groups"));
+const GroupDetail = lazy(() => import("@/pages/GroupDetail"));
 const Conduct = lazy(() => import("@/pages/Conduct"));
 const DigestPreferences = lazy(() => import("@/pages/DigestPreferences"));
 
@@ -104,6 +106,8 @@ export function App() {
                   <Route path="/launches" component={LaunchBoard} />
                   <Route path="/jobs/:id" component={JobDetail} />
                   <Route path="/jobs" component={Jobs} />
+                  <Route path="/groups/:slug" component={GroupDetail} />
+                  <Route path="/groups" component={Groups} />
                   <Route path="/conduct" component={Conduct} />
                   <Route path="/digest" component={DigestPreferences} />
                   <Route path="/about" component={About} />

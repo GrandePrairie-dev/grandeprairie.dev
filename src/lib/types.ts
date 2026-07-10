@@ -123,6 +123,32 @@ export interface Job {
   viewer_can_manage: number;
 }
 
+export interface CommunityGroup {
+  id: number;
+  slug: string;
+  name: string;
+  description: string;
+  tags: string;
+  member_count: number;
+  organizer_count: number;
+  viewer_role: "member" | "organizer" | null;
+}
+
+export interface GroupMember {
+  id: number;
+  name: string;
+  username: string;
+  title: string | null;
+  role: string;
+  avatar_url: string | null;
+  membership_role: "member" | "organizer";
+  joined_at: string;
+}
+
+export interface CommunityGroupDetail extends CommunityGroup {
+  members: GroupMember[];
+}
+
 export interface Event {
   id: number;
   title: string;

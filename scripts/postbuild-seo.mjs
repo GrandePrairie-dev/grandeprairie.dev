@@ -55,6 +55,14 @@ const routes = [
     pageType: "CollectionPage",
   },
   {
+    path: "/groups",
+    title: "Community Groups | Grande Prairie Builders",
+    description:
+      "Find local groups for developers, founders, students, designers, AI builders, and cybersecurity practitioners in Grande Prairie.",
+    keywords: "Grande Prairie tech groups, Grande Prairie developers, Peace Region founders, Grande Prairie AI community",
+    pageType: "CollectionPage",
+  },
+  {
     path: "/map",
     title: "Map | Grande Prairie Tech and Builder Ecosystem",
     description:
