@@ -5,6 +5,9 @@ export type CommunityAction =
   | "board_reply"
   | "event_created"
   | "event_rsvp"
+  | "helpful_answer"
+  | "accepted_answer"
+  | "accepted_answer_revoked"
   | "report_submitted";
 
 export type ReportReason =
@@ -20,6 +23,9 @@ const ACTION_POINTS: Record<CommunityAction, number> = {
   board_reply: 2,
   event_created: 10,
   event_rsvp: 2,
+  helpful_answer: 3,
+  accepted_answer: 10,
+  accepted_answer_revoked: -10,
   report_submitted: 0,
 };
 
@@ -47,6 +53,18 @@ const BADGE_RULES = [
     label: "Good Neighbour",
     actions: ["board_post", "board_reply", "event_created", "event_rsvp"] as CommunityAction[],
     count: 10,
+  },
+  {
+    key: "problem_solver",
+    label: "Problem Solver",
+    actions: ["accepted_answer"] as CommunityAction[],
+    count: 1,
+  },
+  {
+    key: "helpful_neighbour",
+    label: "Helpful Neighbour",
+    actions: ["helpful_answer"] as CommunityAction[],
+    count: 3,
   },
 ] as const;
 

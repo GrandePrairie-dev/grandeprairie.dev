@@ -29,6 +29,16 @@ export interface EventReminderEmail {
   location?: string | null;
 }
 
+export interface MatchNotificationEmail {
+  to: string;
+  recipientName: string;
+  recipientType: "builder" | "business";
+  businessName: string;
+  category: string;
+  builderName: string;
+  requestId: number;
+}
+
 interface ResendEmailPayload {
   from: string;
   to: string[];
@@ -247,6 +257,37 @@ function eventReminderHtml(reminder: EventReminderEmail, siteUrl: string): strin
 </html>`;
 }
 
+function matchNotificationHtml(notification: MatchNotificationEmail, siteUrl: string): string {
+  const requestUrl = `${siteUrl}/business/${notification.requestId}`;
+  const heading = notification.recipientType === "builder"
+    ? `You were matched with ${escapeHtml(notification.businessName)}`
+    : `${escapeHtml(notification.builderName)} was selected for your request`;
+  const message = notification.recipientType === "builder"
+    ? `The GrandePrairie.dev team matched your profile to a local ${escapeHtml(notification.category)} request. Open the request to review the problem and next steps.`
+    : "The GrandePrairie.dev team has selected a local builder for your request. We will coordinate the introduction without publishing private contact details.";
+
+  return `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#161B22;font-family:Inter,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#161B22;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;">
+        <tr><td style="background:#1E2530;border:1px solid #2E3742;border-radius:8px;padding:32px;">
+          <p style="color:#3DBFA8;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 12px;">Community match</p>
+          <h1 style="color:#E2E6EC;font-size:22px;font-weight:700;margin:0 0 12px;">${heading}</h1>
+          <p style="color:#8B95A5;font-size:14px;line-height:1.6;margin:0 0 24px;">Hi ${escapeHtml(plainText(notification.recipientName))}, ${message}</p>
+          <a href="${escapeHtml(requestUrl)}" style="display:inline-block;padding:12px 24px;background:#2D4A3E;color:#3DBFA8;border:1px solid #4A7C6A;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">View request</a>
+          <p style="color:#4C5B6E;font-size:12px;line-height:1.5;margin:24px 0 0;">GrandePrairie.dev keeps contact details private until an introduction is coordinated.</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
 async function sendResendEmail(env: Env, payload: ResendEmailPayload): Promise<boolean> {
   if (!env.RESEND_API_KEY) return false;
 
@@ -313,5 +354,16 @@ export async function sendEventReminder(env: Env, reminder: EventReminderEmail):
     to: [reminder.to],
     subject: `Tomorrow: ${plainText(reminder.eventTitle)}`,
     html: eventReminderHtml(reminder, env.SITE_URL),
+  });
+}
+
+export async function sendMatchNotification(env: Env, notification: MatchNotificationEmail): Promise<boolean> {
+  return sendResendEmail(env, {
+    from: "GrandePrairie.dev <noreply@grandeprairie.dev>",
+    to: [notification.to],
+    subject: notification.recipientType === "builder"
+      ? `You were matched with ${plainText(notification.businessName)}`
+      : `Builder selected: ${plainText(notification.builderName)}`,
+    html: matchNotificationHtml(notification, env.SITE_URL),
   });
 }

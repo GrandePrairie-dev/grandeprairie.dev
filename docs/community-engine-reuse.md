@@ -72,6 +72,10 @@ Extend the board rather than create a second discussion system:
 - Add monthly launch cycles and project votes on top of `projects`.
 - Adapt VSMarket's diversity selector using GP.dev metrics: helpful answers, event hosting, project activity, profile completeness, and community votes.
 
+Q&A is implemented by migration `010-question-answer-loop.sql`: discussion/question post types,
+unanswered and needs-mentor views, unique helpful votes, append-only accepted-answer history,
+reputation awards, intelligence signals, and digest labels. The launch ritual remains next.
+
 ### Phase 3: Jobs and Groups
 
 - Use a dedicated `jobs` table for expiry, employment type, compensation, location, and application URLs. The existing board `jobs` category remains suitable for informal leads.

@@ -16,6 +16,7 @@ Migration `009-intelligence-foundation.sql` adds:
 - `topic_trends`: materialized time-window snapshots derived from structured signals.
 - `experiments`, assignments, and events: stable cohort allocation and registered outcome metrics.
 - `learning_modules`, progress, and events: durable mission progress that replaces VSMarket's JSON-file telemetry.
+- `community_notifications`: retry-safe transactional delivery claims without copying recipient email addresses into the ledger.
 
 ## Builder Matching
 
@@ -30,6 +31,8 @@ The first recommendation policy is `builder-match-rules@1.0.0`. It ranks up to f
 | Community contribution | 10 |
 
 Admins generate suggestions from the Requests tab. Every candidate includes the factor breakdown and explanation. Selecting a candidate creates a `matching_decisions` row; completing the request records the outcome against the originating recommendation.
+
+Match selection sends transactional notices to the selected builder and business contact when an address is available. Admins close each decision as successful, unsuccessful, or cancelled; unsuccessful and cancelled matches return the request to review without erasing decision history.
 
 ## API Boundaries
 

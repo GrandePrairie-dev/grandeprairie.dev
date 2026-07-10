@@ -180,6 +180,13 @@ export interface BoardPost {
   reply_count: number;
   is_pinned: number;
   status: string;
+  post_type: "discussion" | "question";
+  needs_mentor: number;
+  accepted_reply_id: number | null;
+  accepted_by_profile_id: number | null;
+  accepted_at: string | null;
+  helpful_count: number;
+  viewer_found_helpful?: number;
   created_at: string;
   updated_at: string;
 }

@@ -31,7 +31,12 @@ const TABS = [
   { value: "reports", label: "Reports" },
 ];
 
-const STATUS_OPTIONS = ["reviewed", "matched", "in_progress", "completed"] as const;
+const STATUS_OPTIONS = ["reviewed", "in_progress"] as const;
+const MATCH_OUTCOMES = [
+  ["successful", "Successful"],
+  ["unsuccessful", "No fit"],
+  ["cancelled", "Cancelled"],
+] as const;
 
 export default function Admin() {
   const [tab, setTab] = useState("ideas");
@@ -97,6 +102,21 @@ export default function Admin() {
   const { data: expandedInterests, isLoading: interestsLoading } = useQuery<any[]>({
     queryKey: [`/api/business-requests/${expandedRequestId}/interests`],
     enabled: expandedRequestId !== null,
+  });
+
+  const { data: matchDecisions } = useQuery<any[]>({
+    queryKey: [`/api/business-requests/${expandedRequestId}/outcome`],
+    enabled: expandedRequestId !== null,
+  });
+
+  const outcomeMutation = useMutation({
+    mutationFn: ({ id, outcome_status, outcome_notes }: { id: number; outcome_status: string; outcome_notes?: string }) =>
+      apiRequest("PATCH", `/api/business-requests/${id}/outcome`, { outcome_status, outcome_notes }),
+    onSuccess: (_response, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/business-requests"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/business-requests/${variables.id}/outcome`] });
+      toast({ title: "Match outcome recorded" });
+    },
   });
 
   const toggleIdeaFeatured = useMutation({
@@ -476,7 +496,7 @@ export default function Admin() {
                     </Badge>
                   </div>
                   <div className="flex flex-wrap gap-1">
-                    {STATUS_OPTIONS.filter(s => s !== "matched").map((status) => (
+                    {STATUS_OPTIONS.map((status) => (
                       <Button
                         key={status}
                         variant={req.status === status ? "default" : "outline"}
@@ -514,6 +534,41 @@ export default function Admin() {
                           rationale,
                         })}
                       />
+                      {(req.status === "matched" || req.status === "in_progress") && (
+                        <div className="flex flex-wrap items-center gap-2 border-t border-border pt-2">
+                          <span className="mr-auto text-xs font-semibold">Close match</span>
+                          {MATCH_OUTCOMES.map(([outcome, label]) => (
+                            <Button
+                              key={outcome}
+                              type="button"
+                              size="sm"
+                              variant={outcome === "successful" ? "default" : "outline"}
+                              className="h-7 text-[10px]"
+                              disabled={outcomeMutation.isPending}
+                              onClick={() => {
+                                const notes = window.prompt(`Notes for ${label.toLowerCase()} outcome (optional)`) ?? undefined;
+                                outcomeMutation.mutate({ id: req.id, outcome_status: outcome, outcome_notes: notes });
+                              }}
+                            >
+                              {label}
+                            </Button>
+                          ))}
+                        </div>
+                      )}
+                      {(matchDecisions ?? []).length > 0 && (
+                        <div className="border-t border-border pt-2">
+                          <h4 className="mb-2 text-xs font-semibold">Decision history</h4>
+                          <div className="space-y-1">
+                            {(matchDecisions ?? []).slice(0, 3).map((decision: any) => (
+                              <div key={decision.id} className="flex flex-wrap items-center gap-2 text-[10px] text-muted-foreground">
+                                <span className="font-medium text-foreground">{decision.selected_profile_name}</span>
+                                <Badge variant="outline" className="text-[9px] capitalize">{decision.outcome_status}</Badge>
+                                <span>{decision.decision_source} · {formatDate(decision.decided_at)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       <div className="border-t border-border pt-2">
                         <h4 className="mb-2 text-xs font-semibold">Expressed interest</h4>
                       </div>
