@@ -1,7 +1,9 @@
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ExternalLink, MapPin, ArrowUpRight } from "lucide-react";
+import { ExternalLink, MapPin, ArrowUpRight, Rocket, Trophy } from "lucide-react";
+import type { LaunchCycle } from "@/lib/types";
 
 interface AffiliatedDemo {
   slug: string;
@@ -96,6 +98,10 @@ const NETWORK_FEATURES = [
 ];
 
 export default function Showcase() {
+  const { data: launchCycle } = useQuery<LaunchCycle>({
+    queryKey: ["/api/launches/current"],
+  });
+
   return (
     <div className="p-4 md:p-6 space-y-10 max-w-5xl">
       {/* Header */}
@@ -110,6 +116,41 @@ export default function Showcase() {
           designed to rank in AI search, and crosslinks from the main platform.
         </p>
       </div>
+
+      <section className="border-y border-border py-5">
+        <div className="mb-4 flex items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase text-muted-foreground">Community launches</p>
+            <h2 className="mt-1 font-display text-lg font-semibold">Built here, shipped this month</h2>
+          </div>
+          <Link href="/launches">
+            <span className="inline-flex cursor-pointer items-center gap-1 text-xs font-semibold text-aurora-teal hover:underline">
+              Open Launch Board <ArrowUpRight className="h-3 w-3" />
+            </span>
+          </Link>
+        </div>
+        {launchCycle?.entries.length ? (
+          <div className="divide-y divide-border">
+            {launchCycle.entries.slice(0, 3).map((entry) => (
+              <div key={entry.id} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                {entry.rank === 1
+                  ? <Trophy className="h-4 w-4 shrink-0 text-prairie-amber" />
+                  : <span className="w-4 shrink-0 text-center font-mono text-xs text-muted-foreground">#{entry.rank}</span>}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold">{entry.title}</p>
+                  <p className="truncate text-xs text-muted-foreground">{entry.pitch}</p>
+                </div>
+                <span className="font-mono text-xs text-muted-foreground">{entry.votes_count} support</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex items-center gap-3 text-sm text-muted-foreground">
+            <Rocket className="h-5 w-5 text-aurora-teal" />
+            <span>The monthly board is open for its first community launch.</span>
+          </div>
+        )}
+      </section>
 
       {/* Affiliated demos */}
       <div className="space-y-4">

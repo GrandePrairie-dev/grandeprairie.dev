@@ -53,6 +53,51 @@ export interface Project {
   updated_at: string;
 }
 
+export interface LaunchEntry {
+  id: number;
+  cycle_id: number;
+  project_id: number;
+  pitch: string | null;
+  votes_count: number;
+  submitted_at: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  repo_url: string | null;
+  demo_url: string | null;
+  tags: string;
+  author_id: number | null;
+  author_name: string | null;
+  viewer_voted: number;
+  rank: number;
+}
+
+export interface LaunchCycle {
+  id: number;
+  slug: string;
+  title: string;
+  starts_at: string;
+  ends_at: string;
+  is_open: boolean;
+  entries: LaunchEntry[];
+}
+
+export interface ReputationSummary {
+  points: number;
+  trust_level: number;
+  next_level_points: number | null;
+  badges: Array<{ key: string; awarded_at: string }>;
+  contributions: Array<{ event_type: string; count: number; points: number }>;
+  recent: Array<{
+    id: number;
+    event_type: string;
+    points: number;
+    source_type: string | null;
+    source_id: number | null;
+    created_at: string;
+  }>;
+}
+
 export interface Event {
   id: number;
   title: string;

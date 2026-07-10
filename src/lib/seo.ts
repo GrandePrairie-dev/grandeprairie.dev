@@ -19,6 +19,14 @@ export interface RouteSeo {
 
 const ROUTE_SEO: RouteSeo[] = [
   {
+    path: "/launches",
+    title: "Launch Board | Grande Prairie Community Projects",
+    description:
+      "Discover and support new projects shipped by builders in Grande Prairie and the Peace Region.",
+    keywords: ["Grande Prairie startups", "Peace Region projects", "local builders", "community launch board"],
+    pageType: "CollectionPage",
+  },
+  {
     path: "/",
     title: "GrandePrairie.dev | Grande Prairie Tech Community",
     description:

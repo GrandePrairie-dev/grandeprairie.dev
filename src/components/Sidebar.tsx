@@ -24,6 +24,7 @@ import {
   CheckCircle,
   MessageSquare,
   ShieldCheck,
+  Rocket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -79,6 +80,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: "Ideas", href: "/ideas", icon: Lightbulb },
       { label: "Projects", href: "/projects", icon: FolderOpen },
+      { label: "Launch Board", href: "/launches", icon: Rocket },
     ],
   },
   {

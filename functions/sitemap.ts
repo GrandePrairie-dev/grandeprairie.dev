@@ -25,6 +25,7 @@ const SITEMAP_ROUTES: SitemapEntry[] = [
   { path: "/ai-hub", priority: "0.6", changefreq: "weekly" },
   { path: "/orgs", priority: "0.6", changefreq: "weekly" },
   { path: "/showcase", priority: "0.6", changefreq: "weekly" },
+  { path: "/launches", priority: "0.8", changefreq: "weekly" },
   { path: "/about", priority: "0.5", changefreq: "monthly" },
   { path: "/agency", priority: "0.5", changefreq: "monthly" },
 ];

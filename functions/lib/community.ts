@@ -8,6 +8,7 @@ export type CommunityAction =
   | "helpful_answer"
   | "accepted_answer"
   | "accepted_answer_revoked"
+  | "project_launched"
   | "report_submitted";
 
 export type ReportReason =
@@ -26,10 +27,17 @@ const ACTION_POINTS: Record<CommunityAction, number> = {
   helpful_answer: 3,
   accepted_answer: 10,
   accepted_answer_revoked: -10,
+  project_launched: 15,
   report_submitted: 0,
 };
 
 const BADGE_RULES = [
+  {
+    key: "shipped_it",
+    label: "Shipped It",
+    actions: ["project_launched"] as CommunityAction[],
+    count: 1,
+  },
   {
     key: "first_contribution",
     label: "First Contribution",

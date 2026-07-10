@@ -39,6 +39,14 @@ const routes = [
     pageType: "CollectionPage",
   },
   {
+    path: "/launches",
+    title: "Launch Board | Grande Prairie Community Projects",
+    description:
+      "Discover and support new projects shipped by builders in Grande Prairie and the Peace Region.",
+    keywords: "Grande Prairie startups, Peace Region projects, local builders, community launch board",
+    pageType: "CollectionPage",
+  },
+  {
     path: "/map",
     title: "Map | Grande Prairie Tech and Builder Ecosystem",
     description:
