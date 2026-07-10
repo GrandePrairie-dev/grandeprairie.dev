@@ -17,6 +17,8 @@ export interface Profile {
   auth_provider: string | null;
   google_id: string | null;
   email_verified: number;
+  reputation_points: number;
+  trust_level: number;
   created_at: string;
   updated_at: string;
 }
@@ -61,7 +63,30 @@ export interface Event {
   end_time: string | null;
   organizer_id: number | null;
   link: string | null;
+  capacity: number | null;
+  allow_waitlist: number;
+  attendee_count: number;
+  waitlist_count: number;
+  my_rsvp: "attending" | "waitlist" | "cancelled" | null;
   created_at: string;
+}
+
+export interface ContentReport {
+  id: number;
+  reporter_profile_id: number;
+  reporter_name: string;
+  target_type: "board_post" | "profile" | "project" | "event";
+  target_id: number;
+  target_label: string | null;
+  reason: string;
+  details: string | null;
+  priority: "low" | "normal" | "high" | "urgent";
+  status: "open" | "reviewing" | "resolved" | "dismissed";
+  moderator_profile_id: number | null;
+  moderator_name: string | null;
+  resolution_note: string | null;
+  created_at: string;
+  resolved_at: string | null;
 }
 
 export interface IntelPost {

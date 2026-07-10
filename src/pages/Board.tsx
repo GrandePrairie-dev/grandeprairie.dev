@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { MessageSquare, Pin, Reply, Send, Sparkles } from "lucide-react";
 import { RoleFilter } from "@/components/RoleFilter";
+import { ReportContentDialog } from "@/components/ReportContentDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -262,6 +263,7 @@ function BoardThread({ post }: { post: BoardPost }) {
                 <Reply className="h-3.5 w-3.5" />
                 {expanded ? "Hide replies" : `${post.reply_count ?? 0} replies`}
               </button>
+              <ReportContentDialog targetType="board_post" targetId={post.id} />
             </div>
           </div>
         </div>
@@ -285,6 +287,9 @@ function BoardThread({ post }: { post: BoardPost }) {
                       <span>{formatDate(reply.created_at)}</span>
                     </div>
                     <p className="whitespace-pre-wrap text-sm leading-relaxed text-muted-foreground">{reply.body}</p>
+                    <div className="mt-2">
+                      <ReportContentDialog targetType="board_post" targetId={reply.id} />
+                    </div>
                   </div>
                 ))}
               </div>

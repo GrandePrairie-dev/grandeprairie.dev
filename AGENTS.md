@@ -45,7 +45,7 @@ npm run pages:deploy     # Deploy to Cloudflare Pages (also runs via GitHub Acti
 
 **Backend**: Cloudflare Pages Functions in `functions/api/`. Each file exports `onRequestGet`, `onRequestPost`, etc. Functions receive `env` with `DB` (D1) and `SESSIONS` (KV) bindings.
 
-**Database**: Cloudflare D1 (SQLite). Consolidated schema in `db/schema.sql`. Incremental migrations in `db/migrations/001-005`. Tables: `profiles`, `ideas`, `projects`, `events`, `intel`, `business_requests`, `student_resources`, `comments`, `idea_votes`, `activity`, `business_request_interests`, `mentor_requests`, `organizations`, `organization_members`, `organization_projects`, `pipeline_runs`.
+**Database**: Cloudflare D1 (SQLite). Consolidated schema in `db/schema.sql`. Incremental migrations in `db/migrations/001-008`. Core community tables also include `board_posts`, `event_rsvps`, `digest_subscriptions`, `digest_deliveries`, `event_reminders`, `content_reports`, `reputation_events`, and `profile_badges`.
 
 **Auth**: Multi-provider. GitHub OAuth (`/api/auth/login`, `/api/auth/callback`), Google OAuth (`/api/auth/callback/google`), email magic link (`/api/auth/email/request`, `/api/auth/email/verify`). Sessions stored in KV. Current user via `/api/auth/me`. Profile fields: `github_id`, `github_username`, `google_id`, `auth_provider`, `email_verified`.
 
@@ -71,6 +71,8 @@ npm run pages:deploy     # Deploy to Cloudflare Pages (also runs via GitHub Acti
 | `/ai-hub` | AI use cases for local industries | Live |
 | `/orgs`, `/orgs/:slug` | Organization profiles | Live |
 | `/about` | About page | Live |
+| `/conduct` | Community standards | Live |
+| `/digest` | Digest preference center | Live |
 | `/admin` | Admin panel | Live |
 
 ### API Endpoints (Cloudflare Pages Functions)
@@ -92,6 +94,14 @@ All in `functions/api/`. TanStack Query uses the URL path as `queryKey[0]`.
 **Events**
 - `GET|POST /api/events`
 - `GET /api/events/upcoming`
+- `POST /api/events/:id/rsvp`
+- `POST /api/events/reminders/send` (scheduler secret required)
+
+**Community Retention & Trust**
+- `GET|POST|PATCH|DELETE /api/digest/subscriptions`
+- `POST /api/digest/send` (scheduler secret required)
+- `GET|POST /api/reports`
+- `PATCH /api/admin/reports/:id`
 
 **Intel**
 - `GET|POST /api/intel`

@@ -12,12 +12,13 @@ import {
   ChevronDown,
   ChevronUp,
   Trash2,
+  ShieldAlert,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import type { Stats, Idea, Profile, Event, IntelPost, BusinessRequest } from "@/lib/types";
+import type { Stats, Idea, Profile, Event, IntelPost, BusinessRequest, ContentReport } from "@/lib/types";
 import { parseJsonArray } from "@/lib/types";
 
 const TABS = [
@@ -26,6 +27,7 @@ const TABS = [
   { value: "events", label: "Events" },
   { value: "intel", label: "Intel" },
   { value: "requests", label: "Requests" },
+  { value: "reports", label: "Reports" },
 ];
 
 const STATUS_OPTIONS = ["reviewed", "matched", "in_progress", "completed"] as const;
@@ -63,6 +65,11 @@ export default function Admin() {
   const { data: requests, isLoading: requestsLoading } = useQuery<BusinessRequest[]>({
     queryKey: ["/api/business-requests"],
     enabled: tab === "requests",
+  });
+
+  const { data: reports, isLoading: reportsLoading } = useQuery<ContentReport[]>({
+    queryKey: ["/api/reports"],
+    enabled: tab === "reports",
   });
 
   const [expandedRequestId, setExpandedRequestId] = useState<number | null>(null);
@@ -158,6 +165,15 @@ export default function Admin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/events/upcoming"] });
       toast({ title: "Event deleted" });
+    },
+  });
+
+  const reportStatusMutation = useMutation({
+    mutationFn: ({ id, status, resolution_note }: { id: number; status: string; resolution_note?: string }) =>
+      apiRequest("PATCH", `/api/admin/reports/${id}`, { status, resolution_note }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/reports"] });
+      toast({ title: "Report updated" });
     },
   });
 
@@ -518,6 +534,80 @@ export default function Admin() {
                       )}
                     </div>
                   )}
+                </CardContent>
+              </Card>
+            ))
+          )
+        )}
+
+        {/* Reports Tab */}
+        {tab === "reports" && (
+          reportsLoading ? (
+            <div className="space-y-2">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full" />)}</div>
+          ) : (reports ?? []).length === 0 ? (
+            <div className="py-10 text-center text-sm text-muted-foreground">No reports in the moderation queue.</div>
+          ) : (
+            (reports ?? []).map((report) => (
+              <Card key={report.id} className={report.priority === "urgent" ? "border-l-2 border-l-destructive" : report.priority === "high" ? "border-l-2 border-l-prairie-amber" : ""}>
+                <CardContent className="space-y-3 p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <ShieldAlert className="h-4 w-4 text-muted-foreground" />
+                        <h3 className="text-sm font-semibold capitalize">{report.reason.replace(/_/g, " ")}</h3>
+                        <Badge variant={report.priority === "urgent" ? "destructive" : "outline"} className="text-[10px] capitalize">
+                          {report.priority}
+                        </Badge>
+                        <Badge variant="secondary" className="text-[10px] capitalize">{report.status}</Badge>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {report.target_type.replace(/_/g, " ")} #{report.target_id}
+                        {report.target_label ? ` · ${report.target_label}` : ""}
+                      </p>
+                      <p className="mt-1 text-[10px] text-muted-foreground">
+                        Reported by {report.reporter_name} · {formatDate(report.created_at)}
+                      </p>
+                    </div>
+                  </div>
+                  {report.details && <p className="whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground">{report.details}</p>}
+                  {report.resolution_note && <p className="text-xs text-muted-foreground">Resolution: {report.resolution_note}</p>}
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant={report.status === "reviewing" ? "default" : "outline"}
+                      disabled={reportStatusMutation.isPending}
+                      onClick={() => reportStatusMutation.mutate({ id: report.id, status: "reviewing" })}
+                    >
+                      Review
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={reportStatusMutation.isPending}
+                      onClick={() => reportStatusMutation.mutate({
+                        id: report.id,
+                        status: "resolved",
+                        resolution_note: window.prompt("Resolution note (optional)") ?? undefined,
+                      })}
+                    >
+                      Resolve
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      disabled={reportStatusMutation.isPending}
+                      onClick={() => reportStatusMutation.mutate({
+                        id: report.id,
+                        status: "dismissed",
+                        resolution_note: window.prompt("Dismissal note (optional)") ?? undefined,
+                      })}
+                    >
+                      Dismiss
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))

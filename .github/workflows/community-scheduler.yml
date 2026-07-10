@@ -1,0 +1,54 @@
+name: Community scheduler
+
+on:
+  schedule:
+    - cron: "15 * * * *"
+    - cron: "15 16 * * 1"
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Community task to run
+        required: true
+        type: choice
+        options:
+          - reminders
+          - digest
+
+permissions:
+  contents: read
+
+jobs:
+  event-reminders:
+    if: github.event.schedule == '15 * * * *' || inputs.task == 'reminders'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send 24-hour event reminders
+        env:
+          PIPELINE_SECRET: ${{ secrets.PIPELINE_SECRET }}
+        run: |
+          curl --fail-with-body --silent --show-error \
+            --request POST \
+            --header "X-Pipeline-Secret: ${PIPELINE_SECRET}" \
+            https://grandeprairie.dev/api/events/reminders/send
+
+  weekly-digest:
+    if: github.event.schedule == '15 16 * * 1' || inputs.task == 'digest'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send weekly digest batches
+        env:
+          PIPELINE_SECRET: ${{ secrets.PIPELINE_SECRET }}
+        run: |
+          for attempt in $(seq 1 10); do
+            response=$(curl --fail-with-body --silent --show-error \
+              --request POST \
+              --header "X-Pipeline-Secret: ${PIPELINE_SECRET}" \
+              https://grandeprairie.dev/api/digest/send)
+            echo "$response"
+            remaining=$(echo "$response" | jq -r '.remaining // 0')
+            if [ "$remaining" -eq 0 ]; then
+              exit 0
+            fi
+          done
+          echo "Digest still has recipients after 10 batches" >&2
+          exit 1

@@ -23,6 +23,7 @@ import {
   Send,
   CheckCircle,
   MessageSquare,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -103,6 +104,7 @@ const NAV_GROUPS: NavGroup[] = [
 
 const STANDALONE_ITEMS: NavItem[] = [
   { label: "About", href: "/about", icon: Heart },
+  { label: "Conduct", href: "/conduct", icon: ShieldCheck },
   { label: "Admin", href: "/admin", icon: Settings },
 ];
 
