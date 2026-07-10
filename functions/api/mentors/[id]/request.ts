@@ -1,6 +1,7 @@
 import type { Env } from "../../../lib/env";
 import { notifySlack } from "../../../lib/slack";
 import { logActivity } from "../../../lib/activity";
+import { recordSignal, upsertRelationship } from "../../../lib/intelligence";
 
 export const onRequestPost: PagesFunction<Env> = async ({ params, env, request, data }) => {
   const user = (data as { user?: { profileId: number } }).user;
@@ -27,15 +28,37 @@ export const onRequestPost: PagesFunction<Env> = async ({ params, env, request, 
 
   const body = await request.json<{ message?: string }>();
 
-  await env.DB.prepare(
+  const result = await env.DB.prepare(
     "INSERT INTO mentor_requests (mentee_profile_id, mentor_profile_id, message) VALUES (?, ?, ?)"
   ).bind(user.profileId, mentorId, body.message ?? null).run();
+  const mentorRequestId = result.meta.last_row_id as number;
 
   const mentee = await env.DB.prepare("SELECT name FROM profiles WHERE id = ?")
     .bind(user.profileId).first<{ name: string }>();
 
   await logActivity(env, "mentor_request", user.profileId, "profile", mentorId,
     `${mentee?.name ?? "Someone"} requested intro with ${mentor.name}`);
+  await recordSignal(env, {
+    actorProfileId: user.profileId,
+    signalType: "mentor_request",
+    targetType: "profile",
+    targetId: mentorId,
+    topic: "mentorship",
+    source: "mentors",
+    outcome: "pending",
+    metadata: { mentor_request_id: mentorRequestId },
+    dedupeKey: `mentor-request:${mentorRequestId}:pending`,
+  });
+  await upsertRelationship(env, {
+    sourceType: "profile",
+    sourceId: user.profileId,
+    targetType: "profile",
+    targetId: mentorId,
+    relationshipType: "mentorship",
+    status: "pending",
+    provenance: "mentor_requests",
+    metadata: { mentor_request_id: mentorRequestId },
+  });
   await notifySlack(env, `Mentor request: ${mentee?.name ?? "Someone"} -> ${mentor.name} (pending)`);
 
   return Response.json({ success: true }, { status: 201 });

@@ -1,5 +1,6 @@
 import type { Env, UserContext } from "../../lib/env";
 import { sendDigestConfirmation } from "../../lib/email";
+import { recordSignal } from "../../lib/intelligence";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const TOPICS = new Set(["events", "board", "projects", "intel"]);
@@ -61,6 +62,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
          status = 'active', updated_at = datetime('now')
        WHERE id = ?`,
     ).bind(user?.profileId ?? null, topics, existing.id).run();
+    await recordSignal(env, {
+      actorProfileId: user?.profileId,
+      signalType: "digest_preferences_updated",
+      targetType: "digest_subscription",
+      targetId: existing.id,
+      topic: "digest",
+      source: "digest",
+      outcome: "active",
+      metadata: { topics: normalizeTopics(body?.topics) },
+      privacyTier: user ? "member" : "aggregate",
+    });
     return Response.json({ message: "Your weekly digest preferences were updated." });
   }
 
@@ -85,6 +97,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
   if (!sent) {
     return Response.json({ error: "Confirmation email could not be sent." }, { status: 502 });
   }
+
+  await recordSignal(env, {
+    actorProfileId: user?.profileId,
+    signalType: "digest_subscription_requested",
+    targetType: "digest_subscription",
+    targetId: existing?.id ?? "pending",
+    topic: "digest",
+    source: "digest",
+    outcome: "confirmation_sent",
+    metadata: { topics: normalizeTopics(body?.topics) },
+    privacyTier: user ? "member" : "aggregate",
+  });
 
   return Response.json({ message: "Check your email to confirm the weekly digest." }, { status: 202 });
 };

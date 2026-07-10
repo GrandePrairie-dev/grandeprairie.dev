@@ -2,6 +2,7 @@ import type { Env } from "../../../lib/env";
 import { isAdminInDb } from "../../../lib/auth";
 import { notifySlack } from "../../../lib/slack";
 import { logActivity } from "../../../lib/activity";
+import { recordSignal, upsertRelationship } from "../../../lib/intelligence";
 
 // POST: express interest (authenticated)
 export const onRequestPost: PagesFunction<Env> = async ({ params, env, request, data }) => {
@@ -12,8 +13,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ params, env, request, 
   const requestId = Number(params.id);
 
   // Check request exists
-  const br = await env.DB.prepare("SELECT business_name FROM business_requests WHERE id = ?")
-    .bind(requestId).first<{ business_name: string }>();
+  const br = await env.DB.prepare("SELECT business_name, category FROM business_requests WHERE id = ?")
+    .bind(requestId).first<{ business_name: string; category: string }>();
   if (!br) return new Response("Not found", { status: 404 });
 
   // Check duplicate
@@ -32,6 +33,25 @@ export const onRequestPost: PagesFunction<Env> = async ({ params, env, request, 
 
   await logActivity(env, "business_interest", user.profileId, "business_request", requestId,
     `${profile?.name ?? "Someone"} expressed interest in ${br.business_name}`);
+  await recordSignal(env, {
+    actorProfileId: user.profileId,
+    signalType: "business_interest",
+    targetType: "business_request",
+    targetId: requestId,
+    topic: br.category,
+    source: "opportunity",
+    outcome: "expressed",
+    dedupeKey: `business-interest:${requestId}:${user.profileId}`,
+  });
+  await upsertRelationship(env, {
+    sourceType: "profile",
+    sourceId: user.profileId,
+    targetType: "business_request",
+    targetId: requestId,
+    relationshipType: "expressed_interest",
+    status: "active",
+    provenance: "business_request_interests",
+  });
   await notifySlack(env, `\u{1F514} ${profile?.name ?? "Someone"} expressed interest in request #${requestId} \u2014 ${br.business_name}`);
 
   return Response.json({ success: true }, { status: 201 });

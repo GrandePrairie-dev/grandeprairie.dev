@@ -1,5 +1,6 @@
 import type { Env, UserContext } from "../../../lib/env";
 import { recordCommunityAction } from "../../../lib/community";
+import { recordSignal } from "../../../lib/intelligence";
 
 function parseEventId(value: string | string[] | undefined): number | null {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -69,6 +70,18 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data, pa
   if (status === "attending") {
     await recordCommunityAction(env, user.profileId, "event_rsvp", "event", eventId);
   }
+
+  await recordSignal(env, {
+    actorProfileId: user.profileId,
+    signalType: "event_rsvp_changed",
+    targetType: "event",
+    targetId: eventId,
+    topic: "events",
+    source: "calendar",
+    outcome: status,
+    metadata: { previous_status: existing?.status ?? null },
+    dedupeKey: `event-rsvp:${eventId}:${user.profileId}:${existing?.status ?? "none"}:${status}`,
+  });
 
   const currentCounts = await counts(env, eventId);
   return Response.json({

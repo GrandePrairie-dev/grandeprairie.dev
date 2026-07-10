@@ -1,4 +1,5 @@
 import type { Env } from "../../lib/env";
+import { recordSignal, upsertRelationship } from "../../lib/intelligence";
 
 export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request, data }) => {
   const user = (data as { user?: { profileId: number } }).user;
@@ -26,6 +27,31 @@ export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request,
   await env.DB.prepare(
     "UPDATE mentor_requests SET status = ?, responded_at = datetime('now') WHERE id = ?"
   ).bind(body.status, params.id).run();
+
+  await recordSignal(env, {
+    actorProfileId: user.profileId,
+    signalType: "mentor_request_decision",
+    targetType: "mentor_request",
+    targetId: String(params.id),
+    topic: "mentorship",
+    source: "mentors",
+    outcome: body.status,
+    metadata: {
+      mentee_profile_id: req.mentee_profile_id,
+      mentor_profile_id: req.mentor_profile_id,
+    },
+    dedupeKey: `mentor-request:${String(params.id)}:${body.status}`,
+  });
+  await upsertRelationship(env, {
+    sourceType: "profile",
+    sourceId: req.mentee_profile_id,
+    targetType: "profile",
+    targetId: req.mentor_profile_id,
+    relationshipType: "mentorship",
+    status: body.status === "accepted" ? "active" : "inactive",
+    provenance: "mentor_requests",
+    metadata: { mentor_request_id: Number(params.id), outcome: body.status },
+  });
 
   return Response.json({ success: true });
 };
