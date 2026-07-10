@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { AuroraHero } from "@/components/AuroraHero";
+import { CommunityDigestSignup } from "@/components/CommunityDigestSignup";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -110,6 +111,8 @@ export default function Home() {
             ))}
           </div>
         </section>
+
+        <CommunityDigestSignup />
 
         {/* Featured Ideas */}
         <section className="space-y-4">

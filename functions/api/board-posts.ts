@@ -1,6 +1,7 @@
 import type { Env } from "../lib/env";
 import { logActivity } from "../lib/activity";
 import { notifySlack } from "../lib/slack";
+import { recordCommunityAction } from "../lib/community";
 
 const BOARD_CATEGORIES = new Set([
   "general",
@@ -124,6 +125,13 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env, data }) 
     "board_post",
     postId,
     parentId ? `replied: ${clampSummary(postBody)}` : String(title),
+  );
+  await recordCommunityAction(
+    env,
+    user.profileId,
+    parentId ? "board_reply" : "board_post",
+    "board_post",
+    postId,
   );
 
   if (!parentId) {

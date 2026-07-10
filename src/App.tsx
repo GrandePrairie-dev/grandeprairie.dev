@@ -31,6 +31,8 @@ const Admin = lazy(() => import("@/pages/Admin"));
 const Organizations = lazy(() => import("@/pages/Organizations"));
 const OrgDetail = lazy(() => import("@/pages/OrgDetail"));
 const Showcase = lazy(() => import("@/pages/Showcase"));
+const Conduct = lazy(() => import("@/pages/Conduct"));
+const DigestPreferences = lazy(() => import("@/pages/DigestPreferences"));
 
 function RouteFallback() {
   return (
@@ -96,6 +98,8 @@ export function App() {
                   <Route path="/orgs/:slug" component={OrgDetail} />
                   <Route path="/orgs" component={Organizations} />
                   <Route path="/showcase" component={Showcase} />
+                  <Route path="/conduct" component={Conduct} />
+                  <Route path="/digest" component={DigestPreferences} />
                   <Route path="/about" component={About} />
                   <Route path="/admin" component={Admin} />
                   <Route component={NotFound} />

@@ -139,6 +139,20 @@ const ROUTE_SEO: RouteSeo[] = [
     pageType: "AboutPage",
   },
   {
+    path: "/conduct",
+    title: "Community Conduct | GrandePrairie.dev",
+    description: "Participation and moderation standards for the GrandePrairie.dev builder community.",
+    keywords: ["GrandePrairie.dev conduct", "Grande Prairie tech community moderation"],
+    pageType: "WebPage",
+  },
+  {
+    path: "/digest",
+    title: "Digest Preferences | GrandePrairie.dev",
+    description: "Manage a GrandePrairie.dev weekly digest subscription.",
+    keywords: ["GrandePrairie.dev digest"],
+    noindex: true,
+  },
+  {
     path: "/agency",
     title: "GrandePrairie.dev Agency | Build, Run, and Show",
     description:

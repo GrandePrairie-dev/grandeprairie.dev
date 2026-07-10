@@ -1,7 +1,7 @@
 -- GrandePrairie.dev — Complete D1 Schema
--- This file is the consolidated schema reflecting all migrations (001-005).
+-- This file is the consolidated schema reflecting all migrations (001-008).
 -- For incremental updates, add new migration files in db/migrations/
--- Last consolidated: 2026-03-22
+-- Last consolidated: 2026-07-09
 
 -- ============================================================
 -- Core Tables
@@ -31,6 +31,9 @@ CREATE TABLE IF NOT EXISTS profiles (
   google_id TEXT,
   auth_provider TEXT DEFAULT 'github',
   email_verified INTEGER DEFAULT 0,
+  -- 007-community-foundation
+  reputation_points INTEGER NOT NULL DEFAULT 0,
+  trust_level INTEGER NOT NULL DEFAULT 0,
   created_at TEXT DEFAULT (datetime('now')),
   updated_at TEXT DEFAULT (datetime('now'))
 );
@@ -75,6 +78,9 @@ CREATE TABLE IF NOT EXISTS events (
   end_time TEXT,
   organizer_id INTEGER REFERENCES profiles(id),
   link TEXT,
+  -- 007-community-foundation
+  capacity INTEGER,
+  allow_waitlist INTEGER NOT NULL DEFAULT 1,
   created_at TEXT DEFAULT (datetime('now'))
 );
 
@@ -231,6 +237,90 @@ CREATE TABLE IF NOT EXISTS pipeline_runs (
 );
 
 -- ============================================================
+-- Community Foundation (007-community-foundation)
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS event_rsvps (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'attending' CHECK (status IN ('attending', 'waitlist', 'cancelled')),
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now')),
+  UNIQUE(event_id, profile_id)
+);
+
+CREATE TABLE IF NOT EXISTS digest_subscriptions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL COLLATE NOCASE UNIQUE,
+  profile_id INTEGER REFERENCES profiles(id) ON DELETE SET NULL,
+  frequency TEXT NOT NULL DEFAULT 'weekly' CHECK (frequency IN ('weekly', 'paused')),
+  topics TEXT NOT NULL DEFAULT '["events","board","projects","intel"]',
+  status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'unsubscribed')),
+  unsubscribe_token TEXT NOT NULL UNIQUE,
+  confirmation_token TEXT UNIQUE,
+  confirmed_at TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now')),
+  last_sent_at TEXT
+);
+
+CREATE TABLE IF NOT EXISTS content_reports (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  reporter_profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  target_type TEXT NOT NULL CHECK (target_type IN ('board_post', 'profile', 'project', 'event')),
+  target_id INTEGER NOT NULL,
+  reason TEXT NOT NULL CHECK (reason IN ('spam', 'harassment', 'misinformation', 'unsafe', 'off_topic', 'other')),
+  details TEXT,
+  priority TEXT NOT NULL DEFAULT 'normal' CHECK (priority IN ('low', 'normal', 'high', 'urgent')),
+  status TEXT NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'reviewing', 'resolved', 'dismissed')),
+  moderator_profile_id INTEGER REFERENCES profiles(id) ON DELETE SET NULL,
+  resolution_note TEXT,
+  created_at TEXT DEFAULT (datetime('now')),
+  resolved_at TEXT,
+  UNIQUE(reporter_profile_id, target_type, target_id)
+);
+
+CREATE TABLE IF NOT EXISTS reputation_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  event_type TEXT NOT NULL,
+  points INTEGER NOT NULL DEFAULT 0,
+  source_type TEXT,
+  source_id INTEGER,
+  dedupe_key TEXT NOT NULL UNIQUE,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS profile_badges (
+  profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  badge_key TEXT NOT NULL,
+  awarded_at TEXT DEFAULT (datetime('now')),
+  PRIMARY KEY (profile_id, badge_key)
+);
+
+CREATE TABLE IF NOT EXISTS digest_deliveries (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  subscription_id INTEGER NOT NULL REFERENCES digest_subscriptions(id) ON DELETE CASCADE,
+  period_start TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'sending' CHECK (status IN ('sending', 'sent', 'failed')),
+  attempted_at TEXT DEFAULT (datetime('now')),
+  sent_at TEXT,
+  UNIQUE(subscription_id, period_start)
+);
+
+CREATE TABLE IF NOT EXISTS event_reminders (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  reminder_type TEXT NOT NULL DEFAULT '24_hour',
+  status TEXT NOT NULL DEFAULT 'sending' CHECK (status IN ('sending', 'sent', 'failed')),
+  attempted_at TEXT DEFAULT (datetime('now')),
+  sent_at TEXT,
+  UNIQUE(event_id, profile_id, reminder_type)
+);
+
+-- ============================================================
 -- Indexes
 -- ============================================================
 
@@ -249,6 +339,8 @@ CREATE INDEX IF NOT EXISTS idx_idea_votes_profile ON idea_votes(profile_id);
 
 -- events
 CREATE INDEX IF NOT EXISTS idx_events_start ON events(start_time);
+CREATE INDEX IF NOT EXISTS idx_event_rsvps_event_status ON event_rsvps(event_id, status);
+CREATE INDEX IF NOT EXISTS idx_event_rsvps_profile ON event_rsvps(profile_id, status);
 
 -- intel
 CREATE INDEX IF NOT EXISTS idx_intel_created ON intel(created_at);
@@ -274,6 +366,14 @@ CREATE INDEX IF NOT EXISTS idx_board_posts_created ON board_posts(created_at);
 
 -- activity
 CREATE INDEX IF NOT EXISTS idx_activity_created ON activity(created_at);
+
+-- community foundation
+CREATE INDEX IF NOT EXISTS idx_digest_subscriptions_status ON digest_subscriptions(status, frequency);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_digest_confirmation_token ON digest_subscriptions(confirmation_token);
+CREATE INDEX IF NOT EXISTS idx_digest_deliveries_period ON digest_deliveries(period_start, status);
+CREATE INDEX IF NOT EXISTS idx_event_reminders_status ON event_reminders(status, attempted_at);
+CREATE INDEX IF NOT EXISTS idx_content_reports_status ON content_reports(status, priority, created_at);
+CREATE INDEX IF NOT EXISTS idx_reputation_events_profile ON reputation_events(profile_id, event_type);
 
 -- mentor_requests
 CREATE INDEX IF NOT EXISTS idx_mentor_req_mentor ON mentor_requests(mentor_profile_id, status);

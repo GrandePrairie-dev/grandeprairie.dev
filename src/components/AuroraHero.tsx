@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { InviteCommunityDialog } from "@/components/InviteCommunityDialog";
 import { useAuth } from "@/hooks/useAuth";
 import type { Stats } from "@/lib/types";
 
@@ -177,6 +178,7 @@ export function AuroraHero() {
                       Browse Ideas
                     </Button>
                   </Link>
+                  <InviteCommunityDialog triggerClassName="w-full sm:col-span-2 lg:col-span-1" />
                 </div>
               </div>
             ) : (

@@ -1,6 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CalendarCheck, Clock3, MapPin, Users } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 import type { Event } from "@/lib/types";
 
 interface EventCardProps {
@@ -18,11 +23,35 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export function EventCard({ event, featured }: EventCardProps) {
+  const { isLoggedIn, login } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const date = new Date(event.start_time);
   const day = date.getDate();
   const month = date.toLocaleDateString("en-CA", { month: "short" });
   const time = date.toLocaleTimeString("en-CA", { hour: "numeric", minute: "2-digit" });
   const colorClass = CATEGORY_COLORS[event.category ?? "other"] ?? CATEGORY_COLORS.other;
+  const activeRsvp = event.my_rsvp === "attending" || event.my_rsvp === "waitlist";
+
+  const rsvp = useMutation({
+    mutationFn: () => apiRequest("POST", `/api/events/${event.id}/rsvp`, {
+      status: activeRsvp ? "cancelled" : "attending",
+    }),
+    onSuccess: async (response) => {
+      const result = await response.json() as { status: string };
+      queryClient.invalidateQueries({ queryKey: ["/api/events/upcoming"] });
+      toast({
+        title: result.status === "waitlist" ? "Added to waitlist" : result.status === "cancelled" ? "RSVP cancelled" : "You are going",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Could not update RSVP",
+        description: error instanceof Error ? error.message : "Try again shortly.",
+        variant: "destructive",
+      });
+    },
+  });
 
   const content = (
     <div className="flex items-start gap-4">
@@ -47,6 +76,35 @@ export function EventCard({ event, featured }: EventCardProps) {
               <MapPin className="w-3 h-3" /> {event.location}
             </span>
           )}
+          <span className="flex items-center gap-1">
+            <Users className="h-3 w-3" /> {event.attendee_count ?? 0} going
+          </span>
+          {(event.waitlist_count ?? 0) > 0 && (
+            <span className="flex items-center gap-1">
+              <Clock3 className="h-3 w-3" /> {event.waitlist_count} waiting
+            </span>
+          )}
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          {event.my_rsvp === "attending" && <Badge className="text-[10px]">Going</Badge>}
+          {event.my_rsvp === "waitlist" && <Badge variant="secondary" className="text-[10px]">Waitlisted</Badge>}
+          <Button
+            type="button"
+            size="sm"
+            variant={activeRsvp ? "outline" : "default"}
+            className="h-8 min-w-28 text-xs"
+            disabled={rsvp.isPending}
+            onClick={() => isLoggedIn ? rsvp.mutate() : login("/calendar")}
+          >
+            <CalendarCheck className="h-3.5 w-3.5" />
+            {rsvp.isPending
+              ? "Updating..."
+              : event.my_rsvp === "attending"
+                ? "Cancel RSVP"
+                : event.my_rsvp === "waitlist"
+                  ? "Leave waitlist"
+                  : "RSVP"}
+          </Button>
         </div>
       </div>
     </div>

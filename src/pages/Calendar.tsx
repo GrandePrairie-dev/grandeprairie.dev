@@ -25,6 +25,8 @@ export default function Calendar() {
   const [eventCategory, setEventCategory] = useState("");
   const [startTime, setStartTime] = useState("");
   const [location, setLocation] = useState("");
+  const [capacity, setCapacity] = useState("");
+  const [allowWaitlist, setAllowWaitlist] = useState(true);
   const { toast } = useToast();
   const { isLoggedIn, isContributor, login } = useAuth();
   const queryClient = useQueryClient();
@@ -36,13 +38,15 @@ export default function Calendar() {
       title,
       description,
       category: eventCategory,
-      start_time: startTime,
+      start_time: new Date(startTime).toISOString(),
       location,
+      capacity: capacity ? Number(capacity) : null,
+      allow_waitlist: allowWaitlist,
     }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/events/upcoming"] });
       setDialogOpen(false);
-      setTitle(""); setDescription(""); setEventCategory(""); setStartTime(""); setLocation("");
+      setTitle(""); setDescription(""); setEventCategory(""); setStartTime(""); setLocation(""); setCapacity(""); setAllowWaitlist(true);
       toast({ title: "Event created!" });
     },
   });
@@ -86,6 +90,24 @@ export default function Calendar() {
                 </Select>
                 <Input type="datetime-local" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
                 <Input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} />
+                <Input
+                  type="number"
+                  min="1"
+                  max="5000"
+                  inputMode="numeric"
+                  placeholder="Capacity (optional)"
+                  value={capacity}
+                  onChange={(e) => setCapacity(e.target.value)}
+                />
+                <label className="flex min-h-11 items-center gap-2 text-sm text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={allowWaitlist}
+                    onChange={(e) => setAllowWaitlist(e.target.checked)}
+                    className="h-4 w-4 accent-aurora-teal"
+                  />
+                  Start a waitlist when capacity is reached
+                </label>
                 <Button type="submit" disabled={mutation.isPending || !title || !startTime}>
                   {mutation.isPending ? "Creating..." : "Create Event"}
                 </Button>
