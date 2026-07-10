@@ -19,6 +19,7 @@ const TOPICS = [
   ["events", "Events"],
   ["board", "Board discussions"],
   ["projects", "Projects"],
+  ["jobs", "Jobs & gigs"],
   ["intel", "Regional intel"],
 ] as const;
 

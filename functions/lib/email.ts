@@ -19,6 +19,7 @@ export interface WeeklyDigestEmail {
   events: DigestItem[];
   boardPosts: DigestItem[];
   projects: DigestItem[];
+  jobs: DigestItem[];
   intel: DigestItem[];
 }
 
@@ -166,6 +167,7 @@ function weeklyDigestHtml(digest: WeeklyDigestEmail, siteUrl: string): string {
     topics.has("events") ? digestSection("This week", digest.events, siteUrl) : "",
     topics.has("board") ? digestSection("From the board", digest.boardPosts, siteUrl) : "",
     topics.has("projects") ? digestSection("Projects shipping", digest.projects, siteUrl) : "",
+    topics.has("jobs") ? digestSection("Jobs & gigs", digest.jobs, siteUrl) : "",
     topics.has("intel") ? digestSection("Regional intel", digest.intel, siteUrl) : "",
   ].join("");
 
@@ -183,7 +185,7 @@ function weeklyDigestHtml(digest: WeeklyDigestEmail, siteUrl: string): string {
         <tr><td style="background:#1E2530;border:1px solid #2E3742;border-radius:8px;padding:30px;">
           <p style="color:#3DBFA8;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin:0 0 10px;">The GP.dev Weekly</p>
           <h1 style="color:#E2E6EC;font-size:22px;font-weight:700;margin:0 0 10px;">What local builders are doing</h1>
-          <p style="color:#8B95A5;font-size:13px;line-height:1.6;margin:0 0 22px;">Events, questions, projects, and useful signals from Grande Prairie and the Peace Region.</p>
+          <p style="color:#8B95A5;font-size:13px;line-height:1.6;margin:0 0 22px;">Events, questions, projects, jobs, and useful signals from Grande Prairie and the Peace Region.</p>
           <table width="100%" cellpadding="0" cellspacing="0">${sections || `<tr><td style="color:#8B95A5;font-size:13px;">A quiet week. Check the community for the latest activity.</td></tr>`}</table>
           <a href="${siteUrl}" style="display:inline-block;margin-top:12px;padding:11px 22px;background:#2D4A3E;color:#3DBFA8;border:1px solid #4A7C6A;border-radius:6px;text-decoration:none;font-weight:700;font-size:13px;">Open GrandePrairie.dev</a>
         </td></tr>

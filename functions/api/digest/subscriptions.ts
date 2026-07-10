@@ -3,8 +3,8 @@ import { sendDigestConfirmation } from "../../lib/email";
 import { recordSignal } from "../../lib/intelligence";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const TOPICS = new Set(["events", "board", "projects", "intel"]);
-const DEFAULT_TOPICS = ["events", "board", "projects", "intel"];
+const TOPICS = new Set(["events", "board", "projects", "jobs", "intel"]);
+const DEFAULT_TOPICS = ["events", "board", "projects", "jobs", "intel"];
 
 function normalizeEmail(value: unknown): string | null {
   if (typeof value !== "string") return null;

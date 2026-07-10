@@ -27,6 +27,14 @@ const ROUTE_SEO: RouteSeo[] = [
     pageType: "CollectionPage",
   },
   {
+    path: "/jobs",
+    title: "Jobs & Gigs | Grande Prairie Tech Opportunities",
+    description:
+      "Find local technology jobs, contracts, internships, and co-founder opportunities in Grande Prairie and the Peace Region.",
+    keywords: ["Grande Prairie tech jobs", "Peace Region contracts", "Grande Prairie internships", "Alberta remote jobs"],
+    pageType: "CollectionPage",
+  },
+  {
     path: "/",
     title: "GrandePrairie.dev | Grande Prairie Tech Community",
     description:
