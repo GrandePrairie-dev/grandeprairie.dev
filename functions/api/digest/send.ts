@@ -53,7 +53,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
   const periodStart = currentWeeklyPeriod();
 
-  const [eventsResult, boardResult, projectsResult, intelResult, subscriptionsResult] = await Promise.all([
+  const [eventsResult, boardResult, projectsResult, jobsResult, intelResult, subscriptionsResult] = await Promise.all([
     env.DB.prepare(
       `SELECT title, location, start_time FROM events
        WHERE start_time >= datetime('now') AND start_time < datetime('now', '+8 days')
@@ -91,6 +91,20 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       votes_count: number | null;
     }>(),
     env.DB.prepare(
+      `SELECT id, title, organization, employment_type, workplace_type
+         FROM jobs
+        WHERE status = 'published' AND expires_at > datetime('now')
+          AND created_at >= datetime('now', '-14 days')
+        ORDER BY created_at DESC
+        LIMIT 8`,
+    ).all<{
+      id: number;
+      title: string;
+      organization: string;
+      employment_type: string;
+      workplace_type: string;
+    }>(),
+    env.DB.prepare(
       `SELECT title, source_url, category FROM intel
        WHERE created_at >= datetime('now', '-7 days')
        ORDER BY is_pinned DESC, created_at DESC LIMIT 8`,
@@ -126,6 +140,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       : project.category,
     href: project.launch_entry_id ? "/launches" : "/projects",
   }));
+  const jobs: DigestItem[] = jobsResult.results.map((job) => ({
+    title: `${job.title} · ${job.organization}`,
+    detail: `${job.employment_type.replace(/_/g, " ")} · ${job.workplace_type}`,
+    href: `/jobs/${job.id}`,
+  }));
   const intel: DigestItem[] = intelResult.results.map((item) => ({
     title: item.title,
     detail: item.category,
@@ -147,6 +166,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       events,
       boardPosts,
       projects,
+      jobs,
       intel,
     });
     if (ok) {

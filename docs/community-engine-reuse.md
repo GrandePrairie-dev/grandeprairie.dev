@@ -83,8 +83,11 @@ and contribution counts without exposing an opaque social score.
 
 ### Phase 3: Jobs and Groups
 
-- Use a dedicated `jobs` table for expiry, employment type, compensation, location, and application URLs. The existing board `jobs` category remains suitable for informal leads.
-- Prefer a read-only CareerLynx import boundary over duplicating its full hiring workflow.
+- Structured jobs are implemented by migration `012-jobs-and-gigs.sql`, including expiry,
+  employment and workplace types, compensation, location, ownership, and application URLs.
+  The existing board `jobs` category remains suitable for informal leads.
+- CareerLynx remains a read-only import boundary. Imported records use `source='careerlynx'`
+  plus a stable `source_id`; GP.dev does not duplicate applicant or hiring workflow state.
 - Start groups as curated topic pages plus membership and organizer roles. Defer chat and Liveblocks until participation proves demand.
 
 ### Phase 4: Reputation Presentation

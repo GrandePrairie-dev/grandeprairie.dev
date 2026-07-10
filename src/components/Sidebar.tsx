@@ -25,6 +25,7 @@ import {
   MessageSquare,
   ShieldCheck,
   Rocket,
+  BriefcaseBusiness,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Ideas", href: "/ideas", icon: Lightbulb },
       { label: "Projects", href: "/projects", icon: FolderOpen },
       { label: "Launch Board", href: "/launches", icon: Rocket },
+      { label: "Jobs & Gigs", href: "/jobs", icon: BriefcaseBusiness },
     ],
   },
   {

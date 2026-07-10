@@ -98,6 +98,31 @@ export interface ReputationSummary {
   }>;
 }
 
+export interface Job {
+  id: number;
+  title: string;
+  organization: string;
+  description: string;
+  employment_type: "full_time" | "part_time" | "contract" | "internship" | "cofounder" | "volunteer";
+  workplace_type: "onsite" | "hybrid" | "remote";
+  location: string | null;
+  compensation_min: number | null;
+  compensation_max: number | null;
+  compensation_currency: string;
+  compensation_period: "hour" | "year" | "project" | null;
+  application_url: string;
+  tags: string;
+  posted_by_profile_id: number | null;
+  poster_name: string | null;
+  source: "community" | "careerlynx";
+  source_url: string | null;
+  status: "published" | "closed";
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
+  viewer_can_manage: number;
+}
+
 export interface Event {
   id: number;
   title: string;
