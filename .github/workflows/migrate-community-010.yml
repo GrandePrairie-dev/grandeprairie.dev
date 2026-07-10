@@ -1,0 +1,26 @@
+name: Apply community migration 010
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/migrate-community-010.yml
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply question and answer loop migration
+        uses: cloudflare/wrangler-action@v3
+        with:
+          command: d1 execute grandeprairie-dev-db --remote --file=db/migrations/010-question-answer-loop.sql
+        env:
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
