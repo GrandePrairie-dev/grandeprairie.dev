@@ -6,13 +6,33 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft, Github, Linkedin, Globe, Pencil } from "lucide-react";
-import type { Profile } from "@/lib/types";
+import { Activity, ArrowLeft, Award, Github, Linkedin, Globe, Pencil, ShieldCheck } from "lucide-react";
+import type { Profile, ReputationSummary } from "@/lib/types";
 import { parseJsonArray, parseJsonObject } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+
+const TRUST_LABELS = ["New member", "Contributor", "Trusted contributor", "Community steward"];
+const BADGE_LABELS: Record<string, string> = {
+  first_contribution: "First Contribution",
+  community_host: "Community Host",
+  shows_up: "Shows Up",
+  neighbour: "Good Neighbour",
+  problem_solver: "Problem Solver",
+  helpful_neighbour: "Helpful Neighbour",
+  shipped_it: "Shipped It",
+};
+const ACTION_LABELS: Record<string, string> = {
+  board_post: "Posts",
+  board_reply: "Replies",
+  event_created: "Events hosted",
+  event_rsvp: "Events attended",
+  helpful_answer: "Helpful answers",
+  accepted_answer: "Accepted answers",
+  project_launched: "Projects launched",
+};
 
 export default function PersonProfile() {
   const params = useParams<{ id: string }>();
@@ -24,6 +44,9 @@ export default function PersonProfile() {
 
   const { data: profile, isLoading } = useQuery<Profile>({
     queryKey: [`/api/profiles/${params.id}`],
+  });
+  const { data: reputation } = useQuery<ReputationSummary>({
+    queryKey: [`/api/profiles/${params.id}/reputation`],
   });
 
   const isOwnProfile = user?.id === Number(params.id);
@@ -175,6 +198,80 @@ export default function PersonProfile() {
           </div>
         </CardContent>
       </Card>
+
+      {reputation && (
+        <Card>
+          <CardContent className="space-y-5 p-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-md bg-aurora-teal/10 text-aurora-teal">
+                  <ShieldCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase text-muted-foreground">Community reputation</p>
+                  <h2 className="font-display text-base font-semibold">
+                    {TRUST_LABELS[reputation.trust_level] ?? "Community member"}
+                  </h2>
+                </div>
+              </div>
+              <div className="text-left sm:text-right">
+                <p className="font-mono text-xl font-bold text-prairie-amber">{reputation.points}</p>
+                <p className="text-xs text-muted-foreground">contribution points</p>
+              </div>
+            </div>
+
+            {reputation.next_level_points && (
+              <div>
+                <div className="mb-1.5 flex justify-between text-xs text-muted-foreground">
+                  <span>Level {reputation.trust_level}</span>
+                  <span>{reputation.next_level_points - reputation.points} points to next level</span>
+                </div>
+                <div className="h-1.5 overflow-hidden rounded bg-muted">
+                  <div
+                    className="h-full bg-aurora-teal"
+                    style={{
+                      width: `${Math.min(100, (reputation.points / reputation.next_level_points) * 100)}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {reputation.badges.length > 0 && (
+              <div>
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
+                  <Award className="h-3.5 w-3.5" /> Earned badges
+                </h3>
+                <div className="flex flex-wrap gap-1.5">
+                  {reputation.badges.map((badge) => (
+                    <Badge key={badge.key} variant="outline">
+                      {BADGE_LABELS[badge.key] ?? badge.key.replaceAll("_", " ")}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {reputation.contributions.length > 0 && (
+              <div>
+                <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
+                  <Activity className="h-3.5 w-3.5" /> Contributions
+                </h3>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-3">
+                  {reputation.contributions
+                    .filter((item) => item.count > 0 && ACTION_LABELS[item.event_type])
+                    .map((item) => (
+                      <div key={item.event_type} className="flex items-baseline justify-between gap-2 border-b border-border py-1">
+                        <span className="text-xs text-muted-foreground">{ACTION_LABELS[item.event_type]}</span>
+                        <span className="font-mono text-xs font-semibold">{item.count}</span>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Mentor Request Section */}
       {isMentor && !isOwnProfile && (

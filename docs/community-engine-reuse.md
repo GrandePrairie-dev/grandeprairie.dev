@@ -74,7 +74,12 @@ Extend the board rather than create a second discussion system:
 
 Q&A is implemented by migration `010-question-answer-loop.sql`: discussion/question post types,
 unanswered and needs-mentor views, unique helpful votes, append-only accepted-answer history,
-reputation awards, intelligence signals, and digest labels. The launch ritual remains next.
+reputation awards, intelligence signals, and digest labels.
+
+The launch ritual is implemented by migration `011-launch-board.sql`: deterministic monthly
+cycles, project submissions, unique community support votes, transparent ranking, digest inclusion,
+and the `Shipped It` reputation award. Profile pages now show trust levels, points, earned badges,
+and contribution counts without exposing an opaque social score.
 
 ### Phase 3: Jobs and Groups
 
@@ -84,8 +89,8 @@ reputation awards, intelligence signals, and digest labels. The launch ritual re
 
 ### Phase 4: Reputation Presentation
 
-- Add badge progress and contribution history to profile pages.
-- Add transparent trust-level labels; never expose a vague social-intelligence score.
+- Badge progress, contribution history, and transparent trust-level labels are implemented.
+- Never expose a vague social-intelligence score.
 - Add spotlight nominations and explain the selection breakdown in admin.
 
 ## Deployment Order

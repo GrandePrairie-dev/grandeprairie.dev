@@ -72,10 +72,24 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       needs_mentor: number;
     }>(),
     env.DB.prepare(
-      `SELECT id, title, category FROM projects
-       WHERE created_at >= datetime('now', '-30 days')
-       ORDER BY is_featured DESC, created_at DESC LIMIT 6`,
-    ).all<{ id: number; title: string; category: string | null }>(),
+      `SELECT p.id, p.title, p.category,
+              CASE WHEN lc.id IS NOT NULL THEN le.id END AS launch_entry_id,
+              CASE WHEN lc.id IS NOT NULL THEN le.votes_count END AS votes_count
+         FROM projects p
+         LEFT JOIN launch_entries le ON le.project_id = p.id
+         LEFT JOIN launch_cycles lc ON lc.id = le.cycle_id
+           AND datetime('now') >= lc.starts_at AND datetime('now') < lc.ends_at
+        WHERE p.created_at >= datetime('now', '-30 days')
+        ORDER BY CASE WHEN lc.id IS NULL THEN 1 ELSE 0 END,
+                 le.votes_count DESC, p.is_featured DESC, p.created_at DESC
+        LIMIT 6`,
+    ).all<{
+      id: number;
+      title: string;
+      category: string | null;
+      launch_entry_id: number | null;
+      votes_count: number | null;
+    }>(),
     env.DB.prepare(
       `SELECT title, source_url, category FROM intel
        WHERE created_at >= datetime('now', '-7 days')
@@ -107,8 +121,10 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }));
   const projects: DigestItem[] = projectsResult.results.map((project) => ({
     title: project.title,
-    detail: project.category,
-    href: "/projects",
+    detail: project.launch_entry_id
+      ? `${project.votes_count ?? 0} community support · ${project.category ?? "project"}`
+      : project.category,
+    href: project.launch_entry_id ? "/launches" : "/projects",
   }));
   const intel: DigestItem[] = intelResult.results.map((item) => ({
     title: item.title,
