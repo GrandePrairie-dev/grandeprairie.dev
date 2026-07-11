@@ -1,5 +1,5 @@
 -- GrandePrairie.dev — Complete D1 Schema
--- This file is the consolidated schema reflecting all migrations (001-013).
+-- This file is the consolidated schema reflecting all migrations (001-014).
 -- For incremental updates, add new migration files in db/migrations/
 -- Last consolidated: 2026-07-10
 
@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   -- 003-phase3-opportunity
   mentor_available INTEGER DEFAULT 0,
   mentor_topics TEXT DEFAULT '[]',    -- JSON array
+  mentor_capacity INTEGER NOT NULL DEFAULT 2,
   -- 004-auth-expansion
   google_id TEXT,
   auth_provider TEXT DEFAULT 'github',
@@ -308,7 +309,14 @@ CREATE TABLE IF NOT EXISTS mentor_requests (
   message TEXT,
   status TEXT DEFAULT 'pending',
   created_at TEXT DEFAULT (datetime('now')),
-  responded_at TEXT
+  responded_at TEXT,
+  question_id INTEGER REFERENCES board_posts(id) ON DELETE SET NULL,
+  topic TEXT,
+  outcome_status TEXT CHECK (
+    outcome_status IS NULL OR outcome_status IN ('successful', 'unsuccessful', 'cancelled')
+  ),
+  outcome_notes TEXT,
+  outcome_at TEXT
 );
 
 CREATE TABLE IF NOT EXISTS organizations (
@@ -699,6 +707,11 @@ CREATE INDEX IF NOT EXISTS idx_learning_events_profile ON learning_events(profil
 -- mentor_requests
 CREATE INDEX IF NOT EXISTS idx_mentor_req_mentor ON mentor_requests(mentor_profile_id, status);
 CREATE INDEX IF NOT EXISTS idx_mentor_req_mentee ON mentor_requests(mentee_profile_id);
+CREATE INDEX IF NOT EXISTS idx_mentor_requests_question ON mentor_requests(question_id, status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_mentor_requests_capacity ON mentor_requests(mentor_profile_id, status, created_at DESC);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_mentor_requests_question_pair
+  ON mentor_requests(question_id, mentor_profile_id)
+  WHERE question_id IS NOT NULL AND status IN ('pending', 'accepted');
 
 INSERT OR IGNORE INTO community_groups (slug, name, description, tags) VALUES
   ('ai', 'Applied AI', 'Practical AI for field operations, local businesses, education, and regional industries.', '["AI","automation","data"]'),

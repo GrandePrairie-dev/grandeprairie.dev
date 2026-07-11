@@ -28,6 +28,7 @@ const SITEMAP_ROUTES: SitemapEntry[] = [
   { path: "/launches", priority: "0.8", changefreq: "weekly" },
   { path: "/jobs", priority: "0.8", changefreq: "daily" },
   { path: "/groups", priority: "0.7", changefreq: "weekly" },
+  { path: "/mentorship", priority: "0.8", changefreq: "weekly" },
   { path: "/about", priority: "0.5", changefreq: "monthly" },
   { path: "/agency", priority: "0.5", changefreq: "monthly" },
 ];

@@ -364,6 +364,13 @@ function BoardThread({ post }: { post: BoardPost }) {
                 {expanded ? "Hide replies" : `${post.reply_count ?? 0} replies`}
               </button>
               <ReportContentDialog targetType="board_post" targetId={post.id} />
+              {post.needs_mentor > 0 && !post.accepted_reply_id && post.author_id === user?.id && (
+                <Link href={`/mentorship?question=${post.id}`}>
+                  <span className="inline-flex cursor-pointer items-center gap-1 font-medium text-prairie-amber hover:underline">
+                    <UserRoundSearch className="h-3.5 w-3.5" /> Route to a mentor
+                  </span>
+                </Link>
+              )}
             </div>
           </div>
         </div>

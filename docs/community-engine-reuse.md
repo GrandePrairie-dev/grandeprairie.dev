@@ -81,6 +81,10 @@ cycles, project submissions, unique community support votes, transparent ranking
 and the `Shipped It` reputation award. Profile pages now show trust levels, points, earned badges,
 and contribution counts without exposing an opaque social score.
 
+Mentor routing is implemented by migration `014-mentor-routing.sql`: needs-mentor questions can
+be routed to available mentors ranked by topic overlap and remaining capacity. Requests use the
+existing mentorship relationship ledger, retry-safe email delivery, and explicit completion outcomes.
+
 ### Phase 3: Jobs and Groups
 
 - Structured jobs are implemented by migration `012-jobs-and-gigs.sql`, including expiry,

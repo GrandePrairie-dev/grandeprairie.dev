@@ -43,6 +43,14 @@ const ROUTE_SEO: RouteSeo[] = [
     pageType: "CollectionPage",
   },
   {
+    path: "/mentorship",
+    title: "Mentorship | Grande Prairie Builders",
+    description:
+      "Find an available local mentor or route a technical question to experienced builders in Grande Prairie and the Peace Region.",
+    keywords: ["Grande Prairie mentors", "Peace Region mentorship", "developer mentor Grande Prairie", "startup mentor Alberta"],
+    pageType: "CollectionPage",
+  },
+  {
     path: "/",
     title: "GrandePrairie.dev | Grande Prairie Tech Community",
     description:

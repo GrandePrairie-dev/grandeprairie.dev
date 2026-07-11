@@ -36,6 +36,7 @@ export default function EditProfile() {
   const [website, setWebsite] = useState("");
   const [mentorAvailable, setMentorAvailable] = useState(false);
   const [mentorTopicsText, setMentorTopicsText] = useState("");
+  const [mentorCapacity, setMentorCapacity] = useState(2);
 
   useEffect(() => {
     if (profile) {
@@ -50,6 +51,7 @@ export default function EditProfile() {
       setWebsite(links.website ?? "");
       setMentorAvailable(!!(profile as any).mentor_available);
       setMentorTopicsText(parseJsonArray((profile as any).mentor_topics).join(", "));
+      setMentorCapacity(profile.mentor_capacity ?? 2);
     }
   }, [profile]);
 
@@ -68,6 +70,7 @@ export default function EditProfile() {
         },
         mentor_available: mentorAvailable,
         mentor_topics: mentorTopicsText.split(",").map(s => s.trim()).filter(Boolean),
+        mentor_capacity: mentorCapacity,
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/profiles/${params.id}`] });
@@ -158,9 +161,15 @@ export default function EditProfile() {
                 <span className="text-sm">Available as a mentor</span>
               </label>
               {mentorAvailable && (
-                <div>
+                <div className="grid gap-3 sm:grid-cols-[1fr_140px]">
+                  <div>
                   <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Mentor Topics (comma-separated)</label>
                   <Input value={mentorTopicsText} onChange={(e) => setMentorTopicsText(e.target.value)} placeholder="Career advice, React, Python, Starting a business..." className="mt-1" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Active capacity</label>
+                    <Input type="number" min={1} max={10} value={mentorCapacity} onChange={(e) => setMentorCapacity(Math.min(10, Math.max(1, Number(e.target.value) || 1)))} className="mt-1" />
+                  </div>
                 </div>
               )}
             </div>

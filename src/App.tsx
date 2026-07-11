@@ -36,6 +36,7 @@ const Jobs = lazy(() => import("@/pages/Jobs"));
 const JobDetail = lazy(() => import("@/pages/JobDetail"));
 const Groups = lazy(() => import("@/pages/Groups"));
 const GroupDetail = lazy(() => import("@/pages/GroupDetail"));
+const Mentorship = lazy(() => import("@/pages/Mentorship"));
 const Conduct = lazy(() => import("@/pages/Conduct"));
 const DigestPreferences = lazy(() => import("@/pages/DigestPreferences"));
 
@@ -108,6 +109,7 @@ export function App() {
                   <Route path="/jobs" component={Jobs} />
                   <Route path="/groups/:slug" component={GroupDetail} />
                   <Route path="/groups" component={Groups} />
+                  <Route path="/mentorship" component={Mentorship} />
                   <Route path="/conduct" component={Conduct} />
                   <Route path="/digest" component={DigestPreferences} />
                   <Route path="/about" component={About} />

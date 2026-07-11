@@ -26,10 +26,21 @@ jobs:
         env:
           PIPELINE_SECRET: ${{ secrets.PIPELINE_SECRET }}
         run: |
-          curl --fail-with-body --silent --show-error \
-            --request POST \
-            --header "X-Pipeline-Secret: ${PIPELINE_SECRET}" \
-            https://grandeprairie.dev/api/events/reminders/send
+          if [ -z "${PIPELINE_SECRET}" ]; then
+            echo "::error::PIPELINE_SECRET is not configured for the community scheduler"
+            exit 1
+          fi
+          for attempt in 1 2 3; do
+            if curl --fail-with-body --silent --show-error \
+              --request POST \
+              --header "X-Pipeline-Secret: ${PIPELINE_SECRET}" \
+              https://grandeprairie.dev/api/events/reminders/send; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+          echo "::error::Event reminder endpoint failed after 3 attempts"
+          exit 1
 
   weekly-digest:
     if: github.event.schedule == '15 16 * * 1' || inputs.task == 'digest'
@@ -39,6 +50,10 @@ jobs:
         env:
           PIPELINE_SECRET: ${{ secrets.PIPELINE_SECRET }}
         run: |
+          if [ -z "${PIPELINE_SECRET}" ]; then
+            echo "::error::PIPELINE_SECRET is not configured for the community scheduler"
+            exit 1
+          fi
           for attempt in $(seq 1 10); do
             response=$(curl --fail-with-body --silent --show-error \
               --request POST \
