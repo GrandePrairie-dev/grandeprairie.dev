@@ -34,6 +34,16 @@ Admins generate suggestions from the Requests tab. Every candidate includes the 
 
 Match selection sends transactional notices to the selected builder and business contact when an address is available. Admins close each decision as successful, unsuccessful, or cancelled; unsuccessful and cancelled matches return the request to review without erasing decision history.
 
+## Mentor Routing
+
+Migration `014-mentor-routing.sql` links eligible Board questions to the existing mentorship
+request ledger. Available mentors are ranked by inspectable topic overlap, trust level, and remaining
+capacity. The question author selects the mentor; the ranking never creates a relationship by itself.
+
+Mentors accept or decline requests, either participant can record completion, and successful outcomes
+clear the question's mentor-needed state. Request, decision, and completion events are recorded as
+signals and relationships. Transactional notices use the retry-safe `community_notifications` ledger.
+
 ## API Boundaries
 
 - `GET|POST /api/business-requests/:id/recommendations` retrieves or generates admin-only suggestions.
@@ -42,6 +52,9 @@ Match selection sends transactional notices to the selected builder and business
 - `GET /api/experiments/:key/assignment` provides deterministic active-experiment assignment.
 - `POST /api/experiments/:key/events` accepts exposure or the experiment's registered primary metric.
 - `GET /api/learning/:moduleId/progress` and `POST /api/learning/:moduleId/events` maintain member learning progress.
+- `GET /api/mentor-routing/:questionId` returns explainable, capacity-aware mentor candidates.
+- `POST /api/mentors/:id/request` creates a direct or question-linked request.
+- `PATCH /api/mentor-requests/:id` records decisions and completion outcomes.
 
 ## Governance
 

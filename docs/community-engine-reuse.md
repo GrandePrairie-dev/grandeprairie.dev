@@ -13,7 +13,7 @@ Reuse the event vocabulary, scoring rules, selection ideas, and workflow shapes.
 | `server/services/badge-engine.js` | Event-driven badge checks and deduplicated awards | Rebuilt as D1-native reputation events and badge rules in `functions/lib/community.ts` |
 | `server/services/review-moderation.js` | Reason weighting, spam signals, queue prioritization | Rebuilt as pure report-priority scoring; human moderators retain final control |
 | `server/services/review-notifications.js` | Weekly digest workflow and email sections | Adapted to the existing Resend transport and GP.dev content sources |
-| `server/services/creator-spotlight.js` | Weighted scoring and diversity-aware selection | Keep as a reference for the launch-board phase; do not port Firestore queries or sales weights |
+| `server/services/creator-spotlight.js` | Weighted scoring and diversity-aware selection | Launch Board uses transparent community support and deterministic tie-breaking; marketplace weights were not ported |
 | `server/services/points.js` | Immutable points ledger concept | Rebuilt as `reputation_events` with a unique `dedupe_key` |
 | `data/alberta-badges.json` | Data-driven badge definitions | Retheme only community-relevant criteria; purchase/seller badges do not transfer |
 | `social-service/`, `elystrum-social/` | Promotional copy generation | Optional downstream publishing helper, not community product infrastructure |
@@ -61,16 +61,9 @@ X-Pipeline-Secret: <PIPELINE_SECRET>
 
 The community scheduler workflow calls event reminders hourly and the digest Monday at 16:15 UTC. Digest delivery runs in batches of 100 and continues for up to ten batches. The delivery ledger makes workflow retries safe. `RESEND_API_KEY` must be configured in Cloudflare, and `PIPELINE_SECRET` must have the same value in Cloudflare and GitHub Actions.
 
-## Next Feature Phases
+## Implemented Feature Phases
 
 ### Phase 2: Q&A and Launch Ritual
-
-Extend the board rather than create a second discussion system:
-
-- Add `post_type`, accepted reply, helpful votes, and an unanswered/needs-mentor filter.
-- Award helpful-answer and accepted-answer reputation events.
-- Add monthly launch cycles and project votes on top of `projects`.
-- Adapt VSMarket's diversity selector using GP.dev metrics: helpful answers, event hosting, project activity, profile completeness, and community votes.
 
 Q&A is implemented by migration `010-question-answer-loop.sql`: discussion/question post types,
 unanswered and needs-mentor views, unique helpful votes, append-only accepted-answer history,
@@ -100,12 +93,15 @@ existing mentorship relationship ledger, retry-safe email delivery, and explicit
 
 - Badge progress, contribution history, and transparent trust-level labels are implemented.
 - Never expose a vague social-intelligence score.
-- Add spotlight nominations and explain the selection breakdown in admin.
+- Spotlight nominations and an admin-visible selection breakdown remain planned.
 
 ## Deployment Order
 
-1. Apply `db/migrations/007-community-foundation.sql` and `008-community-delivery-hardening.sql` remotely, in order.
-2. Deploy the Pages code.
-3. Configure `RESEND_API_KEY` and verify sender-domain status.
-4. Configure the weekly scheduler with `PIPELINE_SECRET`.
-5. Send a controlled digest to internal addresses before enabling public delivery.
+1. Apply migrations in filename order. Production is currently at migration 014.
+2. Each feature migration has a scoped GitHub workflow that runs when merged to `main`.
+3. Deploy Pages code after, or in parallel with, the corresponding additive migration.
+4. Configure `RESEND_API_KEY` and verify sender-domain status.
+5. Keep `PIPELINE_SECRET` identical in Cloudflare Pages and GitHub Actions.
+6. Run reminders and digest manually after scheduler or secret changes.
+
+See `docs/community-action-map.md` for the production capability map and current priorities.
