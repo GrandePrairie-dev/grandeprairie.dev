@@ -19,6 +19,9 @@ export interface Profile {
   email_verified: number;
   reputation_points: number;
   trust_level: number;
+  mentor_available?: number;
+  mentor_topics?: string;
+  mentor_capacity?: number;
   created_at: string;
   updated_at: string;
 }
@@ -147,6 +150,36 @@ export interface GroupMember {
 
 export interface CommunityGroupDetail extends CommunityGroup {
   members: GroupMember[];
+}
+
+export interface MentorRecommendation extends Profile {
+  active_requests: number;
+  capacity_remaining: number;
+  match_score: number;
+  matched_topics: string[];
+}
+
+export interface MentorRoutingResult {
+  question: BoardPost;
+  topic: string;
+  mentors: MentorRecommendation[];
+}
+
+export interface MentorRequest {
+  id: number;
+  mentee_profile_id: number;
+  mentor_profile_id: number;
+  message: string | null;
+  status: "pending" | "accepted" | "declined" | "cancelled" | "completed";
+  question_id: number | null;
+  question_title?: string | null;
+  topic: string | null;
+  outcome_status: "successful" | "unsuccessful" | "cancelled" | null;
+  outcome_notes: string | null;
+  created_at: string;
+  responded_at: string | null;
+  mentee_name?: string;
+  mentor_name?: string;
 }
 
 export interface Event {

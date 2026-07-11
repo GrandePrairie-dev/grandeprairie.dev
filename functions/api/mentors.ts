@@ -4,7 +4,11 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
   const topic = url.searchParams.get("topic");
 
-  let query = "SELECT * FROM profiles WHERE mentor_available = 1";
+  let query = `SELECT id, name, username, title, bio, role, skills, badges, links,
+    is_featured, is_admin, avatar_url, auth_provider, email_verified,
+    reputation_points, trust_level, mentor_available, mentor_topics, mentor_capacity,
+    created_at, updated_at
+    FROM profiles WHERE mentor_available = 1`;
   const bindings: unknown[] = [];
 
   if (topic) {

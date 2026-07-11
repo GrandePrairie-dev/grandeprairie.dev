@@ -5,9 +5,10 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, data }) => {
   if (!user) return new Response("Unauthorized", { status: 401 });
 
   const { results } = await env.DB.prepare(
-    `SELECT mr.*, p.name as mentee_name, p.skills, p.role
+    `SELECT mr.*, p.name as mentee_name, p.skills, p.role, bp.title AS question_title
      FROM mentor_requests mr
      LEFT JOIN profiles p ON mr.mentee_profile_id = p.id
+     LEFT JOIN board_posts bp ON bp.id = mr.question_id
      WHERE mr.mentor_profile_id = ?
      ORDER BY mr.created_at DESC`
   ).bind(user.profileId).all();

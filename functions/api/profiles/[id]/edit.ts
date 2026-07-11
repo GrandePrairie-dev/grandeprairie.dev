@@ -40,6 +40,11 @@ export const onRequestPatch: PagesFunction<Env> = async ({ params, env, request,
     updates.push("mentor_topics = ?");
     values.push(JSON.stringify(body.mentor_topics ?? []));
   }
+  if ("mentor_capacity" in body) {
+    updates.push("mentor_capacity = ?");
+    const capacity = Number(body.mentor_capacity);
+    values.push(Number.isFinite(capacity) ? Math.min(10, Math.max(1, Math.round(capacity))) : 2);
+  }
 
   if (updates.length === 0) return Response.json({ error: "No valid fields" }, { status: 400 });
 

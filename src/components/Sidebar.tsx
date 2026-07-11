@@ -26,6 +26,7 @@ import {
   ShieldCheck,
   Rocket,
   BriefcaseBusiness,
+  UserRoundSearch,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -99,6 +100,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: "Calendar", href: "/calendar", icon: Calendar },
       { label: "Board", href: "/board", icon: MessageSquare },
       { label: "Groups", href: "/groups", icon: Users },
+      { label: "Mentorship", href: "/mentorship", icon: UserRoundSearch },
       { label: "Business", href: "/business", icon: Building2 },
       { label: "Organizations", href: "/orgs", icon: Building2 },
       { label: "Showcase", href: "/showcase", icon: Sparkles },

@@ -1,5 +1,6 @@
 import type { Env } from "./env";
 import { sendMatchNotification, type MatchNotificationEmail } from "./email";
+import { sendMentorNotification, type MentorNotificationEmail } from "./email";
 
 interface MatchDelivery extends MatchNotificationEmail {
   decisionId: number;
@@ -37,6 +38,40 @@ export async function deliverMatchNotification(env: Env, delivery: MatchDelivery
   }
 
   const sent = await sendMatchNotification(env, delivery);
+  await env.DB.prepare(
+    `UPDATE community_notifications SET status = ?, sent_at = CASE WHEN ? THEN datetime('now') ELSE NULL END,
+       error_code = CASE WHEN ? THEN NULL ELSE 'delivery_failed' END WHERE dedupe_key = ?`,
+  ).bind(sent ? "sent" : "failed", sent ? 1 : 0, sent ? 1 : 0, dedupeKey).run();
+  return sent ? "sent" : "failed";
+}
+
+interface MentorDelivery extends MentorNotificationEmail {
+  recipientId: number;
+}
+
+export async function deliverMentorNotification(
+  env: Env,
+  delivery: MentorDelivery,
+): Promise<"sent" | "failed" | "skipped"> {
+  const dedupeKey = `mentor-request:${delivery.requestId}:${delivery.event}:${delivery.recipientId}`;
+  const claimed = await env.DB.prepare(
+    `INSERT INTO community_notifications
+       (notification_type, target_type, target_id, recipient_type, recipient_id, dedupe_key)
+     VALUES ('mentor_request', 'mentor_request', ?, 'profile', ?, ?)
+     ON CONFLICT(dedupe_key) DO UPDATE SET
+       status = 'sending', attempted_at = datetime('now'), error_code = NULL
+     WHERE community_notifications.status = 'failed'
+        OR (community_notifications.status = 'sending'
+            AND community_notifications.attempted_at < datetime('now', '-15 minutes'))`,
+  ).bind(String(delivery.requestId), String(delivery.recipientId), dedupeKey).run();
+  if ((claimed.meta.changes ?? 0) === 0) return "skipped";
+  if (!delivery.to) {
+    await env.DB.prepare(
+      "UPDATE community_notifications SET status = 'failed', error_code = 'missing_email' WHERE dedupe_key = ?",
+    ).bind(dedupeKey).run();
+    return "failed";
+  }
+  const sent = await sendMentorNotification(env, delivery);
   await env.DB.prepare(
     `UPDATE community_notifications SET status = ?, sent_at = CASE WHEN ? THEN datetime('now') ELSE NULL END,
        error_code = CASE WHEN ? THEN NULL ELSE 'delivery_failed' END WHERE dedupe_key = ?`,

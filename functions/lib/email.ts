@@ -40,6 +40,16 @@ export interface MatchNotificationEmail {
   requestId: number;
 }
 
+export interface MentorNotificationEmail {
+  to: string;
+  recipientName: string;
+  otherName: string;
+  requestId: number;
+  questionId?: number | null;
+  questionTitle?: string | null;
+  event: "requested" | "accepted" | "declined" | "completed";
+}
+
 interface ResendEmailPayload {
   from: string;
   to: string[];
@@ -290,6 +300,27 @@ function matchNotificationHtml(notification: MatchNotificationEmail, siteUrl: st
 </html>`;
 }
 
+function mentorNotificationHtml(notification: MentorNotificationEmail, siteUrl: string): string {
+  const headings = {
+    requested: `${escapeHtml(notification.otherName)} requested mentor support`,
+    accepted: `${escapeHtml(notification.otherName)} accepted your mentor request`,
+    declined: `${escapeHtml(notification.otherName)} cannot take this request`,
+    completed: "Mentorship outcome recorded",
+  };
+  const detail = notification.questionTitle
+    ? `<p style="color:#C9D1D9;font-size:14px;line-height:1.6;margin:0 0 20px;">${escapeHtml(notification.questionTitle)}</p>`
+    : "";
+  const destination = notification.questionId ? `${siteUrl}/board` : `${siteUrl}/mentorship`;
+  return `<!DOCTYPE html><html><body style="margin:0;padding:32px;background:#161B22;font-family:Inter,'Segoe UI',sans-serif;color:#E2E6EC;">
+    <div style="max-width:520px;margin:0 auto;background:#1E2530;border:1px solid #2E3742;border-radius:8px;padding:30px;">
+      <p style="color:#3DBFA8;font-size:11px;font-weight:700;text-transform:uppercase;margin:0 0 10px;">Mentorship</p>
+      <h1 style="font-size:21px;margin:0 0 12px;">${headings[notification.event]}</h1>
+      <p style="color:#8B95A5;font-size:14px;line-height:1.6;">Hi ${escapeHtml(notification.recipientName)},</p>
+      ${detail}
+      <a href="${escapeHtml(destination)}" style="display:inline-block;padding:11px 22px;background:#2D4A3E;color:#3DBFA8;border:1px solid #4A7C6A;border-radius:6px;text-decoration:none;font-weight:700;">Open GP.dev</a>
+    </div></body></html>`;
+}
+
 async function sendResendEmail(env: Env, payload: ResendEmailPayload): Promise<boolean> {
   if (!env.RESEND_API_KEY) return false;
 
@@ -367,5 +398,20 @@ export async function sendMatchNotification(env: Env, notification: MatchNotific
       ? `You were matched with ${plainText(notification.businessName)}`
       : `Builder selected: ${plainText(notification.builderName)}`,
     html: matchNotificationHtml(notification, env.SITE_URL),
+  });
+}
+
+export async function sendMentorNotification(env: Env, notification: MentorNotificationEmail): Promise<boolean> {
+  const subjects = {
+    requested: `Mentor request from ${plainText(notification.otherName)}`,
+    accepted: `${plainText(notification.otherName)} accepted your mentor request`,
+    declined: "Update on your mentor request",
+    completed: "Mentorship outcome recorded",
+  };
+  return sendResendEmail(env, {
+    from: "GrandePrairie.dev <noreply@grandeprairie.dev>",
+    to: [notification.to],
+    subject: subjects[notification.event],
+    html: mentorNotificationHtml(notification, env.SITE_URL),
   });
 }
