@@ -45,7 +45,7 @@ npm run pages:deploy     # Deploy to Cloudflare Pages (also runs via GitHub Acti
 
 **Backend**: Cloudflare Pages Functions in `functions/api/`. Each file exports `onRequestGet`, `onRequestPost`, etc. Functions receive `env` with `DB` (D1) and `SESSIONS` (KV) bindings.
 
-**Database**: Cloudflare D1 (SQLite). Consolidated schema in `db/schema.sql`. Incremental migrations in `db/migrations/001-008`. Core community tables also include `board_posts`, `event_rsvps`, `digest_subscriptions`, `digest_deliveries`, `event_reminders`, `content_reports`, `reputation_events`, and `profile_badges`.
+**Database**: Cloudflare D1 (SQLite). Consolidated schema in `db/schema.sql`. Incremental migrations live in `db/migrations/001-014`. Community tables cover Board Q&A, RSVP and delivery ledgers, reputation, intelligence, launches, jobs, groups, notifications, and mentor routing.
 
 **Auth**: Multi-provider. GitHub OAuth (`/api/auth/login`, `/api/auth/callback`), Google OAuth (`/api/auth/callback/google`), email magic link (`/api/auth/email/request`, `/api/auth/email/verify`). Sessions stored in KV. Current user via `/api/auth/me`. Profile fields: `github_id`, `github_username`, `google_id`, `auth_provider`, `email_verified`.
 
@@ -62,6 +62,10 @@ npm run pages:deploy     # Deploy to Cloudflare Pages (also runs via GitHub Acti
 | `/people/:id/edit` | Edit own profile | Live |
 | `/ideas`, `/ideas/:id` | Ideas board with voting | Live |
 | `/projects` | Project showcases | Live |
+| `/launches` | Monthly community Launch Board | Live |
+| `/jobs`, `/jobs/:id` | Structured jobs and gigs | Live |
+| `/groups`, `/groups/:slug` | Curated community groups | Live |
+| `/mentorship` | Mentor discovery, routing, and request outcomes | Live |
 | `/map` | Leaflet map of Peace Region | Live |
 | `/calendar` | Events calendar | Live |
 | `/intel` | Community news/intel | Live |
@@ -116,9 +120,17 @@ All in `functions/api/`. TanStack Query uses the URL path as `queryKey[0]`.
 **Mentors**
 - `GET /api/mentors`
 - `POST /api/mentors/:id/request`
+- `GET /api/mentor-routing/:questionId`
 - `GET /api/mentor-requests/incoming`
 - `GET /api/mentor-requests/outgoing`
 - `PATCH /api/mentor-requests/:id`
+
+**Launches, Jobs, and Groups**
+- `GET|POST /api/launches/current`
+- `POST|DELETE /api/launches/entries/:id/vote`
+- `GET|POST /api/jobs`; `GET|PATCH /api/jobs/:id`
+- `GET /api/groups`; `GET /api/groups/:slug`
+- `POST|DELETE /api/groups/:slug/membership`
 
 **Organizations**
 - `GET|POST /api/organizations`
