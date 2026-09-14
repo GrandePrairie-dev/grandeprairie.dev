@@ -49,19 +49,6 @@ const STATUS_LABEL: Record<AffiliatedDemo["status"], string> = {
 
 const DEMOS: AffiliatedDemo[] = [
   {
-    slug: "bull-oilfield",
-    name: "Bull Oilfield Instrumentation",
-    tagline:
-      "NIST-traceable calibration, chart recorder and Hawk digital data logger rentals, Baker pump repair. Serving Northern Alberta's oil & gas sector.",
-    category: "Oilfield Services",
-    url: "https://bulloilfield.grandeprairie.dev",
-    location: "Grande Prairie, AB",
-    orgSlug: "bull-oilfield",
-    logo: "/showcase/bull-oilfield.png",
-    accent: "rig-amber",
-    status: "pitch",
-  },
-  {
     slug: "bestkind",
     name: "Best Kind Baking",
     tagline:
