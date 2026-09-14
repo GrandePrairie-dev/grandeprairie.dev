@@ -1,9 +1,12 @@
 name: Community scheduler
 
 on:
-  schedule:
-    - cron: "15 * * * *"
-    - cron: "15 16 * * 1"
+  # Schedule paused 2026-09-13: every run since 2026-07-10 failed and there are no
+  # upcoming events to remind about. To resume, confirm PIPELINE_SECRET matches the
+  # Cloudflare Pages secret, restore these triggers, and re-enable the workflow.
+  # schedule:
+  #   - cron: "15 * * * *"
+  #   - cron: "15 16 * * 1"
   workflow_dispatch:
     inputs:
       task:

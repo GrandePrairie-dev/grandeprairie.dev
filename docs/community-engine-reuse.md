@@ -59,7 +59,7 @@ POST /api/digest/send
 X-Pipeline-Secret: <PIPELINE_SECRET>
 ```
 
-The community scheduler workflow calls event reminders hourly and the digest Monday at 16:15 UTC. Digest delivery runs in batches of 100 and continues for up to ten batches. The delivery ledger makes workflow retries safe. `RESEND_API_KEY` must be configured in Cloudflare, and `PIPELINE_SECRET` must have the same value in Cloudflare and GitHub Actions.
+The community scheduler workflow calls event reminders hourly and the digest Monday at 16:15 UTC. Its schedule is currently paused (since 2026-09-13) and runs only by manual dispatch; see the note in the workflow file before restoring it. Digest delivery runs in batches of 100 and continues for up to ten batches. The delivery ledger makes workflow retries safe. `RESEND_API_KEY` must be configured in Cloudflare, and `PIPELINE_SECRET` must have the same value in Cloudflare and GitHub Actions.
 
 ## Implemented Feature Phases
 
